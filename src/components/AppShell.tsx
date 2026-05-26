@@ -11,7 +11,7 @@ import { AIChatPanel } from "./AIChatPanel";
 function loadProgress(): Set<number> {
   if (typeof window === "undefined") return new Set();
   try {
-    const stored = localStorage.getItem("rustmentor-progress");
+    const stored = localStorage.getItem("learn-to-code-progress");
     if (stored) return new Set(JSON.parse(stored));
   } catch {}
   return new Set();
@@ -19,7 +19,7 @@ function loadProgress(): Set<number> {
 
 function saveProgress(completed: Set<number>) {
   localStorage.setItem(
-    "rustmentor-progress",
+    "learn-to-code-progress",
     JSON.stringify(Array.from(completed))
   );
 }
@@ -27,14 +27,14 @@ function saveProgress(completed: Set<number>) {
 function loadCode(challengeId: number): string | null {
   if (typeof window === "undefined") return null;
   try {
-    return localStorage.getItem(`rustmentor-code-${challengeId}`);
+    return localStorage.getItem(`learn-to-code-code-${challengeId}`);
   } catch {
     return null;
   }
 }
 
 function saveCode(challengeId: number, code: string) {
-  localStorage.setItem(`rustmentor-code-${challengeId}`, code);
+  localStorage.setItem(`learn-to-code-code-${challengeId}`, code);
 }
 
 export function AppShell() {
@@ -127,8 +127,8 @@ export function AppShell() {
             </svg>
           </button>
           <h1 className="text-lg font-bold tracking-tight">
-            <span className="text-accent">Rust</span>
-            <span className="text-foreground">Mentor</span>
+            <span className="text-accent">learn</span>
+            <span className="text-foreground">-to-code</span>
           </h1>
         </div>
         <div className="flex items-center gap-3">

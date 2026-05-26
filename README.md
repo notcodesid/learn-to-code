@@ -1,4 +1,4 @@
-# RustMentor
+# learn-to-code
 
 An AI-powered platform to learn Rust through curated challenges and instant mentorship. Inspired by [RareCode.ai](https://rarecode.ai/).
 
@@ -15,14 +15,14 @@ An AI-powered platform to learn Rust through curated challenges and instant ment
 
 ```bash
 # Install dependencies
-npm install
+bun install
 
 # (Optional) Add OpenAI API key for full AI mentorship
 cp .env.example .env.local
 # Edit .env.local with your OPENAI_API_KEY
 
 # Run the dev server
-npm run dev
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to start learning Rust.
@@ -58,8 +58,8 @@ The AI mentor works in two modes:
 ## Deploy
 
 ```bash
-npm run build
-npm start
+bun run build
+bun run start
 ```
 
 Or deploy to [Vercel](https://vercel.com) with one click.

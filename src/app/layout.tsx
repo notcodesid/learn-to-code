@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RustMentor — Learn Rust with AI",
+  title: "learn-to-code — Learn Rust with AI",
   description:
     "An AI-powered platform to learn Rust through curated challenges and instant mentorship.",
 };
