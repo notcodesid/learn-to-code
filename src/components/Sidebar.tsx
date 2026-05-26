@@ -9,10 +9,10 @@ interface SidebarProps {
   onSelect: (challenge: Challenge) => void;
 }
 
-const difficultyColor = {
-  beginner: "text-green-400",
-  intermediate: "text-yellow-400",
-  advanced: "text-red-400",
+const difficultyConfig = {
+  beginner: { color: "text-emerald-400", bg: "bg-emerald-400/10", label: "BEG" },
+  intermediate: { color: "text-amber-400", bg: "bg-amber-400/10", label: "INT" },
+  advanced: { color: "text-rose-400", bg: "bg-rose-400/10", label: "ADV" },
 };
 
 export function Sidebar({
@@ -25,56 +25,102 @@ export function Sidebar({
     new Set(challenges.map((c) => c.category))
   );
 
+  const totalCompleted = completedIds.size;
+  const totalChallenges = challenges.length;
+
   return (
-    <aside className="w-64 border-r border-border bg-surface overflow-y-auto shrink-0">
+    <aside className="w-full h-full border-r border-border bg-surface/95 backdrop-blur-sm overflow-y-auto">
       <div className="p-3">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted mb-3">
-          Challenges
-        </h2>
-        {categories.map((category) => (
-          <div key={category} className="mb-4">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted/70 mb-1.5 px-2">
-              {category}
+        {/* Progress summary */}
+        <div className="mb-4 p-3 rounded-lg bg-surface-hover/50 border border-border/50 animate-fade-in-down">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+              Progress
+            </span>
+            <span className="text-xs font-bold text-accent tabular-nums">
+              {totalCompleted}/{totalChallenges}
+            </span>
+          </div>
+          <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-accent to-amber-400 rounded-full transition-all duration-700 ease-out"
+              style={{
+                width: `${(totalCompleted / totalChallenges) * 100}%`,
+              }}
+            />
+          </div>
+        </div>
+
+        {categories.map((category, catIdx) => (
+          <div key={category} className="mb-3 animate-fade-in-up" style={{ animationDelay: `${catIdx * 40}ms` }}>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted/60 mb-1 px-2 flex items-center gap-2">
+              <span className="flex-1">{category}</span>
+              <span className="text-[9px] text-muted/40 tabular-nums">
+                {challenges.filter((c) => c.category === category && completedIds.has(c.id)).length}/
+                {challenges.filter((c) => c.category === category).length}
+              </span>
             </h3>
             {challenges
               .filter((c) => c.category === category)
               .map((challenge) => {
                 const isSelected = challenge.id === selectedId;
                 const isCompleted = completedIds.has(challenge.id);
+                const diff = difficultyConfig[challenge.difficulty];
                 return (
                   <button
                     key={challenge.id}
                     onClick={() => onSelect(challenge)}
-                    className={`w-full text-left px-2 py-1.5 rounded-md text-sm transition-colors flex items-center gap-2 mb-0.5 ${
+                    className={`group w-full text-left px-2.5 py-2 rounded-lg text-[13px] transition-all duration-200 flex items-center gap-2.5 mb-0.5 btn-press ${
                       isSelected
-                        ? "bg-accent/15 text-accent"
-                        : "text-foreground/80 hover:bg-surface-hover"
+                        ? "bg-accent/12 text-accent border border-accent/20 shadow-sm shadow-accent/5"
+                        : "text-foreground/75 hover:bg-surface-hover hover:text-foreground border border-transparent"
                     }`}
                   >
-                    <span className="shrink-0 w-4 text-center">
+                    {/* Status indicator */}
+                    <span className="shrink-0 w-5 h-5 flex items-center justify-center">
                       {isCompleted ? (
                         <svg
-                          width="14"
-                          height="14"
+                          width="16"
+                          height="16"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          className="text-green-400"
+                          className="text-success animate-check-draw"
                         >
-                          <path d="M20 6L9 17l-5-5" />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeOpacity="0.3"
+                          />
+                          <path
+                            d="M8 12l3 3 5-5"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
                         </svg>
                       ) : (
-                        <span className="text-[10px] text-muted">
-                          {challenge.id}
+                        <span
+                          className={`text-[10px] font-bold tabular-nums ${
+                            isSelected ? "text-accent" : "text-muted/50 group-hover:text-muted"
+                          } transition-colors`}
+                        >
+                          {String(challenge.id).padStart(2, "0")}
                         </span>
                       )}
                     </span>
-                    <span className="truncate flex-1">{challenge.title}</span>
+
+                    <span className="truncate flex-1 font-medium">
+                      {challenge.title}
+                    </span>
+
                     <span
-                      className={`text-[9px] uppercase font-bold ${difficultyColor[challenge.difficulty]}`}
+                      className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${diff.color} ${diff.bg}`}
                     >
-                      {challenge.difficulty.slice(0, 3)}
+                      {diff.label}
                     </span>
                   </button>
                 );

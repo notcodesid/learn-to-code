@@ -5,8 +5,17 @@ import dynamic from "next/dynamic";
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
   loading: () => (
-    <div className="flex-1 flex items-center justify-center bg-[#141414] text-muted text-sm">
-      Loading editor...
+    <div className="flex-1 flex flex-col items-center justify-center bg-[#111] gap-3">
+      <div className="space-y-2 w-3/4 max-w-md">
+        <div className="skeleton h-4 w-1/3" />
+        <div className="skeleton h-4 w-2/3" />
+        <div className="skeleton h-4 w-1/2" />
+        <div className="skeleton h-4 w-3/4" />
+        <div className="skeleton h-4 w-1/4" />
+      </div>
+      <span className="text-xs text-muted/50 animate-pulse mt-2">
+        Loading editor...
+      </span>
     </div>
   ),
 });
@@ -29,19 +38,51 @@ export function CodeEditor({
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-surface shrink-0">
-        <span className="text-xs text-muted font-mono">main.rs</span>
+      <div className="flex items-center justify-between px-3 md:px-4 py-2 border-b border-border bg-surface/80 backdrop-blur-sm shrink-0">
+        <div className="flex items-center gap-2">
+          {/* File tab */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-surface-hover/60 rounded-md border border-border/50">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="text-accent/70"
+            >
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <path d="M14 2v6h6" />
+            </svg>
+            <span className="text-xs text-foreground/70 font-mono">
+              main.rs
+            </span>
+          </div>
+        </div>
+
         <div className="flex items-center gap-2">
           <button
             onClick={onReset}
-            className="px-3 py-1 text-xs font-medium rounded-md bg-surface-hover text-muted hover:text-foreground transition-colors"
+            className="px-2.5 py-1 text-xs font-medium rounded-md bg-surface-hover text-muted hover:text-foreground transition-all duration-200 btn-press border border-transparent hover:border-border flex items-center gap-1.5"
           >
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M1 4v6h6M23 20v-6h-6" />
+              <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" />
+            </svg>
             Reset
           </button>
+
           <button
             onClick={onRun}
             disabled={isRunning}
-            className="px-4 py-1 text-xs font-semibold rounded-md bg-accent text-white hover:bg-accent-hover transition-colors disabled:opacity-50 flex items-center gap-1.5"
+            className="group px-4 py-1.5 text-xs font-bold rounded-md bg-accent text-white hover:bg-accent-hover transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 btn-glow btn-press shadow-sm shadow-accent/20"
           >
             {isRunning ? (
               <>
@@ -64,19 +105,25 @@ export function CodeEditor({
                     className="opacity-75"
                   />
                 </svg>
-                Running...
+                <span>Running...</span>
               </>
             ) : (
               <>
                 <svg
-                  width="12"
-                  height="12"
+                  width="11"
+                  height="11"
                   viewBox="0 0 24 24"
                   fill="currentColor"
+                  className="transition-transform duration-200 group-hover:scale-110"
                 >
                   <path d="M8 5v14l11-7z" />
                 </svg>
-                Run
+                <span>
+                  Run
+                  <span className="hidden md:inline text-white/50 ml-1 font-normal">
+                    Ctrl+Enter
+                  </span>
+                </span>
               </>
             )}
           </button>
@@ -84,7 +131,7 @@ export function CodeEditor({
       </div>
 
       {/* Monaco */}
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 animate-fade-in">
         <MonacoEditor
           height="100%"
           defaultLanguage="rust"
@@ -96,13 +143,18 @@ export function CodeEditor({
             fontFamily: "var(--font-geist-mono), 'Fira Code', monospace",
             minimap: { enabled: false },
             scrollBeyondLastLine: false,
-            padding: { top: 12 },
+            padding: { top: 16, bottom: 16 },
             lineNumbers: "on",
             renderLineHighlight: "line",
             bracketPairColorization: { enabled: true },
             automaticLayout: true,
             tabSize: 4,
             wordWrap: "on",
+            smoothScrolling: true,
+            cursorSmoothCaretAnimation: "on",
+            cursorBlinking: "smooth",
+            roundedSelection: true,
+            lineHeight: 22,
           }}
         />
       </div>
