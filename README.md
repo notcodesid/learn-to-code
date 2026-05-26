@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RustMentor
+
+An AI-powered platform to learn Rust through curated challenges and instant mentorship. Inspired by [RareCode.ai](https://rarecode.ai/).
+
+## Features
+
+- **20 curated Rust challenges** — from "Hello, Rust!" to a capstone statistics calculator, covering variables, ownership, borrowing, structs, enums, traits, generics, lifetimes, closures, and more
+- **Monaco code editor** — VS Code-quality editing with Rust syntax highlighting
+- **Live code execution** — compile and run Rust code via the Rust Playground API
+- **AI mentor chat** — get hints, explanations, and feedback on your code (uses OpenAI API, with a built-in fallback)
+- **Progress tracking** — completed challenges are tracked in local storage with a visual progress bar
+- **Dark theme** — clean, focused UI designed for extended coding sessions
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# (Optional) Add OpenAI API key for full AI mentorship
+cp .env.example .env.local
+# Edit .env.local with your OPENAI_API_KEY
+
+# Run the dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to start learning Rust.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Next.js 16** (App Router, TypeScript)
+- **Tailwind CSS** for styling
+- **Monaco Editor** (same editor as VS Code)
+- **Rust Playground API** for code compilation and execution
+- **OpenAI API** (optional) for AI mentor chat
 
-## Learn More
+## Challenge Categories
 
-To learn more about Next.js, take a look at the following resources:
+| Category | Challenges | Difficulty |
+|---|---|---|
+| Basics | Hello Rust, Variables, Data Types, Functions, Control Flow, Loops | Beginner |
+| Ownership & Borrowing | Ownership, References, Slices | Intermediate |
+| Structs & Enums | Structs, Enums & Pattern Matching | Intermediate |
+| Error Handling | Option\<T\>, Result\<T, E\> | Intermediate |
+| Collections | Vectors, HashMaps | Intermediate |
+| Traits & Generics | Traits, Generics, Lifetimes | Advanced |
+| Functional Patterns | Closures & Iterators | Advanced |
+| Capstone | Mini CLI Statistics Tool | Advanced |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## AI Mentor
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The AI mentor works in two modes:
 
-## Deploy on Vercel
+1. **With OpenAI API key** — full conversational AI mentorship powered by GPT-4o-mini
+2. **Without API key** — built-in fallback that provides hints, concept explanations, and code guidance based on the current challenge
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+npm start
+```
+
+Or deploy to [Vercel](https://vercel.com) with one click.
