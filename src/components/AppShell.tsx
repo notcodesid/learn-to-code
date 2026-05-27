@@ -8,10 +8,32 @@ import { Sidebar } from "./Sidebar";
 import { ChallengePane } from "./ChallengePane";
 import { CodeEditor } from "./CodeEditor";
 import { OutputPanel } from "./OutputPanel";
-import { AIChatPanel } from "./AIChatPanel";
+
+// Custom SVG Logo Icon
+const LogoIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 46 47"
+    fill="none"
+    className={className}
+  >
+    <g fill="currentColor" clipPath="url(#logo-clip-shell)">
+      <path d="M19.03 46.41a3.175 3.175 0 0 0 3.166-3.174v-4.758h12.697a3.174 3.174 0 0 0 0-6.349H22.196v-4.757a3.167 3.167 0 0 0-3.174-3.167 3.167 3.167 0 0 0-3.166 3.167v15.864a3.174 3.174 0 0 0 3.174 3.174Z" />
+      <path d="M46.002 27.37a3.167 3.167 0 0 0-3.175-3.167H38.07V11.506a3.174 3.174 0 1 0-6.349 0v12.697h-4.757a3.161 3.161 0 0 0-3.167 3.167 3.167 3.167 0 0 0 3.167 3.174h15.863a3.174 3.174 0 0 0 3.175-3.174Z" />
+      <path d="M26.962.408a3.167 3.167 0 0 0-3.167 3.174V8.34H11.1a3.174 3.174 0 0 0-3.167 3.167 3.174 3.174 0 0 0 3.167 3.174h12.696v4.758a3.167 3.167 0 0 0 5.412 2.237c.595-.596.93-1.403.93-2.245V3.582A3.174 3.174 0 0 0 26.961.408Z" />
+      <path d="M0 19.438a3.174 3.174 0 0 0 3.174 3.167h4.758v12.697a3.174 3.174 0 0 0 3.167 3.174 3.175 3.175 0 0 0 3.166-3.174V22.605h4.758a3.174 3.174 0 0 0 3.174-3.167 3.174 3.174 0 0 0-3.174-3.166H3.174A3.174 3.174 0 0 0 0 19.438Z" />
+    </g>
+    <defs>
+      <clipPath id="logo-clip-shell">
+        <path fill="#fff" d="M0 .408h46v46H0z" />
+      </clipPath>
+    </defs>
+  </svg>
+);
 
 export function AppShell() {
   const { data: session, status } = useSession();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const router = useRouter();
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge>(
     challenges[0]
@@ -23,7 +45,6 @@ export function AppShell() {
     new Set()
   );
   const [savedCode, setSavedCode] = useState<Record<number, string>>({});
-  const [showChat, setShowChat] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
 
@@ -249,10 +270,14 @@ export function AppShell() {
               <path d="M3 12h18M3 6h18M3 18h18" />
             </svg>
           </button>
-          <h1 className="text-lg font-bold tracking-tight">
-            <span className="text-accent">learn</span>
-            <span className="text-foreground">-to-code</span>
-          </h1>
+          <div className="flex items-center gap-2 select-none">
+            <span className="text-accent flex items-center shrink-0">
+              <LogoIcon className="w-5.5 h-5.5" />
+            </span>
+            <h1 className="text-[15px] font-extrabold tracking-tight text-foreground font-sans">
+              learn-to-code
+            </h1>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted">
@@ -268,36 +293,49 @@ export function AppShell() {
           </div>
           
           {session ? (
-            <>
+            <div className="relative">
               <button
-                onClick={() => setShowChat(!showChat)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                  showChat
-                    ? "bg-accent text-white"
-                    : "bg-surface-hover text-foreground hover:bg-border"
-                }`}
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center focus:outline-none cursor-pointer"
               >
-                AI Mentor
-              </button>
-              <div className="flex items-center gap-2 pl-2 border-l border-border">
-                {session.user?.image && (
+                {session.user?.image ? (
                   <img
                     src={session.user.image}
                     alt="Profile"
-                    className="w-6 h-6 rounded-full"
+                    className="w-7.5 h-7.5 rounded-full border border-border hover:border-accent transition-colors"
                   />
+                ) : (
+                  <div className="w-7.5 h-7.5 rounded-full bg-surface border border-border flex items-center justify-center text-xs font-semibold text-accent hover:border-accent transition-colors">
+                    {(session.user?.name || "U").substring(0, 1).toUpperCase()}
+                  </div>
                 )}
-                <span className="text-xs text-muted">
-                  {session.user?.name || session.user?.email}
-                </span>
-                <button
-                  onClick={() => signOut({ callbackUrl: "/auth/signin" })}
-                  className="text-xs text-muted hover:text-foreground transition-colors"
-                >
-                  Sign out
-                </button>
-              </div>
-            </>
+              </button>
+              
+              {isProfileOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40 cursor-default" 
+                    onClick={() => setIsProfileOpen(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-48 bg-[#161616] border border-border/80 rounded-xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-100 origin-top-right">
+                    <div className="px-4 py-1.5 text-xs text-muted-foreground truncate border-b border-border/30 pb-2 mb-1 select-none">
+                      <div className="font-semibold text-foreground truncate">
+                        {session.user?.name || "User"}
+                      </div>
+                      <div className="text-[10.5px] text-muted truncate mt-0.5">
+                        {session.user?.email || ""}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => signOut({ callbackUrl: "/auth/signin" })}
+                      className="w-full text-left px-4 py-2 text-xs font-medium text-muted hover:text-foreground hover:bg-surface transition-colors cursor-pointer"
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           ) : (
             <button
               onClick={() => router.push("/auth/signin")}
@@ -355,14 +393,7 @@ export function AppShell() {
           </div>
         </div>
 
-        {/* AI Chat */}
-        {showChat && (
-          <AIChatPanel
-            challenge={selectedChallenge}
-            code={code}
-            onClose={() => setShowChat(false)}
-          />
-        )}
+
       </div>
     </div>
   );
