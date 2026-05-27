@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { challenges, Challenge } from "@/data/challenges";
+import { Challenge } from "@/data/challenges";
 import { Sidebar } from "./Sidebar";
 import { ChallengePane } from "./ChallengePane";
 import { CodeEditor } from "./CodeEditor";
@@ -35,10 +35,9 @@ export function AppShell() {
   const { data: session, status } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const router = useRouter();
-  const [selectedChallenge, setSelectedChallenge] = useState<Challenge>(
-    challenges[0]
-  );
-  const [code, setCode] = useState(challenges[0].starterCode);
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
+  const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [completedChallenges, setCompletedChallenges] = useState<Set<number>>(
@@ -47,6 +46,30 @@ export function AppShell() {
   const [savedCode, setSavedCode] = useState<Record<number, string>>({});
   const [showSidebar, setShowSidebar] = useState(true);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
+  const [isLoadingChallenges, setIsLoadingChallenges] = useState(true);
+
+  // Load challenges from the database
+  useEffect(() => {
+    const loadChallenges = async () => {
+      try {
+        const res = await fetch("/api/challenges");
+        if (res.ok) {
+          const data = await res.json();
+          const list: Challenge[] = data.challenges || [];
+          setChallenges(list);
+          if (list.length > 0) {
+            setSelectedChallenge(list[0]);
+            setCode(list[0].starterCode);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load challenges:", error);
+      } finally {
+        setIsLoadingChallenges(false);
+      }
+    };
+    loadChallenges();
+  }, []);
 
   // Resizable output panel states & callbacks
   const containerRef = useRef<HTMLDivElement>(null);
@@ -162,10 +185,12 @@ export function AppShell() {
   const handleSelectChallenge = useCallback(
     (challenge: Challenge) => {
       // Save current code before switching
-      if (status === "authenticated") {
-        saveProgressToServer(selectedChallenge.id, completedChallenges.has(selectedChallenge.id), code);
-      } else {
-        localStorage.setItem(`learn-to-code-code-${selectedChallenge.id}`, code);
+      if (selectedChallenge) {
+        if (status === "authenticated") {
+          saveProgressToServer(selectedChallenge.id, completedChallenges.has(selectedChallenge.id), code);
+        } else {
+          localStorage.setItem(`learn-to-code-code-${selectedChallenge.id}`, code);
+        }
       }
       
       setSelectedChallenge(challenge);
@@ -173,10 +198,11 @@ export function AppShell() {
       setCode(saved);
       setOutput("");
     },
-    [selectedChallenge.id, code, savedCode, status, completedChallenges]
+    [selectedChallenge, code, savedCode, status, completedChallenges]
   );
 
   const handleRunCode = useCallback(async () => {
+    if (!selectedChallenge) return;
     setIsRunning(true);
     setOutput("Compiling...");
 
@@ -217,6 +243,7 @@ export function AppShell() {
   }, [code, selectedChallenge, completedChallenges, status]);
 
   const handleResetCode = useCallback(() => {
+    if (!selectedChallenge) return;
     setCode(selectedChallenge.starterCode);
     setOutput("");
     // Clear saved code
@@ -229,19 +256,21 @@ export function AppShell() {
 
   // Auto-save code when it changes
   useEffect(() => {
+    if (!selectedChallenge) return;
+    const challengeId = selectedChallenge.id;
     const timer = setTimeout(() => {
       if (status === "authenticated") {
-        saveProgressToServer(selectedChallenge.id, completedChallenges.has(selectedChallenge.id), code);
+        saveProgressToServer(challengeId, completedChallenges.has(challengeId), code);
       } else {
-        localStorage.setItem(`learn-to-code-code-${selectedChallenge.id}`, code);
+        localStorage.setItem(`learn-to-code-code-${challengeId}`, code);
       }
-      setSavedCode(prev => ({ ...prev, [selectedChallenge.id]: code }));
+      setSavedCode(prev => ({ ...prev, [challengeId]: code }));
     }, 1000);
     
     return () => clearTimeout(timer);
-  }, [code, selectedChallenge.id, status, completedChallenges]);
+  }, [code, selectedChallenge, status, completedChallenges]);
 
-  if (status === "loading" || isLoadingProgress) {
+  if (status === "loading" || isLoadingProgress || isLoadingChallenges || !selectedChallenge) {
     return (
       <div className="h-full flex items-center justify-center bg-background">
         <div className="text-muted">Loading...</div>

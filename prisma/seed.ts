@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { challenges } from '../src/data/challenges';
+import { staticChallenges as challenges } from '../src/data/challenges';
 
 const prisma = new PrismaClient();
 

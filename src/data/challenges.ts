@@ -4036,3 +4036,6 @@ fn main() {
     expectedOutput: "Penny: 1 cents\nQuarter: 25 cents",
   }
 ];
+
+// Backwards compatible export - prefer fetching from /api/challenges
+export const challenges = staticChallenges;
