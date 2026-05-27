@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { challenges, Challenge } from "@/data/challenges";
@@ -26,6 +26,44 @@ export function AppShell() {
   const [showChat, setShowChat] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
+
+  // Resizable output panel states & callbacks
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [outputHeight, setOutputHeight] = useState(160);
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const newHeight = rect.bottom - e.clientY;
+        const minHeight = 40;
+        const maxHeight = rect.height - 100;
+        setOutputHeight(Math.max(minHeight, Math.min(newHeight, maxHeight)));
+      }
+    };
+
+    const handlePointerUp = () => {
+      setIsDragging(false);
+    };
+
+    document.addEventListener("pointermove", handlePointerMove);
+    document.addEventListener("pointerup", handlePointerUp);
+    document.addEventListener("pointercancel", handlePointerUp);
+
+    return () => {
+      document.removeEventListener("pointermove", handlePointerMove);
+      document.removeEventListener("pointerup", handlePointerUp);
+      document.removeEventListener("pointercancel", handlePointerUp);
+    };
+  }, [isDragging]);
+
+  const startDragging = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
 
   // Load progress from server when authenticated
   useEffect(() => {
@@ -289,7 +327,10 @@ export function AppShell() {
           <ChallengePane challenge={selectedChallenge} />
 
           {/* Editor + output */}
-          <div className="flex-1 flex flex-col min-h-0">
+          <div
+            ref={containerRef}
+            className={`flex-1 flex flex-col min-h-0 relative ${isDragging ? "select-none" : ""}`}
+          >
             <CodeEditor
               code={code}
               onChange={setCode}
@@ -297,10 +338,19 @@ export function AppShell() {
               onReset={handleResetCode}
               isRunning={isRunning}
             />
+            {/* Drag Handle Divider */}
+            <div
+              className={`h-2 cursor-ns-resize bg-border/50 hover:bg-accent/40 active:bg-accent transition-colors shrink-0 flex items-center justify-center relative group z-10 select-none touch-none`}
+              onPointerDown={startDragging}
+            >
+              <div className="w-8 h-0.5 rounded-full bg-muted/20 group-hover:bg-accent/60 group-active:bg-accent transition-colors" />
+            </div>
+
             <OutputPanel
               output={output}
               expectedOutput={selectedChallenge.expectedOutput}
               isRunning={isRunning}
+              height={outputHeight}
             />
           </div>
         </div>

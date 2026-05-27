@@ -5,6 +5,7 @@ interface OutputPanelProps {
   expectedOutput?: string;
   isRunning: boolean;
   justCompleted?: boolean;
+  height?: number;
 }
 
 export function OutputPanel({
@@ -12,6 +13,7 @@ export function OutputPanel({
   expectedOutput,
   isRunning,
   justCompleted,
+  height,
 }: OutputPanelProps) {
   const isMatch = expectedOutput && output.trim() === expectedOutput.trim();
   const isError =
@@ -23,7 +25,10 @@ export function OutputPanel({
 
   return (
     <div
-      className={`h-36 md:h-40 shrink-0 border-t flex flex-col transition-colors duration-500 ${
+      style={height !== undefined ? { height: `${height}px` } : undefined}
+      className={`shrink-0 border-t flex flex-col transition-colors duration-500 ${
+        height === undefined ? "h-36 md:h-40" : ""
+      } ${
         justCompleted
           ? "border-success/30 bg-success/5"
           : isError

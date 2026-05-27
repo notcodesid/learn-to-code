@@ -455,247 +455,9 @@ fn main() {
     hint: "For mean: sum / count. For median: sort first, then average the two middle elements if even length. For range: use `.iter().cloned().reduce(f64::max)` and similar for min.",
     expectedOutput: "Data: [4.0, 8.0, 15.0, 16.0, 23.0, 42.0]\nMean: 18.0\nMedian: 15.5\nRange: 38.0",
   },
-  // Chapter 1: Getting Started
-  {
-    id: 21,
-    title: "Hello World",
-    difficulty: "beginner",
-    category: "Chapter 1 - Getting Started",
-    description: "Write your first Rust program that prints hello world.",
-    instructions: "Write a Rust program that prints \"Hello, world!\" to the console.",
-    starterCode: `fn main() {
-    println!("Hello, world!");
-}`,
-    hint: "Use println! macro to print to the console.",
-    expectedOutput: "Hello, world!",
-  },
-  {
-    id: 22,
-    title: "Variables and Mutability",
-    difficulty: "beginner",
-    category: "Chapter 1 - Getting Started",
-    description: "Learn about variable declarations and mutability in Rust.",
-    instructions: "Create an immutable variable `x` with value 5 and a mutable variable `y` with value 10. Change `y` to 15 and print both variables.",
-    starterCode: `fn main() {
-    let x = 5;
-    let mut y = 10;
-    
-    // Change y to 15
-    
-    println!("x: {}, y: {}", x, y);
-}`,
-    hint: "Use `mut` keyword to make a variable mutable. Immutable variables cannot be reassigned.",
-    expectedOutput: "x: 5, y: 15",
-  },
-  {
-    id: 23,
-    title: "Constants",
-    difficulty: "beginner",
-    category: "Chapter 1 - Getting Started",
-    description: "Learn about constants in Rust.",
-    instructions: "Declare a constant `MAX_POINTS` with value 100,000. Print the constant.",
-    starterCode: `fn main() {
-    // Declare the constant here
-    
-    println!("Max points: {}", MAX_POINTS);
-}`,
-    hint: "Constants are declared with `const` and must have a type annotation. They are always immutable.",
-    expectedOutput: "Max points: 100000",
-  },
-  {
-    id: 24,
-    title: "Shadowing",
-    difficulty: "beginner",
-    category: "Chapter 1 - Getting Started",
-    description: "Learn about variable shadowing in Rust.",
-    instructions: "Create a variable `x` with value 5. Shadow it with `x` multiplied by 2. Then shadow it again as a string \"hello\". Print all three versions.",
-    starterCode: `fn main() {
-    let x = 5;
-    let x = x * 2;
-    let x = "hello";
-    
-    println!("Final x: {}", x);
-}`,
-    hint: "Shadowing allows you to reuse a variable name with a different type. It's different from mutability.",
-    expectedOutput: "Final x: hello",
-  },
-  // Chapter 2: Guessing Game
-  {
-    id: 25,
-    title: "Reading Input",
-    difficulty: "beginner",
-    category: "Chapter 2 - Guessing Game",
-    description: "Learn to read user input from the console.",
-    instructions: "This challenge simulates reading input. Create a function that takes a string and returns it with a greeting. Print the result.",
-    starterCode: `fn greet_user(name: &str) -> String {
-    format!("Hello, {}!", name)
-}
-
-fn main() {
-    let user_name = "Alice";
-    let greeting = greet_user(user_name);
-    println!("{}", greeting);
-}`,
-    hint: "In real programs, you'd use `std::io::stdin()` to read user input.",
-    expectedOutput: "Hello, Alice!",
-  },
-  {
-    id: 26,
-    title: "Random Numbers",
-    difficulty: "beginner",
-    category: "Chapter 2 - Guessing Game",
-    description: "Learn about generating random numbers in Rust.",
-    instructions: "This challenge simulates random number generation. Create a function that returns a pseudo-random number between 1 and 100 based on a seed.",
-    starterCode: `fn pseudo_random(seed: u32) -> u32 {
-    (seed % 100) + 1
-}
-
-fn main() {
-    let secret_number = pseudo_random(42);
-    println!("Secret number: {}", secret_number);
-}`,
-    hint: "In real programs, you'd use the `rand` crate for true random number generation.",
-    expectedOutput: "Secret number: 43",
-  },
-  {
-    id: 27,
-    title: "Comparison Operators",
-    difficulty: "beginner",
-    category: "Chapter 2 - Guessing Game",
-    description: "Learn about comparison operators in Rust.",
-    instructions: "Compare two numbers and print whether the first is less than, greater than, or equal to the second.",
-    starterCode: `fn main() {
-    let guess = 50;
-    let secret = 43;
-    
-    if guess < secret {
-        println!("Too small");
-    } else if guess > secret {
-        println!("Too big");
-    } else {
-        println!("Correct");
-    }
-}`,
-    hint: "Use comparison operators: <, >, <=, >=, ==, !=",
-    expectedOutput: "Too big",
-  },
-  {
-    id: 28,
-    title: "Loop Control",
-    difficulty: "beginner",
-    category: "Chapter 2 - Guessing Game",
-    description: "Learn about loops and loop control in Rust.",
-    instructions: "Use a loop to count from 1 to 5. Break out of the loop when the count reaches 5.",
-    starterCode: `fn main() {
-    let mut count = 1;
-    
-    loop {
-        println!("Count: {}", count);
-        
-        if count == 5 {
-            break;
-        }
-        
-        count += 1;
-    }
-}`,
-    hint: "Use `loop` for infinite loops and `break` to exit them.",
-    expectedOutput: "Count: 1\nCount: 2\nCount: 3\nCount: 4\nCount: 5",
-  },
-  // Chapter 3: Common Programming Concepts
-  {
-    id: 29,
-    title: "Data Types",
-    difficulty: "beginner",
-    category: "Chapter 3 - Common Programming Concepts",
-    description: "Learn about Rust's data types.",
-    instructions: "Create variables of different types: i32, f64, bool, char. Print each with its type.",
-    starterCode: `fn main() {
-    let integer: i32 = 42;
-    let float: f64 = 3.14;
-    let boolean: bool = true;
-    let character: char = 'R';
-    
-    println!("i32: {}", integer);
-    println!("f64: {}", float);
-    println!("bool: {}", boolean);
-    println!("char: {}", character);
-}`,
-    hint: "Rust has scalar types (integer, float, boolean, char) and compound types (tuple, array).",
-    expectedOutput: "i32: 42\nf64: 3.14\nbool: true\nchar: R",
-  },
-  {
-    id: 30,
-    title: "Functions",
-    difficulty: "beginner",
-    category: "Chapter 3 - Common Programming Concepts",
-    description: "Learn about functions in Rust.",
-    instructions: "Write a function `add` that takes two i32 parameters and returns their sum. Call it with 5 and 3.",
-    starterCode: `fn add(a: i32, b: i32) -> i32 {
-    a + b
-}
-
-fn main() {
-    let result = add(5, 3);
-    println!("5 + 3 = {}", result);
-}`,
-    hint: "Functions are declared with `fn` and return types are specified with `->`.",
-    expectedOutput: "5 + 3 = 8",
-  },
-  {
-    id: 31,
-    title: "Control Flow",
-    difficulty: "beginner",
-    category: "Chapter 3 - Common Programming Concepts",
-    description: "Learn about if/else and loop control flow.",
-    instructions: "Use if/else to check if a number is positive, negative, or zero. Use a while loop to count down from 5 to 1.",
-    starterCode: `fn main() {
-    let number = -3;
-    
-    if number > 0 {
-        println!("Positive");
-    } else if number < 0 {
-        println!("Negative");
-    } else {
-        println!("Zero");
-    }
-    
-    let mut countdown = 5;
-    while countdown > 0 {
-        println!("{}", countdown);
-        countdown -= 1;
-    }
-}`,
-    hint: "if/else expressions return values. while loops continue while a condition is true.",
-    expectedOutput: "Negative\n5\n4\n3\n2\n1",
-  },
-  {
-    id: 32,
-    title: "Comments",
-    difficulty: "beginner",
-    category: "Chapter 3 - Common Programming Concepts",
-    description: "Learn about Rust's comment syntax for documenting code.",
-    instructions: "Write a program with different types of comments: a single-line comment, a multi-line comment, and documentation comments for a function.",
-    starterCode: `// This is a single-line comment
-
-/* This is a multi-line comment
-   that can span multiple lines */
-
-/// This is a documentation comment
-fn add(a: i32, b: i32) -> i32 {
-    a + b
-}
-
-fn main() {
-    let result = add(5, 3);
-    println!("Result: {}", result);
-}`,
-    hint: "Use `//` for single-line, `/* */` for multi-line, and `///` for documentation comments.",
-    expectedOutput: "Result: 8",
-  },
   // Chapter 4: Ownership
   {
-    id: 33,
+    id: 21,
     title: "Ownership Basics",
     difficulty: "intermediate",
     category: "Chapter 4 - Ownership",
@@ -712,7 +474,7 @@ fn main() {
     expectedOutput: "hello",
   },
   {
-    id: 34,
+    id: 22,
     title: "Borrowing",
     difficulty: "intermediate",
     category: "Chapter 4 - Ownership",
@@ -735,7 +497,7 @@ fn main() {
     expectedOutput: "Length of 'hello' is 5\nLength of 'world' is 5",
   },
   {
-    id: 35,
+    id: 23,
     title: "Slices",
     difficulty: "intermediate",
     category: "Chapter 4 - Ownership",
@@ -758,7 +520,7 @@ fn main() {
   },
   // Chapter 5: Structs
   {
-    id: 36,
+    id: 24,
     title: "Struct Methods",
     difficulty: "intermediate",
     category: "Chapter 5 - Structs",
@@ -792,7 +554,7 @@ fn main() {
     expectedOutput: "Player: Alice, Score: 100",
   },
   {
-    id: 37,
+    id: 25,
     title: "Associated Functions",
     difficulty: "intermediate",
     category: "Chapter 5 - Structs",
@@ -817,7 +579,7 @@ fn main() {
     expectedOutput: "Square: 5.0 x 5.0",
   },
   {
-    id: 38,
+    id: 26,
     title: "Multiple impl Blocks",
     difficulty: "intermediate",
     category: "Chapter 5 - Structs",
@@ -855,7 +617,7 @@ fn main() {
     expectedOutput: "Count: 2\nAfter reset: 0",
   },
   {
-    id: 39,
+    id: 27,
     title: "Struct Update Syntax",
     difficulty: "intermediate",
     category: "Chapter 5 - Structs",
@@ -878,7 +640,7 @@ fn main() {
   },
   // Chapter 6: Enums and Pattern Matching
   {
-    id: 40,
+    id: 28,
     title: "Option Deep Dive",
     difficulty: "intermediate",
     category: "Chapter 6 - Enums and Pattern Matching",
@@ -911,7 +673,7 @@ fn main() {
     expectedOutput: "First even at index: 4\nNo even numbers found",
   },
   {
-    id: 41,
+    id: 29,
     title: "Match Control Flow",
     difficulty: "intermediate",
     category: "Chapter 6 - Enums and Pattern Matching",
@@ -934,7 +696,7 @@ fn main() {
     expectedOutput: "5 is small\n50 is medium\n150 is large",
   },
   {
-    id: 42,
+    id: 30,
     title: "If Let",
     difficulty: "intermediate",
     category: "Chapter 6 - Enums and Pattern Matching",
@@ -968,7 +730,7 @@ fn main() {
     expectedOutput: "Second: 2\nNo pair provided",
   },
   {
-    id: 43,
+    id: 31,
     title: "Match with Options",
     difficulty: "intermediate",
     category: "Chapter 6 - Enums and Pattern Matching",
@@ -1001,7 +763,7 @@ fn main() {
   },
   // Chapter 7: Packages, Crates, Modules
   {
-    id: 44,
+    id: 32,
     title: "Basic Modules",
     difficulty: "intermediate",
     category: "Chapter 7 - Packages, Crates, Modules",
@@ -1020,7 +782,7 @@ fn main() {
     expectedOutput: "Hello, Rust!",
   },
   {
-    id: 45,
+    id: 33,
     title: "File Organization",
     difficulty: "intermediate",
     category: "Chapter 7 - Packages, Crates, Modules",
@@ -1045,7 +807,7 @@ fn main() {
     expectedOutput: "Area: 50\nPerimeter: 30",
   },
   {
-    id: 46,
+    id: 34,
     title: "Use Declarations",
     difficulty: "intermediate",
     category: "Chapter 7 - Packages, Crates, Modules",
@@ -1069,7 +831,7 @@ fn main() {
     expectedOutput: "3 + 4 = 7\n5 * 6 = 30",
   },
   {
-    id: 47,
+    id: 35,
     title: "Packages and Crates",
     difficulty: "intermediate",
     category: "Chapter 7 - Packages, Crates, Modules",
@@ -1093,7 +855,7 @@ fn main() {
   },
   // Chapter 8: Common Collections
   {
-    id: 48,
+    id: 36,
     title: "Vector Methods",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -1116,7 +878,7 @@ fn main() {
     expectedOutput: "After push: [1, 2, 3, 4, 5]\nAfter pop: [1, 2, 3, 4]\nLength: 4\nContains 3: true",
   },
   {
-    id: 49,
+    id: 37,
     title: "String Deep Dive",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -1136,7 +898,7 @@ fn main() {
     expectedOutput: "Original: hello\nSlice: hel\nModified: hello world",
   },
   {
-    id: 50,
+    id: 38,
     title: "Hash Maps Advanced",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -1160,7 +922,7 @@ fn main() {
     expectedOutput: "Final counts: {\"is\": 2, \"rust\": 4}",
   },
   {
-    id: 51,
+    id: 39,
     title: "Iterating Collections",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -1191,7 +953,7 @@ fn main() {
     expectedOutput: "Vector: 1, 2, 3, 4, 5, \nHashMap: a=1, b=2, c=3, ",
   },
   {
-    id: 52,
+    id: 40,
     title: "Collection Performance",
     difficulty: "advanced",
     category: "Chapter 8 - Common Collections",
@@ -1214,7 +976,7 @@ fn main() {
     expectedOutput: "Vector length: 1000\nHashMap length: 1000",
   },
   {
-    id: 53,
+    id: 41,
     title: "Vectors Advanced",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -1233,7 +995,7 @@ fn main() {
     expectedOutput: "Sorted: [1, 1, 3, 4, 5]\nCapacity: 10",
   },
   {
-    id: 54,
+    id: 42,
     title: "Strings Advanced",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -1252,7 +1014,7 @@ fn main() {
     expectedOutput: "Original: hello-world\nParts: [\"hello\", \"world\"]\nRejoined: hello world",
   },
   {
-    id: 55,
+    id: 43,
     title: "Deque Operations",
     difficulty: "advanced",
     category: "Chapter 8 - Common Collections",
@@ -1282,7 +1044,7 @@ fn main() {
   },
   // Chapter 9: Error Handling - Adding 6 challenges
   {
-    id: 56,
+    id: 44,
     title: "Result Deep Dive",
     difficulty: "intermediate",
     category: "Chapter 9 - Error Handling",
@@ -1310,7 +1072,7 @@ fn main() {
     expectedOutput: "Parsed: 42\nFailed to parse: invalid digit found in string",
   },
   {
-    id: 57,
+    id: 45,
     title: "Error Propagation",
     difficulty: "intermediate",
     category: "Chapter 9 - Error Handling",
@@ -1335,7 +1097,7 @@ fn main() {
     expectedOutput: "Result 1: Ok(123)\nResult 2: Err(\"String is empty\")",
   },
   {
-    id: 58,
+    id: 46,
     title: "Custom Error Types",
     difficulty: "advanced",
     category: "Chapter 9 - Error Handling",
@@ -1365,7 +1127,7 @@ fn main() {
     expectedOutput: "Result 1: Ok(5.0)\nResult 2: Err(DivisionByZero)",
   },
   {
-    id: 59,
+    id: 47,
     title: "Panic vs Error Handling",
     difficulty: "intermediate",
     category: "Chapter 9 - Error Handling",
@@ -1398,7 +1160,7 @@ fn main() {
     expectedOutput: "Panic check passed\nError: Negative number",
   },
   {
-    id: 60,
+    id: 48,
     title: "From Trait for Errors",
     difficulty: "advanced",
     category: "Chapter 9 - Error Handling",
@@ -1431,7 +1193,7 @@ fn main() {
     expectedOutput: "Result 1: Ok(42)\nResult 2: Err(ParseError(\"invalid digit found in string\"))",
   },
   {
-    id: 61,
+    id: 49,
     title: "Error Handling Best Practices",
     difficulty: "intermediate",
     category: "Chapter 9 - Error Handling",
@@ -1472,7 +1234,7 @@ fn main() {
   },
   // Chapter 10: Generic Types, Traits, and Lifetimes - Adding 8 challenges
   {
-    id: 62,
+    id: 50,
     title: "Generic Functions",
     difficulty: "intermediate",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1499,7 +1261,7 @@ fn main() {
     expectedOutput: "Largest int: 8\nLargest float: 8.8",
   },
   {
-    id: 63,
+    id: 51,
     title: "Generic Structs",
     difficulty: "intermediate",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1531,7 +1293,7 @@ fn main() {
     expectedOutput: "Original: (1, 2)\nSwapped: (2, 1)",
   },
   {
-    id: 64,
+    id: 52,
     title: "Trait Definitions",
     difficulty: "intermediate",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1573,7 +1335,7 @@ fn main() {
     expectedOutput: "Drawing circle with radius 5\nDrawing rectangle 10 x 20",
   },
   {
-    id: 65,
+    id: 53,
     title: "Trait Bounds",
     difficulty: "intermediate",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1595,7 +1357,7 @@ fn main() {
     expectedOutput: "Display: 42\nDebug: 42\nDisplay: hello\nDebug: \"hello\"\nDisplay: 3.14\nDebug: 3.14",
   },
   {
-    id: 66,
+    id: 54,
     title: "Default Implementations",
     difficulty: "intermediate",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1644,7 +1406,7 @@ fn main() {
     expectedOutput: "Buddy says: woof\nWhiskers says: generic sound",
   },
   {
-    id: 67,
+    id: 55,
     title: "Lifetimes Basics",
     difficulty: "advanced",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1669,7 +1431,7 @@ fn main() {
     expectedOutput: "The longest string is long string",
   },
   {
-    id: 68,
+    id: 56,
     title: "Lifetime Annotations",
     difficulty: "advanced",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1704,7 +1466,7 @@ fn main() {
     expectedOutput: "Excerpt: Call me Ishmael\nLevel: trivial",
   },
   {
-    id: 69,
+    id: 57,
     title: "Struct Lifetimes",
     difficulty: "advanced",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1737,7 +1499,7 @@ fn main() {
   },
   // Chapter 11-12: Testing and I/O - Adding 8 challenges
   {
-    id: 70,
+    id: 58,
     title: "Unit Tests",
     difficulty: "intermediate",
     category: "Chapter 11 - Testing",
@@ -1769,7 +1531,7 @@ fn main() {
     expectedOutput: "2 + 3 = 5",
   },
   {
-    id: 71,
+    id: 59,
     title: "Integration Tests",
     difficulty: "intermediate",
     category: "Chapter 11 - Testing",
@@ -1797,7 +1559,7 @@ mod integration_tests {
     expectedOutput: "Hello, World!",
   },
   {
-    id: 72,
+    id: 60,
     title: "Test Organization",
     difficulty: "intermediate",
     category: "Chapter 11 - Testing",
@@ -1837,7 +1599,7 @@ fn main() {
     expectedOutput: "2 + 3 = 5",
   },
   {
-    id: 73,
+    id: 61,
     title: "Test Attributes",
     difficulty: "intermediate",
     category: "Chapter 11 - Testing",
@@ -1879,7 +1641,7 @@ fn main() {
     expectedOutput: "10.0 / 2.0 = 5",
   },
   {
-    id: 74,
+    id: 62,
     title: "File Reading",
     difficulty: "intermediate",
     category: "Chapter 12 - I/O Project",
@@ -1902,7 +1664,7 @@ fn main() {
     expectedOutput: "Content length: 33\nFirst line: First line",
   },
   {
-    id: 75,
+    id: 63,
     title: "File Writing",
     difficulty: "intermediate",
     category: "Chapter 12 - I/O Project",
@@ -1923,7 +1685,7 @@ fn main() {
     expectedOutput: "Prepared content:\nLine 1\nLine 2\nLine 3",
   },
   {
-    id: 76,
+    id: 64,
     title: "Command Line Arguments",
     difficulty: "intermediate",
     category: "Chapter 12 - I/O Project",
@@ -1957,7 +1719,7 @@ fn main() {
     expectedOutput: "Name: Alice, Count: 5",
   },
   {
-    id: 77,
+    id: 65,
     title: "Error Handling in I/O",
     difficulty: "intermediate",
     category: "Chapter 12 - I/O Project",
@@ -1996,7 +1758,7 @@ fn main() {
   },
   // Advanced Chapters 13-20 - Adding 20 challenges
   {
-    id: 78,
+    id: 66,
     title: "Closures Basics",
     difficulty: "intermediate",
     category: "Chapter 13 - Iterators and Closures",
@@ -2022,7 +1784,7 @@ fn main() {
     expectedOutput: "Is 4 equal to x? true\nIs 5 equal to x? false\nSum: 5",
   },
   {
-    id: 79,
+    id: 67,
     title: "Iterator Basics",
     difficulty: "intermediate",
     category: "Chapter 13 - Iterators and Closures",
@@ -2043,7 +1805,7 @@ fn main() {
     expectedOutput: "Result: [4, 8]",
   },
   {
-    id: 80,
+    id: 68,
     title: "Performance: Iterators vs Loops",
     difficulty: "advanced",
     category: "Chapter 13 - Iterators and Closures",
@@ -2070,7 +1832,7 @@ fn main() {
     expectedOutput: "Iterator sum: 338350\nLoop sum: 338350",
   },
   {
-    id: 81,
+    id: 69,
     title: "Cargo Workspaces",
     difficulty: "intermediate",
     category: "Chapter 14 - Cargo and Crates.io",
@@ -2099,7 +1861,7 @@ fn main() {
     expectedOutput: "Hello, Workspace User!",
   },
   {
-    id: 82,
+    id: 70,
     title: "Publishing to Crates.io",
     difficulty: "intermediate",
     category: "Chapter 14 - Cargo and Crates.io",
@@ -2123,7 +1885,7 @@ fn main() {
     expectedOutput: "2 + 3 = 5\n2 * 3 = 6",
   },
   {
-    id: 83,
+    id: 71,
     title: "Box for Heap Allocation",
     difficulty: "intermediate",
     category: "Chapter 15 - Smart Pointers",
@@ -2146,7 +1908,7 @@ fn main() {
     expectedOutput: "Created a linked list with Box",
   },
   {
-    id: 84,
+    id: 72,
     title: "Rc for Reference Counting",
     difficulty: "advanced",
     category: "Chapter 15 - Smart Pointers",
@@ -2175,7 +1937,7 @@ fn main() {
     expectedOutput: "Reference count: 1\nAfter first clone: 2\nAfter second clone: 3\nValue: 42",
   },
   {
-    id: 85,
+    id: 73,
     title: "RefCell for Interior Mutability",
     difficulty: "advanced",
     category: "Chapter 15 - Smart Pointers",
@@ -2215,7 +1977,7 @@ fn main() {
     expectedOutput: "Before: Initial message\nAfter: Updated message",
   },
   {
-    id: 86,
+    id: 74,
     title: "Reference Cycles",
     difficulty: "advanced",
     category: "Chapter 15 - Smart Pointers",
@@ -2247,7 +2009,7 @@ fn main() {
     expectedOutput: "Leaf strong count: 1\nLeaf weak count: 0\nReference cycles can cause memory leaks. Use Weak to break cycles.",
   },
   {
-    id: 87,
+    id: 75,
     title: "Threads Basics",
     difficulty: "intermediate",
     category: "Chapter 16 - Fearless Concurrency",
@@ -2275,7 +2037,7 @@ fn main() {
     expectedOutput: "Main thread: 1\nThread 1: 1\nMain thread: 2\nThread 1: 2\nMain thread: 3\nThread 1: 3",
   },
   {
-    id: 88,
+    id: 76,
     title: "Message Passing with Channels",
     difficulty: "intermediate",
     category: "Chapter 16 - Fearless Concurrency",
@@ -2308,7 +2070,7 @@ fn main() {
     expectedOutput: "Got: hi\nGot: from\nGot: the\nGot: the thread",
   },
   {
-    id: 89,
+    id: 77,
     title: "Shared State with Mutex",
     difficulty: "advanced",
     category: "Chapter 16 - Fearless Concurrency",
@@ -2340,7 +2102,7 @@ fn main() {
     expectedOutput: "Result: 5",
   },
   {
-    id: 90,
+    id: 78,
     title: "Trait Objects for Polymorphism",
     difficulty: "intermediate",
     category: "Chapter 17 - OOP",
@@ -2386,7 +2148,7 @@ fn main() {
     expectedOutput: "Drawing button: Submit (50x10)\nDrawing text field with placeholder: Enter name",
   },
   {
-    id: 91,
+    id: 79,
     title: "Object-Oriented Design Patterns",
     difficulty: "advanced",
     category: "Chapter 17 - OOP",
@@ -2435,7 +2197,7 @@ fn main() {
     expectedOutput: "State: Draft\nState: Review\nState: Published",
   },
   {
-    id: 92,
+    id: 80,
     title: "Pattern Matching Advanced",
     difficulty: "intermediate",
     category: "Chapter 18 - Patterns and Matching",
@@ -2462,7 +2224,7 @@ fn main() {
     expectedOutput: "(0, 0) is origin\n(5, 0) is on x-axis\n(0, 3) is on y-axis\n(4, 4) is diagonal\n(2, 3) is other",
   },
   {
-    id: 93,
+    id: 81,
     title: "Pattern Syntax",
     difficulty: "intermediate",
     category: "Chapter 18 - Patterns and Matching",
@@ -2499,7 +2261,7 @@ fn main() {
     expectedOutput: "one\nOn y axis at 7",
   },
   {
-    id: 94,
+    id: 82,
     title: "Unsafe Rust",
     difficulty: "advanced",
     category: "Chapter 19 - Advanced Features",
@@ -2524,7 +2286,7 @@ fn main() {
     expectedOutput: "r1 is: 5\nr2 is: 5\nnum is now: 10",
   },
   {
-    id: 95,
+    id: 83,
     title: "Advanced Traits",
     difficulty: "advanced",
     category: "Chapter 19 - Advanced Features",
@@ -2570,7 +2332,7 @@ fn main() {
     expectedOutput: "Got: 1\nGot: 2\nGot: 3\nGot: 4\nGot: 5",
   },
   {
-    id: 96,
+    id: 84,
     title: "TCP Listener",
     difficulty: "advanced",
     category: "Chapter 20 - Web Server",
@@ -2594,7 +2356,7 @@ fn main() {
     expectedOutput: "Handling connection 1\nProcessing request...\nSending response...\nConnection 1 closed\nHandling connection 2\nProcessing request...\nSending response...\nConnection 2 closed\nHandling connection 3\nProcessing request...\nSending response...\nConnection 3 closed",
   },
   {
-    id: 97,
+    id: 85,
     title: "HTTP Request Parsing",
     difficulty: "advanced",
     category: "Chapter 20 - Web Server",
