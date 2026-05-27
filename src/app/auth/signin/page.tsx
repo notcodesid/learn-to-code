@@ -28,7 +28,7 @@ export default function SignInPage() {
       if (result?.error) {
         setError("Invalid email or password");
       } else {
-        router.push("/");
+        router.push("/learn");
         router.refresh();
       }
     } catch (error) {
@@ -41,7 +41,7 @@ export default function SignInPage() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      await signIn("google", { callbackUrl: "/" });
+      await signIn("google", { callbackUrl: "/learn" });
     } catch (error) {
       setError("Failed to sign in with Google");
       setIsGoogleLoading(false);

@@ -130,6 +130,334 @@ fn main() {
   },
   {
     id: 7,
+    title: "For Loop Counter",
+    difficulty: "beginner",
+    category: "Control Flow - For Loops",
+    description: "Learn basic for loop iteration with a counter.",
+    instructions: "Use a for loop to count from 1 to 5 and print each number.",
+    starterCode: `fn main() {
+    for i in 1..=5 {
+        println!("{}", i);
+    }
+}`,
+    hint: "Use `for variable in start..=end` for inclusive ranges, or `start..end` for exclusive ranges.",
+    expectedOutput: "1\n2\n3\n4\n5",
+  },
+  {
+    id: 8,
+    title: "Variable Range Loop",
+    difficulty: "beginner",
+    category: "Control Flow - For Loops",
+    description: "Use for loops with variables to define ranges.",
+    instructions: "Create variables `start` and `end`, then use a for loop with these variables to iterate and print numbers.",
+    starterCode: `fn main() {
+    let start = 3;
+    let end = 7;
+    
+    for i in start..=end {
+        println!("{}", i);
+    }
+}`,
+    hint: "You can use variables in range expressions: `for i in start..=end`.",
+    expectedOutput: "3\n4\n5\n6\n7",
+  },
+  {
+    id: 9,
+    title: "Loop Counter with Mutable Variable",
+    difficulty: "beginner",
+    category: "Control Flow - For Loops",
+    description: "Combine mutable variables with for loops for counting.",
+    instructions: "Use a mutable counter variable inside a for loop to track total iterations.",
+    starterCode: `fn main() {
+    let mut count = 0;
+    
+    for _ in 1..=5 {
+        count += 1;
+    }
+    
+    println!("Total iterations: {}", count);
+}`,
+    hint: "Use `_` when you don't need the loop variable: `for _ in range`.",
+    expectedOutput: "Total iterations: 5",
+  },
+  {
+    id: 10,
+    title: "Count Even Numbers",
+    difficulty: "beginner",
+    category: "Control Flow - For Loops",
+    description: "Use for loops to count specific values in a range.",
+    instructions: "Use a for loop to count how many even numbers are between 1 and 10.",
+    starterCode: `fn main() {
+    let mut even_count = 0;
+    
+    for i in 1..=10 {
+        if i % 2 == 0 {
+            even_count += 1;
+        }
+    }
+    
+    println!("Even numbers: {}", even_count);
+}`,
+    hint: "Use the modulus operator `%` to check for even numbers: `i % 2 == 0`.",
+    expectedOutput: "Even numbers: 5",
+  },
+  {
+    id: 11,
+    title: "Sum of Even Numbers",
+    difficulty: "beginner",
+    category: "Control Flow - For Loops",
+    description: "Use for loops to accumulate values with conditions.",
+    instructions: "Use a for loop to calculate the sum of all even numbers between 1 and 10.",
+    starterCode: `fn main() {
+    let mut sum = 0;
+    
+    for i in 1..=10 {
+        if i % 2 == 0 {
+            sum += i;
+        }
+    }
+    
+    println!("Sum of evens: {}", sum);
+}`,
+    hint: "Accumulate values in a mutable variable: `sum += i`.",
+    expectedOutput: "Sum of evens: 30",
+  },
+  {
+    id: 12,
+    title: "Product by Addition",
+    difficulty: "intermediate",
+    category: "Control Flow - For Loops",
+    description: "Use for loops to implement multiplication through repeated addition.",
+    instructions: "Implement multiplication using a for loop with repeated addition. Calculate 5 * 4.",
+    starterCode: `fn multiply_by_addition(a: i32, b: i32) -> i32 {
+    let mut product = 0;
+    
+    for _ in 0..b {
+        product += a;
+    }
+    
+    product
+}
+
+fn main() {
+    let result = multiply_by_addition(5, 4);
+    println!("5 * 4 = {}", result);
+}`,
+    hint: "Use a for loop to add the first number `b` times to simulate multiplication.",
+    expectedOutput: "5 * 4 = 20",
+  },
+  {
+    id: 13,
+    title: "Power Function",
+    difficulty: "intermediate",
+    category: "Control Flow - For Loops",
+    description: "Use for loops to implement exponentiation.",
+    instructions: "Implement a power function using for loops. Calculate 2^5.",
+    starterCode: `fn power(base: i32, exp: u32) -> i32 {
+    let mut result = 1;
+    
+    for _ in 0..exp {
+        result *= base;
+    }
+    
+    result
+}
+
+fn main() {
+    let result = power(2, 5);
+    println!("2^5 = {}", result);
+}`,
+    hint: "Multiply the base by itself `exp` times using a for loop.",
+    expectedOutput: "2^5 = 32",
+  },
+  {
+    id: 14,
+    title: "Prime Number Checker",
+    difficulty: "intermediate",
+    category: "Control Flow - For Loops",
+    description: "Use for loops to check if a number is prime.",
+    instructions: "Write a function that checks if a number is prime using a for loop to test divisibility.",
+    starterCode: `fn is_prime(n: u32) -> bool {
+    if n <= 1 {
+        return false;
+    }
+    
+    for i in 2..=(n as f64).sqrt() as u32 {
+        if n % i == 0 {
+            return false;
+        }
+    }
+    
+    true
+}
+
+fn main() {
+    println!("Is 7 prime? {}", is_prime(7));
+    println!("Is 12 prime? {}", is_prime(12));
+}`,
+    hint: "A number is prime if it's not divisible by any number from 2 to its square root.",
+    expectedOutput: "Is 7 prime? true\nIs 12 prime? false",
+  },
+  {
+    id: 15,
+    title: "Countdown Loop",
+    difficulty: "beginner",
+    category: "Control Flow - For Loops",
+    description: "Use for loops to count backwards.",
+    instructions: "Use a for loop to count down from 5 to 1, printing each number.",
+    starterCode: `fn main() {
+    for i in (1..=5).rev() {
+        println!("{}", i);
+    }
+}`,
+    hint: "Use `.rev()` on a range to iterate in reverse: `(1..=5).rev()`.",
+    expectedOutput: "5\n4\n3\n2\n1",
+  },
+  {
+    id: 16,
+    title: "Largest Proper Divisor",
+    difficulty: "intermediate",
+    category: "Control Flow - For Loops",
+    description: "Use for loops to find the largest proper divisor of a number.",
+    instructions: "Write a function that finds the largest proper divisor (largest number less than n that divides n) using a for loop.",
+    starterCode: `fn largest_proper_divisor(n: u32) -> Option<u32> {
+    if n <= 1 {
+        return None;
+    }
+    
+    for i in (1..n).rev() {
+        if n % i == 0 {
+            return Some(i);
+        }
+    }
+    
+    None
+}
+
+fn main() {
+    println!("Largest proper divisor of 12: {:?}", largest_proper_divisor(12));
+    println!("Largest proper divisor of 7: {:?}", largest_proper_divisor(7));
+}`,
+    hint: "Iterate backwards from n-1 to 1 and return the first divisor found.",
+    expectedOutput: "Largest proper divisor of 12: Some(6)\nLargest proper divisor of 7: Some(1)",
+  },
+  {
+    id: 17,
+    title: "Fibonacci Function",
+    difficulty: "intermediate",
+    category: "Control Flow - For Loops",
+    description: "Use for loops to generate Fibonacci sequence.",
+    instructions: "Write a function that generates the nth Fibonacci number using a for loop.",
+    starterCode: `fn fibonacci(n: u32) -> u64 {
+    if n == 0 {
+        return 0;
+    }
+    if n == 1 {
+        return 1;
+    }
+    
+    let mut a = 0;
+    let mut b = 1;
+    
+    for _ in 2..=n {
+        let temp = a + b;
+        a = b;
+        b = temp;
+    }
+    
+    b
+}
+
+fn main() {
+    println!("Fibonacci(7): {}", fibonacci(7));
+    println!("Fibonacci(10): {}", fibonacci(10));
+}`,
+    hint: "Use two variables to track the previous two Fibonacci numbers, updating them in each iteration.",
+    expectedOutput: "Fibonacci(7): 13\nFibonacci(10): 55",
+  },
+  {
+    id: 18,
+    title: "Factorial Function",
+    difficulty: "intermediate",
+    category: "Control Flow - For Loops",
+    description: "Use for loops to calculate factorial.",
+    instructions: "Write a function that calculates the factorial of a number using a for loop.",
+    starterCode: `fn factorial(n: u32) -> u64 {
+    if n == 0 {
+        return 1;
+    }
+    
+    let mut result = 1;
+    for i in 1..=n {
+        result *= i;
+    }
+    
+    result
+}
+
+fn main() {
+    println!("5! = {}", factorial(5));
+    println!("7! = {}", factorial(7));
+}`,
+    hint: "Multiply all integers from 1 to n to calculate factorial.",
+    expectedOutput: "5! = 120\n7! = 5040",
+  },
+  {
+    id: 19,
+    title: "Nested Loops",
+    difficulty: "intermediate",
+    category: "Control Flow - For Loops",
+    description: "Use nested for loops to work with 2D patterns.",
+    instructions: "Use nested for loops to print a 3x3 multiplication table.",
+    starterCode: `fn main() {
+    for i in 1..=3 {
+        for j in 1..=3 {
+            print!("{}x{}={} ", i, j, i * j);
+        }
+        println!();
+    }
+}`,
+    hint: "Nested loops allow you to work with 2D structures. The inner loop completes for each iteration of the outer loop.",
+    expectedOutput: "1x1=1 1x2=2 1x3=3 \n2x1=2 2x2=4 2x3=6 \n3x1=3 3x2=6 3x3=9 ",
+  },
+  {
+    id: 20,
+    title: "Early Loop Termination",
+    difficulty: "intermediate",
+    category: "Control Flow - For Loops",
+    description: "Use break to exit loops early based on conditions.",
+    instructions: "Use a for loop to find the first number greater than 50 that's divisible by 7.",
+    starterCode: `fn main() {
+    for i in 1..100 {
+        if i > 50 && i % 7 == 0 {
+            println!("Found: {}", i);
+            break;
+        }
+    }
+}`,
+    hint: "Use `break` to exit a loop early when you find what you're looking for.",
+    expectedOutput: "Found: 56",
+  },
+  {
+    id: 21,
+    title: "Loop with Continue",
+    difficulty: "intermediate",
+    category: "Control Flow - For Loops",
+    description: "Use continue to skip iterations in loops.",
+    instructions: "Use a for loop to print all numbers from 1 to 20 except multiples of 3.",
+    starterCode: `fn main() {
+    for i in 1..=20 {
+        if i % 3 == 0 {
+            continue;
+        }
+        println!("{}", i);
+    }
+}`,
+    hint: "Use `continue` to skip the rest of the current iteration and move to the next one.",
+    expectedOutput: "1\n2\n4\n5\n7\n8\n10\n11\n13\n14\n16\n17\n19\n20",
+  },
+  {
+    id: 22,
     title: "Ownership",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
@@ -153,7 +481,7 @@ fn main() {
     expectedOutput: "hello\nworld",
   },
   {
-    id: 8,
+    id: 23,
     title: "References & Borrowing",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
@@ -177,7 +505,7 @@ fn main() {
     expectedOutput: "Rustacean: 9",
   },
   {
-    id: 9,
+    id: 24,
     title: "Slices",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
@@ -199,7 +527,7 @@ fn main() {
     expectedOutput: "Hello,",
   },
   {
-    id: 10,
+    id: 25,
     title: "Structs",
     difficulty: "intermediate",
     category: "Structs & Enums",
@@ -220,7 +548,7 @@ fn main() {
     expectedOutput: "Rectangle: 10x5.5, area: 55",
   },
   {
-    id: 11,
+    id: 26,
     title: "Enums & Pattern Matching",
     difficulty: "intermediate",
     category: "Structs & Enums",
@@ -243,7 +571,7 @@ fn main() {
     expectedOutput: "1\n5\n10\n25",
   },
   {
-    id: 12,
+    id: 27,
     title: "Option<T>",
     difficulty: "intermediate",
     category: "Error Handling",
@@ -265,7 +593,7 @@ fn main() {
     expectedOutput: "Found at index 2\nNot found",
   },
   {
-    id: 13,
+    id: 28,
     title: "Result<T, E> & Error Handling",
     difficulty: "intermediate",
     category: "Error Handling",
@@ -287,7 +615,7 @@ fn main() {
     expectedOutput: "Ok: 42\nErr: not a number",
   },
   {
-    id: 14,
+    id: 29,
     title: "Vectors",
     difficulty: "intermediate",
     category: "Collections",
@@ -310,7 +638,7 @@ fn main() {
     expectedOutput: "[2, 4, 6, 8, 10]\n[2, 4, 6, 8, 10]\n30",
   },
   {
-    id: 15,
+    id: 30,
     title: "HashMaps",
     difficulty: "intermediate",
     category: "Collections",
@@ -331,7 +659,7 @@ fn main() {
     expectedOutput: "cat: 2\nmat: 1\non: 1\nsat: 1\nthe: 3",
   },
   {
-    id: 16,
+    id: 31,
     title: "Traits",
     difficulty: "advanced",
     category: "Traits & Generics",
@@ -355,7 +683,7 @@ fn main() {
     expectedOutput: "Buddy is a Golden Retriever\n2024 Tesla",
   },
   {
-    id: 17,
+    id: 32,
     title: "Generics",
     difficulty: "advanced",
     category: "Traits & Generics",
@@ -378,7 +706,7 @@ fn main() {
     expectedOutput: "Largest number: 100\nLargest char: y",
   },
   {
-    id: 18,
+    id: 33,
     title: "Lifetimes",
     difficulty: "advanced",
     category: "Traits & Generics",
@@ -403,7 +731,7 @@ fn main() {
     expectedOutput: "Longest: long string",
   },
   {
-    id: 19,
+    id: 34,
     title: "Closures & Iterators",
     difficulty: "advanced",
     category: "Functional Patterns",
@@ -422,7 +750,7 @@ fn main() {
     expectedOutput: "[\"ALICE\", \"CHARLIE\", \"FRANKLIN\"]",
   },
   {
-    id: 20,
+    id: 35,
     title: "Final Challenge: Mini CLI Tool",
     difficulty: "advanced",
     category: "Capstone",
@@ -455,9 +783,8 @@ fn main() {
     hint: "For mean: sum / count. For median: sort first, then average the two middle elements if even length. For range: use `.iter().cloned().reduce(f64::max)` and similar for min.",
     expectedOutput: "Data: [4.0, 8.0, 15.0, 16.0, 23.0, 42.0]\nMean: 18.0\nMedian: 15.5\nRange: 38.0",
   },
-  // Chapter 4: Ownership
   {
-    id: 21,
+    id: 36,
     title: "Ownership Basics",
     difficulty: "intermediate",
     category: "Chapter 4 - Ownership",
@@ -474,7 +801,7 @@ fn main() {
     expectedOutput: "hello",
   },
   {
-    id: 22,
+    id: 37,
     title: "Borrowing",
     difficulty: "intermediate",
     category: "Chapter 4 - Ownership",
@@ -497,7 +824,7 @@ fn main() {
     expectedOutput: "Length of 'hello' is 5\nLength of 'world' is 5",
   },
   {
-    id: 23,
+    id: 38,
     title: "Slices",
     difficulty: "intermediate",
     category: "Chapter 4 - Ownership",
@@ -518,9 +845,8 @@ fn main() {
     hint: "Slices let you reference a contiguous sequence of elements in a collection without taking ownership.",
     expectedOutput: "First word: hello\nSecond word: world\nArray slice: [1, 2, 3]",
   },
-  // Chapter 5: Structs
   {
-    id: 24,
+    id: 39,
     title: "Struct Methods",
     difficulty: "intermediate",
     category: "Chapter 5 - Structs",
@@ -554,7 +880,7 @@ fn main() {
     expectedOutput: "Player: Alice, Score: 100",
   },
   {
-    id: 25,
+    id: 40,
     title: "Associated Functions",
     difficulty: "intermediate",
     category: "Chapter 5 - Structs",
@@ -579,7 +905,7 @@ fn main() {
     expectedOutput: "Square: 5.0 x 5.0",
   },
   {
-    id: 26,
+    id: 41,
     title: "Multiple impl Blocks",
     difficulty: "intermediate",
     category: "Chapter 5 - Structs",
@@ -617,7 +943,7 @@ fn main() {
     expectedOutput: "Count: 2\nAfter reset: 0",
   },
   {
-    id: 27,
+    id: 42,
     title: "Struct Update Syntax",
     difficulty: "intermediate",
     category: "Chapter 5 - Structs",
@@ -638,9 +964,8 @@ fn main() {
     hint: "Use `Point { x: 3, ..point1 }` to copy most fields and override specific ones.",
     expectedOutput: "Point 1: (1, 2)\nPoint 2: (3, 2)",
   },
-  // Chapter 6: Enums and Pattern Matching
   {
-    id: 28,
+    id: 43,
     title: "Option Deep Dive",
     difficulty: "intermediate",
     category: "Chapter 6 - Enums and Pattern Matching",
@@ -673,7 +998,7 @@ fn main() {
     expectedOutput: "First even at index: 4\nNo even numbers found",
   },
   {
-    id: 29,
+    id: 44,
     title: "Match Control Flow",
     difficulty: "intermediate",
     category: "Chapter 6 - Enums and Pattern Matching",
@@ -696,7 +1021,7 @@ fn main() {
     expectedOutput: "5 is small\n50 is medium\n150 is large",
   },
   {
-    id: 30,
+    id: 45,
     title: "If Let",
     difficulty: "intermediate",
     category: "Chapter 6 - Enums and Pattern Matching",
@@ -730,7 +1055,7 @@ fn main() {
     expectedOutput: "Second: 2\nNo pair provided",
   },
   {
-    id: 31,
+    id: 46,
     title: "Match with Options",
     difficulty: "intermediate",
     category: "Chapter 6 - Enums and Pattern Matching",
@@ -761,9 +1086,8 @@ fn main() {
     hint: "Use `match result { Some(value) => ..., None => ... }` for clean error handling.",
     expectedOutput: "10.0 / 2.0 = 5.0\nCannot divide by zero",
   },
-  // Chapter 7: Packages, Crates, Modules
   {
-    id: 32,
+    id: 47,
     title: "Basic Modules",
     difficulty: "intermediate",
     category: "Chapter 7 - Packages, Crates, Modules",
@@ -782,7 +1106,7 @@ fn main() {
     expectedOutput: "Hello, Rust!",
   },
   {
-    id: 33,
+    id: 48,
     title: "File Organization",
     difficulty: "intermediate",
     category: "Chapter 7 - Packages, Crates, Modules",
@@ -807,7 +1131,7 @@ fn main() {
     expectedOutput: "Area: 50\nPerimeter: 30",
   },
   {
-    id: 34,
+    id: 49,
     title: "Use Declarations",
     difficulty: "intermediate",
     category: "Chapter 7 - Packages, Crates, Modules",
@@ -831,7 +1155,7 @@ fn main() {
     expectedOutput: "3 + 4 = 7\n5 * 6 = 30",
   },
   {
-    id: 35,
+    id: 50,
     title: "Packages and Crates",
     difficulty: "intermediate",
     category: "Chapter 7 - Packages, Crates, Modules",
@@ -853,9 +1177,8 @@ fn main() {
     hint: "In real projects, you'd add dependencies in Cargo.toml and use `extern crate crate_name;` to bring external libraries into scope.",
     expectedOutput: "Original: hello\nReversed: olleh",
   },
-  // Chapter 8: Common Collections
   {
-    id: 36,
+    id: 51,
     title: "Vector Methods",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -878,7 +1201,7 @@ fn main() {
     expectedOutput: "After push: [1, 2, 3, 4, 5]\nAfter pop: [1, 2, 3, 4]\nLength: 4\nContains 3: true",
   },
   {
-    id: 37,
+    id: 52,
     title: "String Deep Dive",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -898,7 +1221,7 @@ fn main() {
     expectedOutput: "Original: hello\nSlice: hel\nModified: hello world",
   },
   {
-    id: 38,
+    id: 53,
     title: "Hash Maps Advanced",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -922,7 +1245,7 @@ fn main() {
     expectedOutput: "Final counts: {\"is\": 2, \"rust\": 4}",
   },
   {
-    id: 39,
+    id: 54,
     title: "Iterating Collections",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -953,7 +1276,7 @@ fn main() {
     expectedOutput: "Vector: 1, 2, 3, 4, 5, \nHashMap: a=1, b=2, c=3, ",
   },
   {
-    id: 40,
+    id: 55,
     title: "Collection Performance",
     difficulty: "advanced",
     category: "Chapter 8 - Common Collections",
@@ -976,7 +1299,7 @@ fn main() {
     expectedOutput: "Vector length: 1000\nHashMap length: 1000",
   },
   {
-    id: 41,
+    id: 56,
     title: "Vectors Advanced",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -995,7 +1318,7 @@ fn main() {
     expectedOutput: "Sorted: [1, 1, 3, 4, 5]\nCapacity: 10",
   },
   {
-    id: 42,
+    id: 57,
     title: "Strings Advanced",
     difficulty: "intermediate",
     category: "Chapter 8 - Common Collections",
@@ -1014,7 +1337,7 @@ fn main() {
     expectedOutput: "Original: hello-world\nParts: [\"hello\", \"world\"]\nRejoined: hello world",
   },
   {
-    id: 43,
+    id: 58,
     title: "Deque Operations",
     difficulty: "advanced",
     category: "Chapter 8 - Common Collections",
@@ -1042,9 +1365,8 @@ fn main() {
     hint: "In real code, use `VecDeque` from std::collections for efficient front/back operations.",
     expectedOutput: "After adds: [1, 2, 3, 4, 5]\nFinal deque: [2, 3, 4]",
   },
-  // Chapter 9: Error Handling - Adding 6 challenges
   {
-    id: 44,
+    id: 59,
     title: "Result Deep Dive",
     difficulty: "intermediate",
     category: "Chapter 9 - Error Handling",
@@ -1072,7 +1394,7 @@ fn main() {
     expectedOutput: "Parsed: 42\nFailed to parse: invalid digit found in string",
   },
   {
-    id: 45,
+    id: 60,
     title: "Error Propagation",
     difficulty: "intermediate",
     category: "Chapter 9 - Error Handling",
@@ -1097,7 +1419,7 @@ fn main() {
     expectedOutput: "Result 1: Ok(123)\nResult 2: Err(\"String is empty\")",
   },
   {
-    id: 46,
+    id: 61,
     title: "Custom Error Types",
     difficulty: "advanced",
     category: "Chapter 9 - Error Handling",
@@ -1127,7 +1449,7 @@ fn main() {
     expectedOutput: "Result 1: Ok(5.0)\nResult 2: Err(DivisionByZero)",
   },
   {
-    id: 47,
+    id: 62,
     title: "Panic vs Error Handling",
     difficulty: "intermediate",
     category: "Chapter 9 - Error Handling",
@@ -1160,7 +1482,7 @@ fn main() {
     expectedOutput: "Panic check passed\nError: Negative number",
   },
   {
-    id: 48,
+    id: 63,
     title: "From Trait for Errors",
     difficulty: "advanced",
     category: "Chapter 9 - Error Handling",
@@ -1193,7 +1515,7 @@ fn main() {
     expectedOutput: "Result 1: Ok(42)\nResult 2: Err(ParseError(\"invalid digit found in string\"))",
   },
   {
-    id: 49,
+    id: 64,
     title: "Error Handling Best Practices",
     difficulty: "intermediate",
     category: "Chapter 9 - Error Handling",
@@ -1232,9 +1554,8 @@ fn main() {
     hint: "Granular error types help callers handle different error cases appropriately.",
     expectedOutput: "Result 1: Ok(42)\nResult 2: Err(Empty)\nResult 3: Err(NotPositive)",
   },
-  // Chapter 10: Generic Types, Traits, and Lifetimes - Adding 8 challenges
   {
-    id: 50,
+    id: 65,
     title: "Generic Functions",
     difficulty: "intermediate",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1261,7 +1582,7 @@ fn main() {
     expectedOutput: "Largest int: 8\nLargest float: 8.8",
   },
   {
-    id: 51,
+    id: 66,
     title: "Generic Structs",
     difficulty: "intermediate",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1293,7 +1614,7 @@ fn main() {
     expectedOutput: "Original: (1, 2)\nSwapped: (2, 1)",
   },
   {
-    id: 52,
+    id: 67,
     title: "Trait Definitions",
     difficulty: "intermediate",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1335,7 +1656,7 @@ fn main() {
     expectedOutput: "Drawing circle with radius 5\nDrawing rectangle 10 x 20",
   },
   {
-    id: 53,
+    id: 68,
     title: "Trait Bounds",
     difficulty: "intermediate",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1357,7 +1678,7 @@ fn main() {
     expectedOutput: "Display: 42\nDebug: 42\nDisplay: hello\nDebug: \"hello\"\nDisplay: 3.14\nDebug: 3.14",
   },
   {
-    id: 54,
+    id: 69,
     title: "Default Implementations",
     difficulty: "intermediate",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1406,7 +1727,7 @@ fn main() {
     expectedOutput: "Buddy says: woof\nWhiskers says: generic sound",
   },
   {
-    id: 55,
+    id: 70,
     title: "Lifetimes Basics",
     difficulty: "advanced",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1431,7 +1752,7 @@ fn main() {
     expectedOutput: "The longest string is long string",
   },
   {
-    id: 56,
+    id: 71,
     title: "Lifetime Annotations",
     difficulty: "advanced",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1466,7 +1787,7 @@ fn main() {
     expectedOutput: "Excerpt: Call me Ishmael\nLevel: trivial",
   },
   {
-    id: 57,
+    id: 72,
     title: "Struct Lifetimes",
     difficulty: "advanced",
     category: "Chapter 10 - Generic Types, Traits, and Lifetimes",
@@ -1497,9 +1818,8 @@ fn main() {
     hint: "Multiple lifetime parameters allow fine-grained control over reference validity.",
     expectedOutput: "Book: The Rust Book\nExcerpt: Some excerpt from the book",
   },
-  // Chapter 11-12: Testing and I/O - Adding 8 challenges
   {
-    id: 58,
+    id: 73,
     title: "Unit Tests",
     difficulty: "intermediate",
     category: "Chapter 11 - Testing",
@@ -1531,7 +1851,7 @@ fn main() {
     expectedOutput: "2 + 3 = 5",
   },
   {
-    id: 59,
+    id: 74,
     title: "Integration Tests",
     difficulty: "intermediate",
     category: "Chapter 11 - Testing",
@@ -1559,7 +1879,7 @@ mod integration_tests {
     expectedOutput: "Hello, World!",
   },
   {
-    id: 60,
+    id: 75,
     title: "Test Organization",
     difficulty: "intermediate",
     category: "Chapter 11 - Testing",
@@ -1599,7 +1919,7 @@ fn main() {
     expectedOutput: "2 + 3 = 5",
   },
   {
-    id: 61,
+    id: 76,
     title: "Test Attributes",
     difficulty: "intermediate",
     category: "Chapter 11 - Testing",
@@ -1641,7 +1961,7 @@ fn main() {
     expectedOutput: "10.0 / 2.0 = 5",
   },
   {
-    id: 62,
+    id: 77,
     title: "File Reading",
     difficulty: "intermediate",
     category: "Chapter 12 - I/O Project",
@@ -1664,7 +1984,7 @@ fn main() {
     expectedOutput: "Content length: 33\nFirst line: First line",
   },
   {
-    id: 63,
+    id: 78,
     title: "File Writing",
     difficulty: "intermediate",
     category: "Chapter 12 - I/O Project",
@@ -1685,7 +2005,7 @@ fn main() {
     expectedOutput: "Prepared content:\nLine 1\nLine 2\nLine 3",
   },
   {
-    id: 64,
+    id: 79,
     title: "Command Line Arguments",
     difficulty: "intermediate",
     category: "Chapter 12 - I/O Project",
@@ -1719,7 +2039,7 @@ fn main() {
     expectedOutput: "Name: Alice, Count: 5",
   },
   {
-    id: 65,
+    id: 80,
     title: "Error Handling in I/O",
     difficulty: "intermediate",
     category: "Chapter 12 - I/O Project",
@@ -1756,9 +2076,8 @@ fn main() {
     hint: "Use custom error types for I/O operations to provide meaningful error information.",
     expectedOutput: "Processed: HELLO\nError processing '': InvalidInput\nError processing 'error': ProcessingFailed\nProcessed: WORLD",
   },
-  // Advanced Chapters 13-20 - Adding 20 challenges
   {
-    id: 66,
+    id: 81,
     title: "Closures Basics",
     difficulty: "intermediate",
     category: "Chapter 13 - Iterators and Closures",
@@ -1784,7 +2103,7 @@ fn main() {
     expectedOutput: "Is 4 equal to x? true\nIs 5 equal to x? false\nSum: 5",
   },
   {
-    id: 67,
+    id: 82,
     title: "Iterator Basics",
     difficulty: "intermediate",
     category: "Chapter 13 - Iterators and Closures",
@@ -1805,7 +2124,7 @@ fn main() {
     expectedOutput: "Result: [4, 8]",
   },
   {
-    id: 68,
+    id: 83,
     title: "Performance: Iterators vs Loops",
     difficulty: "advanced",
     category: "Chapter 13 - Iterators and Closures",
@@ -1832,7 +2151,7 @@ fn main() {
     expectedOutput: "Iterator sum: 338350\nLoop sum: 338350",
   },
   {
-    id: 69,
+    id: 84,
     title: "Cargo Workspaces",
     difficulty: "intermediate",
     category: "Chapter 14 - Cargo and Crates.io",
@@ -1861,7 +2180,7 @@ fn main() {
     expectedOutput: "Hello, Workspace User!",
   },
   {
-    id: 70,
+    id: 85,
     title: "Publishing to Crates.io",
     difficulty: "intermediate",
     category: "Chapter 14 - Cargo and Crates.io",
@@ -1885,7 +2204,7 @@ fn main() {
     expectedOutput: "2 + 3 = 5\n2 * 3 = 6",
   },
   {
-    id: 71,
+    id: 86,
     title: "Box for Heap Allocation",
     difficulty: "intermediate",
     category: "Chapter 15 - Smart Pointers",
@@ -1908,7 +2227,7 @@ fn main() {
     expectedOutput: "Created a linked list with Box",
   },
   {
-    id: 72,
+    id: 87,
     title: "Rc for Reference Counting",
     difficulty: "advanced",
     category: "Chapter 15 - Smart Pointers",
@@ -1937,7 +2256,7 @@ fn main() {
     expectedOutput: "Reference count: 1\nAfter first clone: 2\nAfter second clone: 3\nValue: 42",
   },
   {
-    id: 73,
+    id: 88,
     title: "RefCell for Interior Mutability",
     difficulty: "advanced",
     category: "Chapter 15 - Smart Pointers",
@@ -1977,7 +2296,7 @@ fn main() {
     expectedOutput: "Before: Initial message\nAfter: Updated message",
   },
   {
-    id: 74,
+    id: 89,
     title: "Reference Cycles",
     difficulty: "advanced",
     category: "Chapter 15 - Smart Pointers",
@@ -2009,7 +2328,7 @@ fn main() {
     expectedOutput: "Leaf strong count: 1\nLeaf weak count: 0\nReference cycles can cause memory leaks. Use Weak to break cycles.",
   },
   {
-    id: 75,
+    id: 90,
     title: "Threads Basics",
     difficulty: "intermediate",
     category: "Chapter 16 - Fearless Concurrency",
@@ -2037,7 +2356,7 @@ fn main() {
     expectedOutput: "Main thread: 1\nThread 1: 1\nMain thread: 2\nThread 1: 2\nMain thread: 3\nThread 1: 3",
   },
   {
-    id: 76,
+    id: 91,
     title: "Message Passing with Channels",
     difficulty: "intermediate",
     category: "Chapter 16 - Fearless Concurrency",
@@ -2070,7 +2389,7 @@ fn main() {
     expectedOutput: "Got: hi\nGot: from\nGot: the\nGot: the thread",
   },
   {
-    id: 77,
+    id: 92,
     title: "Shared State with Mutex",
     difficulty: "advanced",
     category: "Chapter 16 - Fearless Concurrency",
@@ -2102,7 +2421,7 @@ fn main() {
     expectedOutput: "Result: 5",
   },
   {
-    id: 78,
+    id: 93,
     title: "Trait Objects for Polymorphism",
     difficulty: "intermediate",
     category: "Chapter 17 - OOP",
@@ -2148,7 +2467,7 @@ fn main() {
     expectedOutput: "Drawing button: Submit (50x10)\nDrawing text field with placeholder: Enter name",
   },
   {
-    id: 79,
+    id: 94,
     title: "Object-Oriented Design Patterns",
     difficulty: "advanced",
     category: "Chapter 17 - OOP",
@@ -2197,7 +2516,7 @@ fn main() {
     expectedOutput: "State: Draft\nState: Review\nState: Published",
   },
   {
-    id: 80,
+    id: 95,
     title: "Pattern Matching Advanced",
     difficulty: "intermediate",
     category: "Chapter 18 - Patterns and Matching",
@@ -2224,7 +2543,7 @@ fn main() {
     expectedOutput: "(0, 0) is origin\n(5, 0) is on x-axis\n(0, 3) is on y-axis\n(4, 4) is diagonal\n(2, 3) is other",
   },
   {
-    id: 81,
+    id: 96,
     title: "Pattern Syntax",
     difficulty: "intermediate",
     category: "Chapter 18 - Patterns and Matching",
@@ -2261,7 +2580,7 @@ fn main() {
     expectedOutput: "one\nOn y axis at 7",
   },
   {
-    id: 82,
+    id: 97,
     title: "Unsafe Rust",
     difficulty: "advanced",
     category: "Chapter 19 - Advanced Features",
@@ -2286,7 +2605,7 @@ fn main() {
     expectedOutput: "r1 is: 5\nr2 is: 5\nnum is now: 10",
   },
   {
-    id: 83,
+    id: 98,
     title: "Advanced Traits",
     difficulty: "advanced",
     category: "Chapter 19 - Advanced Features",
@@ -2332,7 +2651,7 @@ fn main() {
     expectedOutput: "Got: 1\nGot: 2\nGot: 3\nGot: 4\nGot: 5",
   },
   {
-    id: 84,
+    id: 99,
     title: "TCP Listener",
     difficulty: "advanced",
     category: "Chapter 20 - Web Server",
@@ -2356,7 +2675,7 @@ fn main() {
     expectedOutput: "Handling connection 1\nProcessing request...\nSending response...\nConnection 1 closed\nHandling connection 2\nProcessing request...\nSending response...\nConnection 2 closed\nHandling connection 3\nProcessing request...\nSending response...\nConnection 3 closed",
   },
   {
-    id: 85,
+    id: 100,
     title: "HTTP Request Parsing",
     difficulty: "advanced",
     category: "Chapter 20 - Web Server",
@@ -2386,4 +2705,1279 @@ fn main() {
     hint: "Real HTTP servers parse requests according to the HTTP specification, handling various edge cases and error conditions.",
     expectedOutput: "Method: GET\nPath: /index.html\nHeaders: [\"Host: localhost\", \"User-Agent: Test\"]",
   },
+  {
+    id: 101,
+    title: "Basic Move Semantics",
+    difficulty: "intermediate",
+    category: "Ownership - Move Semantics",
+    description: "Practice basic ownership transfer between variables.",
+    instructions: "Create a String, assign it to another variable, and observe that the original variable is no longer valid.",
+    starterCode: `fn main() {
+    let s1 = String::from("hello");
+    let s2 = s1; // s1 is moved to s2
+    
+    // This would cause an error: println!("{}", s1);
+    println!("s2: {}", s2);
+}`,
+    hint: "When a value is moved, the original variable can no longer be used. This prevents double-free errors.",
+    expectedOutput: "s2: hello",
+  },
+  {
+    id: 102,
+    title: "Function Ownership Transfer",
+    difficulty: "intermediate",
+    category: "Ownership - Move Semantics",
+    description: "Practice ownership transfer through function calls.",
+    instructions: "Create a function that takes ownership of a String, modifies it, and returns it.",
+    starterCode: `fn take_and_modify(s: String) -> String {
+    let mut modified = s;
+    modified.push_str(" modified");
+    modified
+}
+
+fn main() {
+    let original = String::from("hello");
+    let result = take_and_modify(original);
+    
+    // original is no longer valid here
+    println!("Result: {}", result);
+}`,
+    hint: "When a value is moved into a function, the caller loses ownership. The function can return it to transfer ownership back.",
+    expectedOutput: "Result: hello modified",
+  },
+  {
+    id: 103,
+    title: "Clone vs Move",
+    difficulty: "intermediate",
+    category: "Ownership - Clone vs Move",
+    description: "Practice the difference between cloning and moving values.",
+    instructions: "Create a String, clone it to another variable, and show both variables remain valid.",
+    starterCode: `fn main() {
+    let s1 = String::from("hello");
+    let s2 = s1.clone(); // s1 is cloned, not moved
+    
+    println!("s1: {}", s1);
+    println!("s2: {}", s2);
+}`,
+    hint: "Use `.clone()` to create a deep copy. The original remains valid, but this has a performance cost.",
+    expectedOutput: "s1: hello\ns2: hello",
+  },
+  {
+    id: 104,
+    title: "Stack vs Heap Ownership",
+    difficulty: "intermediate",
+    category: "Ownership - Stack vs Heap",
+    description: "Understand which types are copied vs moved.",
+    instructions: "Create both a stack-allocated type (i32) and a heap-allocated type (String). Show that copying works for stack types but moving for heap types.",
+    starterCode: `fn main() {
+    let x = 5;
+    let y = x; // i32 is Copy, so x is still valid
+    
+    println!("x: {}, y: {}", x, y);
+    
+    let s1 = String::from("hello");
+    let s2 = s1; // String is not Copy, so s1 is moved
+    
+    // This would cause an error: println!("{}", s1);
+    println!("s2: {}", s2);
+}`,
+    hint: "Types that implement the Copy trait are copied instead of moved. Primitive types like i32 are Copy.",
+    expectedOutput: "x: 5, y: 5\ns2: hello",
+  },
+  {
+    id: 105,
+    title: "Ownership in Structs",
+    difficulty: "intermediate",
+    category: "Ownership - Structs",
+    description: "Practice ownership with custom structs containing heap data.",
+    instructions: "Create a struct with a String field. Move instances between variables and observe ownership behavior.",
+    starterCode: `struct Person {
+    name: String,
+    age: i32,
+}
+
+fn main() {
+    let person1 = Person {
+        name: String::from("Alice"),
+        age: 30,
+    };
+    
+    let person2 = person1; // person1 is moved
+    
+    // This would cause an error: println!("{}", person1.name);
+    println!("Person: {}, age {}", person2.name, person2.age);
+}`,
+    hint: "Structs containing heap data (like String) are moved when assigned. The original becomes invalid.",
+    expectedOutput: "Person: Alice, age 30",
+  },
+  {
+    id: 106,
+    title: "Partial Move with Structs",
+    difficulty: "advanced",
+    category: "Ownership - Partial Moves",
+    description: "Practice partial moves where some fields are moved but others remain valid.",
+    instructions: "Create a struct with multiple fields. Move some fields to show partial ownership.",
+    starterCode: `struct Data {
+    id: i32,
+    value: String,
+}
+
+fn main() {
+    let data = Data {
+        id: 1,
+        value: String::from("important"),
+    };
+    
+    let moved_value = data.value; // only value is moved
+    
+    // This would cause an error: println!("{}", data.value);
+    println!("ID: {}", data.id); // id is still valid
+    println!("Moved value: {}", moved_value);
+}`,
+    hint: "When you move individual fields, the struct becomes partially invalid. Only the moved fields are inaccessible.",
+    expectedOutput: "ID: 1\nMoved value: important",
+  },
+  {
+    id: 107,
+    title: "Ownership with Vectors",
+    difficulty: "intermediate",
+    category: "Ownership - Collections",
+    description: "Practice ownership with vectors and iteration.",
+    instructions: "Create a vector, iterate over it with ownership transfer, and show how the vector becomes invalid after iteration.",
+    starterCode: `fn main() {
+    let numbers = vec![1, 2, 3];
+    
+    // This would cause an error: for num in numbers
+    for num in numbers.into_iter() {
+        println!("{}", num);
+    }
+    
+    // numbers is no longer valid here because into_iter() took ownership
+}`,
+    hint: "`.into_iter()` takes ownership of the collection. Use `.iter()` for immutable references instead.",
+    expectedOutput: "1\n2\n3",
+  },
+  {
+    id: 108,
+    title: "Ownership and Return Values",
+    difficulty: "intermediate",
+    category: "Ownership - Return Values",
+    description: "Practice returning ownership from functions.",
+    instructions: "Write functions that return ownership of different types and show how to chain them.",
+    starterCode: `fn create_string() -> String {
+    String::from("created")
+}
+
+fn append_world(mut s: String) -> String {
+    s.push_str(" world");
+    s
+}
+
+fn main() {
+    let s1 = create_string();
+    let s2 = append_world(s1);
+    
+    println!("Result: {}", s2);
+}`,
+    hint: "Functions can return ownership to the caller. Chain functions by passing the returned value to the next function.",
+    expectedOutput: "Result: created world",
+  },
+  {
+    id: 109,
+    title: "Multiple Ownership with Clone",
+    difficulty: "intermediate",
+    category: "Ownership - Multiple Owners",
+    description: "Practice enabling multiple ownership through cloning.",
+    instructions: "Create a scenario where you need multiple owners of the same data by cloning.",
+    starterCode: `fn main() {
+    let original = String::from("shared data");
+    
+    let owner1 = original.clone();
+    let owner2 = original.clone();
+    let owner3 = original;
+    
+    println!("Owner 1: {}", owner1);
+    println!("Owner 2: {}", owner2);
+    println!("Owner 3: {}", owner3);
+}`,
+    hint: "Cloning creates deep copies, allowing multiple independent owners. Each clone can be modified independently.",
+    expectedOutput: "Owner 1: shared data\nOwner 2: shared data\nOwner 3: shared data",
+  },
+  {
+    id: 110,
+    title: "Ownership in Pattern Matching",
+    difficulty: "advanced",
+    category: "Ownership - Pattern Matching",
+    description: "Practice ownership transfer in pattern matching.",
+    instructions: "Use pattern matching to move values out of enums and structs.",
+    starterCode: `enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+}
+
+fn main() {
+    let message = Message::Write(String::from("hello"));
+    
+    match message {
+        Message::Write(text) => {
+            println!("Text: {}", text);
+            // message is moved here, no longer valid
+        }
+        _ => println!("Other message"),
+    }
+    
+    // This would cause an error: use of moved value
+}`,
+    hint: "Pattern matching can move values. Once matched, the original variable becomes invalid.",
+    expectedOutput: "Text: hello",
+  },
+  {
+    id: 111,
+    title: "Immutable Borrowing Basics",
+    difficulty: "intermediate",
+    category: "Borrowing - Immutable References",
+    description: "Practice borrowing values immutably with references.",
+    instructions: "Create a String and pass an immutable reference to a function that prints its length.",
+    starterCode: `fn calculate_length(s: &String) -> usize {
+    s.len()
+}
+
+fn main() {
+    let s1 = String::from("hello");
+    let len = calculate_length(&s1);
+    
+    println!("Length of '{}' is {}", s1, len);
+}`,
+    hint: "Use `&` to create an immutable reference. The original value remains valid and can still be used.",
+    expectedOutput: "Length of 'hello' is 5",
+  },
+  {
+    id: 112,
+    title: "Mutable Borrowing",
+    difficulty: "intermediate",
+    category: "Borrowing - Mutable References",
+    description: "Practice borrowing values mutably to modify them.",
+    instructions: "Create a String and pass a mutable reference to a function that modifies it.",
+    starterCode: `fn append_world(s: &mut String) {
+    s.push_str(" world");
+}
+
+fn main() {
+    let mut s1 = String::from("hello");
+    append_world(&mut s1);
+    
+    println!("Modified: {}", s1);
+}`,
+    hint: "Use `&mut` to create a mutable reference. This allows modification without taking ownership.",
+    expectedOutput: "Modified: hello world",
+  },
+  {
+    id: 113,
+    title: "Multiple Immutable References",
+    difficulty: "intermediate",
+    category: "Borrowing - Multiple References",
+    description: "Practice having multiple immutable references simultaneously.",
+    instructions: "Create a String and pass multiple immutable references to different functions.",
+    starterCode: `fn print_length(s: &String) {
+    println!("Length: {}", s.len());
+}
+
+fn print_first_char(s: &String) {
+    println!("First: {}", s.chars().next().unwrap());
+}
+
+fn main() {
+    let s = String::from("hello");
+    
+    print_length(&s);
+    print_first_char(&s);
+    
+    println!("Original: {}", s);
+}`,
+    hint: "Rust allows multiple immutable references (`&T`) simultaneously because they can't modify the data.",
+    expectedOutput: "Length: 5\nFirst: h\nOriginal: hello",
+  },
+  {
+    id: 114,
+    title: "Borrowing Rules Violation",
+    difficulty: "intermediate",
+    category: "Borrowing - Borrowing Rules",
+    description: "Understand the borrowing rules through examples.",
+    instructions: "Show that you cannot have a mutable reference while immutable references exist.",
+    starterCode: `fn main() {
+    let mut s = String::from("hello");
+    
+    let r1 = &s; // immutable borrow
+    let r2 = &s; // another immutable borrow - OK
+    
+    println!("Both immutable refs: {}, {}", r1, r2);
+    
+    // This would cause an error: let r3 = &mut s;
+    // Cannot have mutable reference while immutable references exist
+}`,
+    hint: "Rust's borrowing rules: you can have either multiple immutable references OR one mutable reference, but not both simultaneously.",
+    expectedOutput: "Both immutable refs: hello, hello",
+  },
+  {
+    id: 115,
+    title: "Borrowing in Structs",
+    difficulty: "intermediate",
+    category: "Borrowing - Structs",
+    description: "Practice borrowing struct fields.",
+    instructions: "Create a struct and borrow its fields immutably and mutably.",
+    starterCode: `struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn print_x(point: &Point) {
+    println!("X: {}", point.x);
+}
+
+fn double_y(point: &mut Point) {
+    point.y *= 2;
+}
+
+fn main() {
+    let mut point = Point { x: 5, y: 10 };
+    
+    print_x(&point);
+    double_y(&mut point);
+    
+    println!("After: ({}, {})", point.x, point.y);
+}`,
+    hint: "You can borrow individual fields of structs. The borrowing rules apply to each field independently.",
+    expectedOutput: "X: 5\nAfter: (5, 20)",
+  },
+  {
+    id: 116,
+    title: "Borrowing with Slices",
+    difficulty: "intermediate",
+    category: "Borrowing - Slices",
+    description: "Practice borrowing different types of slices.",
+    instructions: "Create a String and borrow different slices of it simultaneously.",
+    starterCode: `fn main() {
+    let s = String::from("hello world");
+    
+    let hello = &s[0..5];
+    let world = &s[6..11];
+    
+    println!("First: {}", hello);
+    println!("Second: {}", world);
+    println!("Original: {}", s);
+}`,
+    hint: "String slices are immutable references (`&str`). Multiple slices can exist simultaneously because they don't modify the data.",
+    expectedOutput: "First: hello\nSecond: world\nOriginal: hello world",
+  },
+  {
+    id: 117,
+    title: "Borrowing in Functions",
+    difficulty: "intermediate",
+    category: "Borrowing - Functions",
+    description: "Practice passing references to functions and returning references.",
+    instructions: "Write functions that take and return references, respecting borrowing rules.",
+    starterCode: `fn first_word(s: &String) -> &str {
+    let bytes = s.as_bytes();
+    
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+    
+    &s[..]
+}
+
+fn main() {
+    let s = String::from("hello world");
+    let word = first_word(&s);
+    
+    println!("First word: {}", word);
+    println!("Original: {}", s);
+}`,
+    hint: "Functions can return references that borrow from the input. The lifetime must be valid for the returned reference.",
+    expectedOutput: "First word: hello\nOriginal: hello world",
+  },
+  {
+    id: 118,
+    title: "Borrowing with Collections",
+    difficulty: "intermediate",
+    category: "Borrowing - Collections",
+    description: "Practice borrowing from vectors and other collections.",
+    instructions: "Create a vector and borrow elements from it using indexing and iteration.",
+    starterCode: `fn main() {
+    let numbers = vec![10, 20, 30, 40, 50];
+    
+    // Borrow by index
+    let first = &numbers[0];
+    println!("First: {}", first);
+    
+    // Borrow by iteration
+    for num in &numbers {
+        if *num > 25 {
+            println!("Greater than 25: {}", num);
+        }
+    }
+    
+    // Original vector is still valid
+    println!("Original: {:?}", numbers);
+}`,
+    hint: "Use `&vector[i]` to borrow individual elements, or `&vector` to borrow the entire collection for iteration.",
+    expectedOutput: "First: 10\nGreater than 25: 30\nGreater than 25: 40\nGreater than 25: 50\nOriginal: [10, 20, 30, 40, 50]",
+  },
+  {
+    id: 119,
+    title: "Borrowing and Iterators",
+    difficulty: "intermediate",
+    category: "Borrowing - Iterators",
+    description: "Practice borrowing through iterator methods.",
+    instructions: "Use iterator methods that borrow values from the collection.",
+    starterCode: `fn main() {
+    let numbers = vec![1, 2, 3, 4, 5];
+    
+    // iter() borrows each element
+    let doubled: Vec<i32> = numbers.iter()
+        .map(|x| x * 2)
+        .collect();
+    
+    println!("Original: {:?}", numbers);
+    println!("Doubled: {:?}", doubled);
+}`,
+    hint: "`.iter()` creates an iterator that yields immutable references. The original collection remains valid.",
+    expectedOutput: "Original: [1, 2, 3, 4, 5]\nDoubled: [2, 4, 6, 8, 10]",
+  },
+  {
+    id: 120,
+    title: "Borrow Checker Understanding",
+    difficulty: "advanced",
+    category: "Borrowing - Borrow Checker",
+    description: "Practice understanding the borrow checker through complex scenarios.",
+    instructions: "Create a scenario that demonstrates why the borrow checker prevents data races.",
+    starterCode: `struct Data {
+    value: i32,
+}
+
+fn main() {
+    let data = Data { value: 42 };
+    
+    let r1 = &data;
+    let r2 = &data;
+    
+    println!("Multiple immutable refs: {}, {}", r1.value, r2.value);
+    
+    // This would cause an error: let r3 = &mut data;
+    // The borrow checker prevents this to avoid data races
+}`,
+    hint: "The borrow checker enforces memory safety at compile time by preventing invalid memory access patterns.",
+    expectedOutput: "Multiple immutable refs: 42, 42",
+  },
+  {
+    id: 121,
+    title: "Basic Struct Definition",
+    difficulty: "beginner",
+    category: "Structs - Basic Definition",
+    description: "Practice defining and using basic structs.",
+    instructions: "Define a simple struct with a few fields and create instances of it.",
+    starterCode: `struct Person {
+    name: String,
+    age: u32,
+}
+
+fn main() {
+    let person = Person {
+        name: String::from("Alice"),
+        age: 30,
+    };
+    
+    println!("Name: {}, Age: {}", person.name, person.age);
+}`,
+    hint: "Structs are defined with `struct Name { field: Type }`. Create instances with `Name { field: value }`.",
+    expectedOutput: "Name: Alice, Age: 30",
+  },
+  {
+    id: 122,
+    title: "Struct Methods",
+    difficulty: "intermediate",
+    category: "Structs - Methods",
+    description: "Practice defining methods on structs.",
+    instructions: "Define a struct with methods that operate on its data.",
+    starterCode: `struct Rectangle {
+    width: f64,
+    height: f64,
+}
+
+impl Rectangle {
+    fn area(&self) -> f64 {
+        self.width * self.height
+    }
+    
+    fn perimeter(&self) -> f64 {
+        2.0 * (self.width + self.height)
+    }
+}
+
+fn main() {
+    let rect = Rectangle {
+        width: 10.0,
+        height: 5.0,
+    };
+    
+    println!("Area: {}", rect.area());
+    println!("Perimeter: {}", rect.perimeter());
+}`,
+    hint: "Methods are defined in `impl StructName` blocks. Use `&self` for immutable methods and `&mut self` for mutable methods.",
+    expectedOutput: "Area: 50\nPerimeter: 30",
+  },
+  {
+    id: 123,
+    title: "Associated Functions",
+    difficulty: "intermediate",
+    category: "Structs - Associated Functions",
+    description: "Practice defining associated functions (constructor-like functions).",
+    instructions: "Define a struct with associated functions to create instances.",
+    starterCode: `struct Point {
+    x: f64,
+    y: f64,
+}
+
+impl Point {
+    fn new(x: f64, y: f64) -> Self {
+        Point { x, y }
+    }
+    
+    fn origin() -> Self {
+        Point { x: 0.0, y: 0.0 }
+    }
+}
+
+fn main() {
+    let p1 = Point::new(3.0, 4.0);
+    let p2 = Point::origin();
+    
+    println!("Point 1: ({}, {})", p1.x, p1.y);
+    println!("Point 2: ({}, {})", p2.x, p2.y);
+}`,
+    hint: "Associated functions don't take `self` and are called with `StructName::function_name()`. They're often used as constructors.",
+    expectedOutput: "Point 1: (3, 4)\nPoint 2: (0, 0)",
+  },
+  {
+    id: 124,
+    title: "Mutable Methods",
+    difficulty: "intermediate",
+    category: "Structs - Mutable Methods",
+    description: "Practice defining methods that modify struct data.",
+    instructions: "Define a struct with a mutable method that changes its state.",
+    starterCode: `struct Counter {
+    count: i32,
+}
+
+impl Counter {
+    fn new() -> Self {
+        Counter { count: 0 }
+    }
+    
+    fn increment(&mut self) {
+        self.count += 1;
+    }
+    
+    fn reset(&mut self) {
+        self.count = 0;
+    }
+}
+
+fn main() {
+    let mut counter = Counter::new();
+    counter.increment();
+    counter.increment();
+    counter.increment();
+    
+    println!("Count: {}", counter.count);
+    counter.reset();
+    println!("After reset: {}", counter.count);
+}`,
+    hint: "Use `&mut self` for methods that need to modify the struct's fields.",
+    expectedOutput: "Count: 3\nAfter reset: 0",
+  },
+  {
+    id: 125,
+    title: "Tuple Structs",
+    difficulty: "intermediate",
+    category: "Structs - Tuple Structs",
+    description: "Practice using tuple structs for data without field names.",
+    instructions: "Define a tuple struct and use it for color values.",
+    starterCode: `struct Color(u8, u8, u8);
+
+fn main() {
+    let black = Color(0, 0, 0);
+    let red = Color(255, 0, 0);
+    
+    let Color(r, g, b) = red;
+    println!("Red: R={}, G={}, B={}", r, g, b);
+    
+    let Color(br, bg, bb) = black;
+    println!("Black: R={}, G={}, B={}", br, bg, bb);
+}`,
+    hint: "Tuple structs are defined with `StructName(Type1, Type2, ...)` and accessed with destructuring.",
+    expectedOutput: "Red: R=255, G=0, B=0\nBlack: R=0, G=0, B=0",
+  },
+  {
+    id: 126,
+    title: "Struct Update Syntax",
+    difficulty: "intermediate",
+    category: "Structs - Update Syntax",
+    description: "Practice the struct update syntax for creating new instances from existing ones.",
+    instructions: "Create a struct instance and use the update syntax to create a modified copy.",
+    starterCode: `struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn main() {
+    let p1 = Point { x: 1, y: 2 };
+    let p2 = Point { x: 3, ..p1 };
+    
+    println!("Point 1: ({}, {})", p1.x, p1.y);
+    println!("Point 2: ({}, {})", p2.x, p2.y);
+}`,
+    hint: "Use `StructName { field: value, ..original }` to copy most fields and override specific ones.",
+    expectedOutput: "Point 1: (1, 2)\nPoint 2: (3, 2)",
+  },
+  {
+    id: 127,
+    title: "Structs with References",
+    difficulty: "intermediate",
+    category: "Structs - References",
+    description: "Practice defining structs that hold references.",
+    instructions: "Define a struct that holds a string reference and use it.",
+    starterCode: `struct Text<'a> {
+    content: &'a str,
+}
+
+fn main() {
+    let text = String::from("Hello, world!");
+    let excerpt = Text { content: &text[0..5] };
+    
+    println!("Excerpt: {}", excerpt.content);
+}`,
+    hint: "Structs that hold references need lifetime annotations to ensure the reference outlives the struct.",
+    expectedOutput: "Excerpt: Hello",
+  },
+  {
+    id: 128,
+    title: "Structs with Methods and Associated Functions",
+    difficulty: "intermediate",
+    category: "Structs - Combined",
+    description: "Practice combining methods and associated functions in the same impl block.",
+    instructions: "Define a struct with both methods and associated functions in the same impl block.",
+    starterCode: `struct Calculator {
+    value: f64,
+}
+
+impl Calculator {
+    fn new(value: f64) -> Self {
+        Calculator { value }
+    }
+    
+    fn add(&mut self, amount: f64) {
+        self.value += amount;
+    }
+    
+    fn multiply(&mut self, factor: f64) {
+        self.value *= factor;
+    }
+    
+    fn get_value(&self) -> f64 {
+        self.value
+    }
+}
+
+fn main() {
+    let mut calc = Calculator::new(10.0);
+    calc.add(5.0);
+    calc.multiply(2.0);
+    
+    println!("Result: {}", calc.get_value());
+}`,
+    hint: "You can mix methods (with `self`) and associated functions (without `self`) in the same impl block.",
+    expectedOutput: "Result: 30",
+  },
+  {
+    id: 129,
+    title: "Structs with Option Fields",
+    difficulty: "intermediate",
+    category: "Structs - Option Fields",
+    description: "Practice defining structs with optional fields using Option.",
+    instructions: "Define a struct with optional fields and handle the Option in usage.",
+    starterCode: `struct User {
+    name: String,
+    email: Option<String>,
+}
+
+fn main() {
+    let user1 = User {
+        name: String::from("Alice"),
+        email: Some(String::from("alice@example.com")),
+    };
+    
+    let user2 = User {
+        name: String::from("Bob"),
+        email: None,
+    };
+    
+    println!("User 1: {}", user1.name);
+    match &user1.email {
+        Some(e) => println!("Email: {}", e),
+        None => println!("No email"),
+    }
+    
+    println!("User 2: {}", user2.name);
+    match &user2.email {
+        Some(e) => println!("Email: {}", e),
+        None => println!("No email"),
+    }
+}`,
+    hint: "Use `Option<T>` for fields that may or may not have values. Pattern match with `Some(value)` and `None`.",
+    expectedOutput: "User 1: Alice\nEmail: alice@example.com\nUser 2: Bob\nNo email",
+  },
+  {
+    id: 130,
+    title: "Structs with Vec Fields",
+    difficulty: "intermediate",
+    category: "Structs - Collections",
+    description: "Practice defining structs that contain vectors.",
+    instructions: "Define a struct with a vector field and implement methods to work with it.",
+    starterCode: `struct Team {
+    members: Vec<String>,
+}
+
+impl Team {
+    fn new() -> Self {
+        Team { members: Vec::new() }
+    }
+    
+    fn add_member(&mut self, name: String) {
+        self.members.push(name);
+    }
+    
+    fn count(&self) -> usize {
+        self.members.len()
+    }
+}
+
+fn main() {
+    let mut team = Team::new();
+    team.add_member(String::from("Alice"));
+    team.add_member(String::from("Bob"));
+    team.add_member(String::from("Charlie"));
+    
+    println!("Team size: {}", team.count());
+}`,
+    hint: "Vectors inside structs work like normal vectors but need to follow the struct's borrowing rules.",
+    expectedOutput: "Team size: 3",
+  },
+  {
+    id: 131,
+    title: "Basic Result Type",
+    difficulty: "intermediate",
+    category: "Error Handling - Result Basics",
+    description: "Practice using Result for error handling.",
+    instructions: "Write a function that returns Result for success and error cases.",
+    starterCode: `fn divide(a: f64, b: f64) -> Result<f64, String> {
+    if b == 0.0 {
+        Err(String::from("Division by zero"))
+    } else {
+        Ok(a / b)
+    }
+}
+
+fn main() {
+    let result1 = divide(10.0, 2.0);
+    let result2 = divide(10.0, 0.0);
+    
+    match result1 {
+        Ok(value) => println!("10.0 / 2.0 = {}", value),
+        Err(e) => println!("Error: {}", e),
+    }
+    
+    match result2 {
+        Ok(value) => println!("10.0 / 0.0 = {}", value),
+        Err(e) => println!("Error: {}", e),
+    }
+}`,
+    hint: "Use `Result<T, E>` for functions that can fail. Return `Ok(value)` for success and `Err(error)` for failure.",
+    expectedOutput: "10.0 / 2.0 = 5\nError: Division by zero",
+  },
+  {
+    id: 132,
+    title: "Error Propagation with ?",
+    difficulty: "intermediate",
+    category: "Error Handling - Error Propagation",
+    description: "Practice using the ? operator for error propagation.",
+    instructions: "Write functions that use ? to propagate errors automatically.",
+    starterCode: `fn parse_number(s: &str) -> Result<i32, String> {
+    s.parse::<i32>().map_err(|e| e.to_string())
+}
+
+fn double_if_positive(s: &str) -> Result<i32, String> {
+    let num = parse_number(s)?;
+    if num > 0 {
+        Ok(num * 2)
+    } else {
+        Err(String::from("Number must be positive"))
+    }
+}
+
+fn main() {
+    let result1 = double_if_positive("5");
+    let result2 = double_if_positive("-3");
+    
+    println!("Result 1: {:?}", result1);
+    println!("Result 2: {:?}", result2);
+}`,
+    hint: "Use `?` to propagate errors early. It returns the error if the Result is Err, or unwraps the value if Ok.",
+    expectedOutput: "Result 1: Ok(10)\nResult 2: Err(\"Number must be positive\")",
+  },
+  {
+    id: 133,
+    title: "Custom Error Types",
+    difficulty: "intermediate",
+    category: "Error Handling - Custom Errors",
+    description: "Practice defining custom error types with enums.",
+    instructions: "Define a custom error enum and use it in function signatures.",
+    starterCode: `#[derive(Debug)]
+enum MathError {
+    DivisionByZero,
+    NegativeSquareRoot,
+}
+
+fn safe_divide(a: f64, b: f64) -> Result<f64, MathError> {
+    if b == 0.0 {
+        Err(MathError::DivisionByZero)
+    } else {
+        Ok(a / b)
+    }
+}
+
+fn main() {
+    let result1 = safe_divide(10.0, 2.0);
+    let result2 = safe_divide(10.0, 0.0);
+    
+    println!("Result 1: {:?}", result1);
+    println!("Result 2: {:?}", result2);
+}`,
+    hint: "Custom error types make errors more descriptive. Define them as enums for different error cases.",
+    expectedOutput: "Result 1: Ok(5.0)\nResult 2: Err(DivisionByZero)",
+  },
+  {
+    id: 134,
+    title: "Panic vs Result",
+    difficulty: "intermediate",
+    category: "Error Handling - Panic vs Result",
+    description: "Practice choosing between panic and Result for error handling.",
+    instructions: "Show when to use panic for unrecoverable errors vs Result for recoverable ones.",
+    starterCode: `fn validate_positive(num: i32) {
+    if num < 0 {
+        panic!("Number must be positive");
+    }
+}
+
+fn safe_divide(a: f64, b: f64) -> Result<f64, String> {
+    if b == 0.0 {
+        Err(String::from("Cannot divide by zero"))
+    } else {
+        Ok(a / b)
+    }
+}
+
+fn main() {
+    validate_positive(5);
+    println!("Validation passed");
+    
+    let result = safe_divide(10.0, 0.0);
+    println!("Division result: {:?}", result);
+}`,
+    hint: "Use panic for unrecoverable errors (bugs, invalid state). Use Result for recoverable errors (user input, I/O).",
+    expectedOutput: "Validation passed\nDivision result: Err(\"Cannot divide by zero\")",
+  },
+  {
+    id: 135,
+    title: "From Trait for Errors",
+    difficulty: "advanced",
+    category: "Error Handling - From Trait",
+    description: "Practice implementing From trait for error conversion.",
+    instructions: "Implement From trait to convert between error types automatically.",
+    starterCode: `#[derive(Debug)]
+enum AppError {
+    ParseError(String),
+}
+
+impl From<std::num::ParseIntError> for AppError {
+    fn from(error: std::num::ParseIntError) -> Self {
+        AppError::ParseError(error.to_string())
+    }
+}
+
+fn parse_number(s: &str) -> Result<i32, AppError> {
+    s.parse()?
+}
+
+fn main() {
+    let result1 = parse_number("42");
+    let result2 = parse_number("invalid");
+    
+    println!("Result 1: {:?}", result1);
+    println!("Result 2: {:?}", result2);
+}`,
+    hint: "The From trait enables automatic error conversion with ?, making error handling more ergonomic.",
+    expectedOutput: "Result 1: Ok(42)\nResult 2: Err(ParseError(\"invalid digit found in string\"))",
+  },
+  {
+    id: 136,
+    title: "Error Chaining",
+    difficulty: "intermediate",
+    category: "Error Handling - Error Chaining",
+    description: "Practice chaining multiple operations that can fail.",
+    instructions: "Write a function that performs multiple operations, each of which can fail.",
+    starterCode: `fn read_number(s: &str) -> Result<i32, String> {
+    s.parse().map_err(|e| format!("Parse error: {}", e))
+}
+
+fn validate_positive(num: i32) -> Result<i32, String> {
+    if num > 0 {
+        Ok(num)
+    } else {
+        Err(String::from("Number must be positive"))
+    }
+}
+
+fn process_number(s: &str) -> Result<i32, String> {
+    let num = read_number(s)?;
+    validate_positive(num)
+}
+
+fn main() {
+    let result1 = process_number("42");
+    let result2 = process_number("-5");
+    
+    println!("Result 1: {:?}", result1);
+    println!("Result 2: {:?}", result2);
+}`,
+    hint: "Chain operations with ?. Each ? will return early if an error occurs, passing the error up the call chain.",
+    expectedOutput: "Result 1: Ok(42)\nResult 2: Err(\"Number must be positive\")",
+  },
+  {
+    id: 137,
+    title: "unwrap_or and unwrap_or_else",
+    difficulty: "intermediate",
+    category: "Error Handling - Unwrap Methods",
+    description: "Practice using unwrap_or and unwrap_or_else for default values.",
+    instructions: "Use unwrap_or to provide defaults for Result types.",
+    starterCode: `fn main() {
+    let result: Result<i32, &str> = Err("Failed");
+    
+    let value = result.unwrap_or(0);
+    println!("With unwrap_or: {}", value);
+    
+    let result2: Result<i32, &str> = Ok(42);
+    let value2 = result2.unwrap_or(100);
+    println!("With unwrap_or: {}", value2);
+}`,
+    hint: "Use `unwrap_or(default)` to provide a default value when the Result is Err. Use `unwrap_or_else` for computed defaults.",
+    expectedOutput: "With unwrap_or: 0\nWith unwrap_or: 42",
+  },
+  {
+    id: 138,
+    title: "Map and And Then",
+    difficulty: "intermediate",
+    category: "Error Handling - Combinators",
+    description: "Practice using map and and_then with Result types.",
+    instructions: "Use combinators to transform Results and chain operations.",
+    starterCode: `fn main() {
+    let result: Result<i32, &str> = Ok(5);
+    
+    let doubled = result.map(|x| x * 2);
+    println!("Map result: {:?}", doubled);
+    
+    let then_result: Result<i32, &str> = Ok(5);
+    let chained = then_result.and_then(|x| Ok(x * 3));
+    println!("And then result: {:?}", chained);
+}`,
+    hint: "Use `map()` to transform the success value, and `and_then()` to chain operations that return Result.",
+    expectedOutput: "Map result: Ok(10)\nAnd then result: Ok(15)",
+  },
+  {
+    id: 139,
+    title: "Vector Push and Pop",
+    difficulty: "beginner",
+    category: "Collections - Vectors",
+    description: "Practice basic vector operations: push and pop.",
+    instructions: "Create a vector, push elements, and pop elements.",
+    starterCode: `fn main() {
+    let mut numbers = vec![1, 2, 3];
+    
+    numbers.push(4);
+    println!("After push: {:?}", numbers);
+    
+    numbers.pop();
+    println!("After pop: {:?}", numbers);
+}`,
+    hint: "Use `.push()` to add elements to the end, `.pop()` to remove the last element. Vectors grow dynamically.",
+    expectedOutput: "After push: [1, 2, 3, 4]\nAfter pop: [1, 2, 3]",
+  },
+  {
+    id: 140,
+    title: "Vector Iteration",
+    difficulty: "beginner",
+    category: "Collections - Vectors",
+    description: "Practice iterating over vectors in different ways.",
+    instructions: "Create a vector and iterate using indices, references, and for loops.",
+    starterCode: `fn main() {
+    let numbers = vec![10, 20, 30, 40, 50];
+    
+    println!("By index:");
+    for i in 0..numbers.len() {
+        println!("  Index {}: {}", i, numbers[i]);
+    }
+    
+    println!("By reference:");
+    for num in &numbers {
+        println!("  {}", num);
+    }
+}`,
+    hint: "Use `&vector` to iterate by reference, or indices with `0..vector.len()`. References avoid taking ownership.",
+    expectedOutput: "By index:\n  Index 0: 10\n  Index 1: 20\n  Index 2: 30\n  Index 3: 40\n  Index 4: 50\nBy reference:\n  10\n  20\n  30\n  40\n  50",
+  },
+  {
+    id: 141,
+    title: "Vector Sorting",
+    difficulty: "beginner",
+    category: "Collections - Vectors",
+    description: "Practice sorting vectors in different orders.",
+    instructions: "Create a vector and sort it in ascending and descending order.",
+    starterCode: `fn main() {
+    let mut numbers = vec![5, 2, 8, 1, 9, 3];
+    
+    numbers.sort();
+    println!("Ascending: {:?}", numbers);
+    
+    numbers.sort_by(|a, b| b.cmp(a));
+    println!("Descending: {:?}", numbers);
+}`,
+    hint: "Use `.sort()` for ascending, `.sort_by()` with `Ord::cmp` for descending, or `.sort_by_key()` for custom sorting.",
+    expectedOutput: "Ascending: [1, 2, 3, 5, 8, 9]\nDescending: [9, 8, 5, 3, 2, 1]",
+  },
+  {
+    id: 142,
+    title: "Vector Filtering",
+    difficulty: "intermediate",
+    category: "Collections - Vectors",
+    description: "Practice filtering vectors to keep only elements that meet criteria.",
+    instructions: "Create a vector and use filtering to keep only even numbers.",
+    starterCode: `fn main() {
+    let numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    
+    let evens: Vec<i32> = numbers
+        .into_iter()
+        .filter(|&x| x % 2 == 0)
+        .collect();
+    
+    println!("Even numbers: {:?}", evens);
+}`,
+    hint: "Use `.filter()` with a closure that returns `true` for elements to keep, `false` to discard.",
+    expectedOutput: "Even numbers: [2, 4, 6, 8, 10]",
+  },
+  {
+    id: 143,
+    title: "Vector Mapping",
+    difficulty: "intermediate",
+    category: "Collections - Vectors",
+    description: "Practice transforming vectors using map.",
+    instructions: "Create a vector and use map to transform each element.",
+    starterCode: `fn main() {
+    let numbers = vec![1, 2, 3, 4, 5];
+    
+    let squared: Vec<i32> = numbers
+        .iter()
+        .map(|x| x * x)
+        .collect();
+    
+    println!("Original: {:?}", numbers);
+    println!("Squared: {:?}", squared);
+}`,
+    hint: "Use `.map()` to transform each element. `.iter()` borrows, `.into_iter()` takes ownership.",
+    expectedOutput: "Original: [1, 2, 3, 4, 5]\nSquared: [1, 4, 9, 16, 25]",
+  },
+  {
+    id: 144,
+    title: "Vector Finding",
+    difficulty: "beginner",
+    category: "Collections - Vectors",
+    description: "Practice finding elements in vectors.",
+    instructions: "Create a vector and find elements using different methods.",
+    starterCode: `fn main() {
+    let numbers = vec![10, 20, 30, 40, 50];
+    
+    // Find first element > 25
+    let found = numbers.iter().find(|&&x| x > 25);
+    println!("First > 25: {:?}", found);
+    
+    // Check if contains
+    let contains_30 = numbers.contains(&30);
+    println!("Contains 30: {}", contains_30);
+    
+    // Find position
+    let position = numbers.iter().position(|&&x| x == 40);
+    println!("Position of 40: {:?}", position);
+}`,
+    hint: "Use `.find()` for first match, `.contains()` for existence, `.position()` for index.",
+    expectedOutput: "First > 25: Some(30)\nContains 30: true\nPosition of 40: Some(3)",
+  },
+  {
+    id: 145,
+    title: "Vector Split and Chunks",
+    difficulty: "intermediate",
+    category: "Collections - Vectors",
+    description: "Practice splitting vectors into chunks.",
+    instructions: "Create a vector and split it into chunks of a specific size.",
+    starterCode: `fn main() {
+    let numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    
+    let chunks: Vec<&[i32]> = numbers.chunks(3).collect();
+    
+    for (i, chunk) in chunks.iter().enumerate() {
+        println!("Chunk {}: {:?}", i, chunk);
+    }
+}`,
+    hint: "Use `.chunks(size)` to split a vector into slices of the specified size.",
+    expectedOutput: "Chunk 0: [1, 2, 3]\nChunk 1: [4, 5, 6]\nChunk 2: [7, 8, 9]\nChunk 3: [10]",
+  },
+  {
+    id: 146,
+    title: "String Concatenation",
+    difficulty: "beginner",
+    category: "Collections - Strings",
+    description: "Practice different ways to concatenate strings.",
+    instructions: "Create strings and concatenate them using different methods.",
+    starterCode: `fn main() {
+    let s1 = String::from("Hello");
+    let s2 = String::from(" ");
+    let s3 = String::from("World");
+    
+    // Method 1: push_str
+    let mut result1 = s1.clone();
+    result1.push_str(&s2);
+    result1.push_str(&s3);
+    println!("Method 1: {}", result1);
+    
+    // Method 2: + operator
+    let result2 = s1 + &s2 + &s3;
+    println!("Method 2: {}", result2);
+    
+    // Method 3: format!
+    let result3 = format!("{}{}{}", s1, s2, s3);
+    println!("Method 3: {}", result3);
+}`,
+    hint: "Use `push_str()` for in-place modification, `+` for concatenation, `format!` for formatted strings.",
+    expectedOutput: "Method 1: Hello World\nMethod 2: Hello World\nMethod 3: Hello World",
+  },
+  {
+    id: 147,
+    title: "String Trimming and Splitting",
+    difficulty: "intermediate",
+    category: "Collections - Strings",
+    description: "Practice string manipulation methods.",
+    instructions: "Create a string and trim whitespace, then split it into words.",
+    starterCode: `fn main() {
+    let s = String::from("  hello   world  ");
+    
+    let trimmed = s.trim();
+    println!("Trimmed: '{}'", trimmed);
+    
+    let words: Vec<&str> = trimmed.split_whitespace().collect();
+    println!("Words: {:?}", words);
+}`,
+    hint: "Use `.trim()` to remove leading/trailing whitespace, `.split_whitespace()` to split on any whitespace.",
+    expectedOutput: "Trimmed: 'hello   world'\nWords: [\"hello\", \"world\"]",
+  },
+  {
+    id: 148,
+    title: "HashMap Basic Operations",
+    difficulty: "intermediate",
+    category: "Collections - HashMap",
+    description: "Practice basic HashMap operations: insert, get, remove.",
+    instructions: "Create a HashMap and perform basic operations.",
+    starterCode: `use std::collections::HashMap;
+
+fn main() {
+    let mut scores = HashMap::new();
+    
+    scores.insert(String::from("Alice"), 95);
+    scores.insert(String::from("Bob"), 87);
+    scores.insert(String::from("Charlie"), 92);
+    
+    println!("Alice's score: {:?}", scores.get("Alice"));
+    
+    scores.remove("Bob");
+    println!("After removing Bob: {:?}", scores);
+}`,
+    hint: "Use `.insert()` to add key-value pairs, `.get()` to retrieve values (returns Option), `.remove()` to delete.",
+    expectedOutput: "Alice's score: Some(95)\nAfter removing Bob: {\"Alice\": 95, \"Charlie\": 92}",
+  },
+  {
+    id: 149,
+    title: "HashMap Entry API",
+    difficulty: "intermediate",
+    category: "Collections - HashMap",
+    description: "Practice using the entry API for conditional insertion.",
+    instructions: "Use the entry API to insert values only if they don't exist.",
+    starterCode: `use std::collections::HashMap;
+
+fn main() {
+    let mut word_count = HashMap::new();
+    
+    // Insert if not exists, otherwise increment
+    *word_count.entry("hello").or_insert(0) += 1;
+    println!("First hello: {:?}", word_count);
+    
+    *word_count.entry("hello").or_insert(0) += 1;
+    println!("Second hello: {:?}", word_count);
+    
+    *word_count.entry("world").or_insert(0) += 1;
+    println!("First world: {:?}", word_count);
+}`,
+    hint: "Use `.entry(key).or_insert(default)` to get a mutable reference to insert or get the existing value.",
+    expectedOutput: "First hello: {\"hello\": 1}\nSecond hello: {\"hello\": 2}\nFirst world: {\"hello\": 2, \"world\": 1}",
+  },
+  {
+    id: 150,
+    title: "HashMap Iteration",
+    difficulty: "intermediate",
+    category: "Collections - HashMap",
+    description: "Practice iterating over HashMaps in different orders.",
+    instructions: "Create a HashMap and iterate over its key-value pairs.",
+    starterCode: `use std::collections::HashMap;
+
+fn main() {
+    let mut scores = HashMap::new();
+    scores.insert(String::from("Alice"), 95);
+    scores.insert(String::from("Bob"), 87);
+    scores.insert(String::from("Charlie"), 92);
+    
+    println!("Iterating:");
+    for (name, score) in &scores {
+        println!("  {} scored {}", name, score);
+    }
+    
+    println!("\nSorted by score:");
+    let mut sorted: Vec<_> = scores.iter().collect();
+    sorted.sort_by_key(|(_, score)| score);
+    
+    for (name, score) in sorted {
+        println!("  {} scored {}", name, score);
+    }
+}`,
+    hint: "Use `for (key, value) in &hashmap` for iteration. HashMaps don't guarantee order, so sort explicitly if needed.",
+    expectedOutput: "Iterating:\n  Alice scored 95\n  Bob scored 87\n  Charlie scored 92\n\nSorted by score:\n  Bob scored 87\n  Charlie scored 92\n  Alice scored 95",
+  }
 ];
