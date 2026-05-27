@@ -65,6 +65,7 @@ export function Sidebar({
               .map((challenge) => {
                 const isSelected = challenge.id === selectedId;
                 const isCompleted = completedIds.has(challenge.id);
+                const isLocked = !!challenge.locked;
                 const diff = difficultyConfig[challenge.difficulty];
                 return (
                   <button
@@ -73,12 +74,37 @@ export function Sidebar({
                     className={`group w-full text-left px-2.5 py-2 rounded-lg text-[13px] transition-all duration-200 flex items-center gap-2.5 mb-0.5 btn-press ${
                       isSelected
                         ? "bg-accent/12 text-accent border border-accent/20 shadow-sm shadow-accent/5"
+                        : isLocked
+                        ? "text-muted/70 hover:bg-surface-hover hover:text-foreground/90 border border-transparent"
                         : "text-foreground/75 hover:bg-surface-hover hover:text-foreground border border-transparent"
                     }`}
                   >
                     {/* Status indicator */}
                     <span className="shrink-0 w-5 h-5 flex items-center justify-center">
-                      {isCompleted ? (
+                      {isLocked ? (
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          className="text-muted/60 group-hover:text-accent transition-colors"
+                        >
+                          <rect
+                            x="5"
+                            y="11"
+                            width="14"
+                            height="9"
+                            rx="2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <path
+                            d="M8 11V7a4 4 0 1 1 8 0v4"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                        </svg>
+                      ) : isCompleted ? (
                         <svg
                           width="16"
                           height="16"

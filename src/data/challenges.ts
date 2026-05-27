@@ -8,6 +8,7 @@ export interface Challenge {
   starterCode: string;
   hint: string;
   expectedOutput?: string;
+  locked?: boolean;
 }
 
 // Static challenges data - kept for reference and seeding

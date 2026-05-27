@@ -8,6 +8,9 @@ import { Sidebar } from "./Sidebar";
 import { ChallengePane } from "./ChallengePane";
 import { CodeEditor } from "./CodeEditor";
 import { OutputPanel } from "./OutputPanel";
+import { PaywallModal } from "./PaywallModal";
+import { AuthPromptModal } from "./AuthPromptModal";
+
 
 // Custom SVG Logo Icon
 const LogoIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
@@ -47,6 +50,14 @@ export function AppShell() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [isLoadingChallenges, setIsLoadingChallenges] = useState(true);
+  const [paywall, setPaywall] = useState<{ open: boolean; title?: string }>({
+    open: false,
+  });
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
+  // Track if we've already shown the "please sign up" prompt for typing.
+  // We only auto-show once on write, but re-show on Run attempts (stronger intent).
+  const hasSeenWritePromptRef = useRef(false);
 
   // Load challenges from the database
   useEffect(() => {
@@ -109,18 +120,10 @@ export function AppShell() {
     setIsDragging(true);
   }, []);
 
-  // Load progress from server when authenticated
-  useEffect(() => {
-    if (status === "authenticated") {
-      loadProgressFromServer();
-    } else if (status === "unauthenticated") {
-      // Load from localStorage as fallback for unauthenticated users
-      loadProgressFromLocalStorage();
-      setIsLoadingProgress(false);
-    }
-  }, [status]);
-
-  const loadProgressFromServer = async (retryCount = 0) => {
+  // Load progress from server (authenticated users only).
+  // Unauthenticated users can browse challenges but the editor is gated.
+  // Defined as a regular function before the effect so it is hoisted for the recursive retry call.
+  async function loadProgressFromServer(retryCount = 0) {
     try {
       const res = await fetch("/api/progress");
       if (res.ok) {
@@ -128,13 +131,14 @@ export function AppShell() {
         const completed = new Set<number>();
         const codeMap: Record<number, string> = {};
         
-        Object.entries(data.progress).forEach(([challengeId, progress]: [string, any]) => {
+        Object.entries(data.progress).forEach(([challengeId, progress]) => {
+          const p = progress as { completed?: boolean; code?: string | null };
           const id = parseInt(challengeId);
-          if (progress.completed) {
+          if (p.completed) {
             completed.add(id);
           }
-          if (progress.code) {
-            codeMap[id] = progress.code;
+          if (p.code) {
+            codeMap[id] = p.code;
           }
         });
         
@@ -167,27 +171,17 @@ export function AppShell() {
     } finally {
       setIsLoadingProgress(false);
     }
-  };
+  }
 
-  const loadProgressFromLocalStorage = () => {
-    try {
-      const stored = localStorage.getItem("learn-to-code-progress");
-      if (stored) {
-        const completed = new Set<number>(JSON.parse(stored) as number[]);
-        setCompletedChallenges(completed);
-      }
-      
-      // Load saved code for all challenges
-      challenges.forEach(challenge => {
-        const saved = localStorage.getItem(`learn-to-code-code-${challenge.id}`);
-        if (saved) {
-          setSavedCode(prev => ({ ...prev, [challenge.id]: saved }));
-        }
-      });
-    } catch (error) {
-      console.error("Failed to load from localStorage:", error);
+  useEffect(() => {
+    if (status === "authenticated") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsLoadingProgress(true);
+      void loadProgressFromServer();
+    } else if (status === "unauthenticated") {
+      setIsLoadingProgress(false);
     }
-  };
+  }, [status]);
 
   const saveProgressToServer = async (challengeId: number, completed: boolean, code: string) => {
     if (status !== "authenticated") return;
@@ -205,13 +199,15 @@ export function AppShell() {
 
   const handleSelectChallenge = useCallback(
     (challenge: Challenge) => {
-      // Save current code before switching
-      if (selectedChallenge) {
-        if (status === "authenticated") {
-          saveProgressToServer(selectedChallenge.id, completedChallenges.has(selectedChallenge.id), code);
-        } else {
-          localStorage.setItem(`learn-to-code-code-${selectedChallenge.id}`, code);
-        }
+      // Locked challenges open the paywall instead of being selected.
+      if (challenge.locked) {
+        setPaywall({ open: true, title: challenge.title });
+        return;
+      }
+
+      // Save current code before switching (only for authenticated users)
+      if (selectedChallenge && status === "authenticated") {
+        saveProgressToServer(selectedChallenge.id, completedChallenges.has(selectedChallenge.id), code);
       }
       
       setSelectedChallenge(challenge);
@@ -224,6 +220,14 @@ export function AppShell() {
 
   const handleRunCode = useCallback(async () => {
     if (!selectedChallenge) return;
+
+    // For guests: show the friendly sign-up prompt instead of running.
+    // We always show on Run (even if they dismissed the typing prompt).
+    if (status === "unauthenticated") {
+      setShowAuthPrompt(true);
+      return;
+    }
+
     setIsRunning(true);
     setOutput("Compiling...");
 
@@ -231,9 +235,16 @@ export function AppShell() {
       const res = await fetch("/api/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code, challengeId: selectedChallenge.id }),
       });
       const data = await res.json();
+
+      if (res.status === 402 || data.locked) {
+        setPaywall({ open: true, title: selectedChallenge.title });
+        setOutput("");
+        setIsRunning(false);
+        return;
+      }
 
       if (data.success) {
         setOutput(data.stdout || "(no output)");
@@ -246,11 +257,9 @@ export function AppShell() {
           updated.add(selectedChallenge.id);
           setCompletedChallenges(updated);
           
-          // Save to server or localStorage
+          // Save completion to server (authenticated users only)
           if (status === "authenticated") {
             saveProgressToServer(selectedChallenge.id, true, code);
-          } else {
-            localStorage.setItem("learn-to-code-progress", JSON.stringify(Array.from(updated)));
           }
         }
       } else {
@@ -275,16 +284,24 @@ export function AppShell() {
     });
   }, [selectedChallenge]);
 
-  // Auto-save code when it changes
+  // Wrapped code change handler: guests can type and see the editor fully.
+  // We gently prompt them once the first time they start writing code.
+  const handleCodeChange = useCallback((newCode: string) => {
+    if (status === "unauthenticated" && !hasSeenWritePromptRef.current) {
+      hasSeenWritePromptRef.current = true;
+      setShowAuthPrompt(true);
+    }
+    // Always update so the editor feels completely real for guests too.
+    setCode(newCode);
+  }, [status]);
+
+  // Auto-save code when it changes (only for authenticated users now)
   useEffect(() => {
-    if (!selectedChallenge) return;
+    if (!selectedChallenge || status !== "authenticated") return;
+    
     const challengeId = selectedChallenge.id;
     const timer = setTimeout(() => {
-      if (status === "authenticated") {
-        saveProgressToServer(challengeId, completedChallenges.has(challengeId), code);
-      } else {
-        localStorage.setItem(`learn-to-code-code-${challengeId}`, code);
-      }
+      saveProgressToServer(challengeId, completedChallenges.has(challengeId), code);
       setSavedCode(prev => ({ ...prev, [challengeId]: code }));
     }, 1000);
     
@@ -342,6 +359,16 @@ export function AppShell() {
             />
           </div>
           
+          {session && !session.user?.hasPaid && (
+            <button
+              onClick={() => setPaywall({ open: true })}
+              className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider rounded-md bg-gradient-to-r from-accent to-amber-400 text-black hover:opacity-90 transition-opacity"
+              title="Unlock all 155 challenges"
+            >
+              ⚡ Unlock Pro
+            </button>
+          )}
+
           {session ? (
             <div className="relative">
               <button
@@ -414,14 +441,15 @@ export function AppShell() {
           {/* Challenge description */}
           <ChallengePane challenge={selectedChallenge} />
 
-          {/* Editor + output */}
+          {/* Editor + output — always visible so guests can see the code and starter.
+              We intercept writes/runs via modal for unauthenticated users. */}
           <div
             ref={containerRef}
             className={`flex-1 flex flex-col min-h-0 relative ${isDragging ? "select-none" : ""}`}
           >
             <CodeEditor
               code={code}
-              onChange={setCode}
+              onChange={handleCodeChange}
               onRun={handleRunCode}
               onReset={handleResetCode}
               isRunning={isRunning}
@@ -445,6 +473,17 @@ export function AppShell() {
 
 
       </div>
+
+      <PaywallModal
+        open={paywall.open}
+        onClose={() => setPaywall({ open: false })}
+        triggerTitle={paywall.title}
+      />
+
+      <AuthPromptModal
+        open={showAuthPrompt}
+        onClose={() => setShowAuthPrompt(false)}
+      />
     </div>
   );
 }
