@@ -120,7 +120,7 @@ export function AppShell() {
     }
   }, [status]);
 
-  const loadProgressFromServer = async () => {
+  const loadProgressFromServer = async (retryCount = 0) => {
     try {
       const res = await fetch("/api/progress");
       if (res.ok) {
@@ -140,6 +140,27 @@ export function AppShell() {
         
         setCompletedChallenges(completed);
         setSavedCode(codeMap);
+      } else if (res.status === 404 && retryCount === 0) {
+        // User not found in database, try to sync from session
+        console.log("User not found in database, attempting to sync...");
+        try {
+          const syncRes = await fetch("/api/auth/sync-user", { method: "POST" });
+          if (syncRes.ok) {
+            console.log("User synced successfully, retrying progress load");
+            // Retry loading progress after sync (only once)
+            await loadProgressFromServer(retryCount + 1);
+          } else {
+            console.error("Failed to sync user, signing out");
+            await signOut({ callbackUrl: "/auth/signin" });
+          }
+        } catch (syncError) {
+          console.error("Sync failed:", syncError);
+          await signOut({ callbackUrl: "/auth/signin" });
+        }
+      } else {
+        // Failed after retry or other error
+        console.error("Failed to load progress after retry");
+        await signOut({ callbackUrl: "/auth/signin" });
       }
     } catch (error) {
       console.error("Failed to load progress:", error);

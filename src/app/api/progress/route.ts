@@ -14,6 +14,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Check if user exists in database
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id }
+    });
+
+    if (!user) {
+      console.error("User not found in database:", session.user.id);
+      return NextResponse.json(
+        { error: "User not found. Please sign in again." },
+        { status: 404 }
+      );
+    }
+
     const progress = await prisma.progress.findMany({
       where: { userId: session.user.id },
       select: {
@@ -59,6 +72,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Invalid challengeId" },
         { status: 400 }
+      );
+    }
+
+    // Check if user exists in database
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id }
+    });
+
+    if (!user) {
+      console.error("User not found in database:", session.user.id);
+      return NextResponse.json(
+        { error: "User not found. Please sign in again." },
+        { status: 404 }
       );
     }
 

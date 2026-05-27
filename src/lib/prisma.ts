@@ -1,4 +1,9 @@
 import { PrismaClient } from '@prisma/client';
+import { config } from 'dotenv';
+import { resolve } from 'path';
+
+// Load environment variables explicitly
+config({ path: resolve(process.cwd(), '.env') });
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;

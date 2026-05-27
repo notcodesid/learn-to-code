@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun --bun next dev",
+    "dev": "bun --bun next dev --webpack",
     "build": "bun --bun next build",
     "start": "bun --bun next start",
     "lint": "bun --bun eslint",
@@ -17,6 +17,7 @@
     "@monaco-editor/react": "^4.7.0",
     "@prisma/client": "^6",
     "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
     "next-auth": "^4",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^3.0.0",
+    "@types/dotenv": "^8.2.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

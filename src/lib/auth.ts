@@ -56,38 +56,44 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account }: any) {
-      if (account?.provider === "google") {
-        try {
-          // Check if user exists, if not create them
-          const existingUser = await prisma.user.findUnique({
-            where: { email: user.email! }
-          });
+      if (!user?.email) {
+        console.error("No email in user object");
+        return false;
+      }
 
-          if (!existingUser) {
-            // Create new user from Google data
-            const newUser = await prisma.user.create({
-              data: {
-                email: user.email!,
-                name: user.name,
-                image: user.image,
-                emailVerified: new Date(),
-              }
-            });
-            user.id = newUser.id;
-          } else {
-            user.id = existingUser.id;
-            if (!existingUser.emailVerified) {
-              // Update email verification if needed
-              await prisma.user.update({
-                where: { id: existingUser.id },
-                data: { emailVerified: new Date() }
-              });
+      try {
+        // Check if user exists, if not create them (for both Google and credentials)
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email! }
+        });
+
+        if (!existingUser) {
+          // Create new user from OAuth/credentials data
+          const newUser = await prisma.user.create({
+            data: {
+              email: user.email!,
+              name: user.name || user.email?.split('@')[0],
+              image: user.image,
+              emailVerified: account?.provider === "google" ? new Date() : null,
             }
+          });
+          user.id = newUser.id;
+          console.log(`Created new user from ${account?.provider}:`, newUser.id);
+        } else {
+          user.id = existingUser.id;
+          console.log(`Found existing user for ${account?.provider}:`, existingUser.id);
+          
+          // Update user data if needed
+          if (account?.provider === "google" && !existingUser.emailVerified) {
+            await prisma.user.update({
+              where: { id: existingUser.id },
+              data: { emailVerified: new Date() }
+            });
           }
-        } catch (error) {
-          console.error("Error in signIn callback:", error);
-          return false;
         }
+      } catch (error) {
+        console.error("Error in signIn callback:", error);
+        return false;
       }
       return true;
     },
@@ -95,6 +101,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.picture = user.image;
+        console.log("JWT callback - Set token.id from user:", user.id);
       }
       if (account) {
         token.provider = account.provider;
@@ -105,10 +112,11 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.image = token.picture as string;
+        console.log("Session callback - Set session.user.id from token:", token.id);
       }
       return session;
     }
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  debug: false, // Disable debug warnings
 };
