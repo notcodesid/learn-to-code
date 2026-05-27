@@ -29,7 +29,7 @@ export function Sidebar({
   const totalChallenges = challenges.length;
 
   return (
-    <aside className="w-full h-full border-r border-border bg-surface/95 backdrop-blur-sm overflow-y-auto">
+    <aside className="w-80 shrink-0 h-full border-r border-border bg-surface/95 backdrop-blur-sm overflow-y-auto">
       <div className="p-3">
         {/* Progress summary */}
         <div className="mb-4 p-3 rounded-lg bg-surface-hover/50 border border-border/50 animate-fade-in-down">

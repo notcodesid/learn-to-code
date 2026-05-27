@@ -70,7 +70,7 @@ export function AppShell() {
     try {
       const stored = localStorage.getItem("learn-to-code-progress");
       if (stored) {
-        const completed = new Set(JSON.parse(stored));
+        const completed = new Set<number>(JSON.parse(stored) as number[]);
         setCompletedChallenges(completed);
       }
       
