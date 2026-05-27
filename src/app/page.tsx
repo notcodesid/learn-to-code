@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Play,
   Terminal,
@@ -35,6 +35,38 @@ const LogoIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
   </svg>
 );
 
+const CODE_SEGMENTS = [
+  { text: "fn ", className: "text-accent" },
+  { text: "main", className: "text-blue-400" },
+  { text: "() {\n", className: "" },
+  { text: "  ", className: "" },
+  { text: "let", className: "text-accent" },
+  { text: " language = ", className: "" },
+  { text: "\"Rust\"", className: "text-emerald-400" },
+  { text: ";\n  ", className: "" },
+  { text: "println!", className: "text-blue-400" },
+  { text: "(", className: "" },
+  { text: "\"Hello, {} learner!\"", className: "text-emerald-400" },
+  { text: ", language);\n\n  ", className: "" },
+  { text: "// Compiler checks test cases\n  ", className: "text-muted-foreground" },
+  { text: "let mut", className: "text-accent" },
+  { text: " lines_written = ", className: "" },
+  { text: "1", className: "text-amber-500" },
+  { text: ";\n  ", className: "" },
+  { text: "lines_written += ", className: "" },
+  { text: "999", className: "text-amber-500" },
+  { text: ";\n\n  ", className: "" },
+  { text: "assert_eq!", className: "text-blue-400" },
+  { text: "(lines_written, ", className: "" },
+  { text: "1000", className: "text-amber-500" },
+  { text: ");\n  ", className: "" },
+  { text: "println!", className: "text-blue-400" },
+  { text: "(", className: "" },
+  { text: "\"Muscle memory unlocked: {} lines.\"", className: "text-emerald-400" },
+  { text: ", lines_written);\n", className: "" },
+  { text: "}", className: "" }
+];
+
 export default function LandingPage() {
   const { data: session } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -44,9 +76,33 @@ export default function LandingPage() {
   const [mockRunning, setMockRunning] = useState(false);
   const [mockFinished, setMockFinished] = useState(false);
   const [mockActiveTab, setMockActiveTab] = useState<"main.rs" | "Cargo.toml">("main.rs");
+  const [typedLength, setTypedLength] = useState(0);
+
+  const totalLength = CODE_SEGMENTS.reduce((sum, seg) => sum + seg.text.length, 0);
+
+  useEffect(() => {
+    if (mockActiveTab === "main.rs") {
+      setTypedLength(0);
+      const startTimeout = setTimeout(() => {
+        const interval = setInterval(() => {
+          setTypedLength((prev) => {
+            if (prev >= totalLength) {
+              clearInterval(interval);
+              return totalLength;
+            }
+            return prev + 1;
+          });
+        }, 15);
+        return () => clearInterval(interval);
+      }, 500);
+
+      return () => clearTimeout(startTimeout);
+    }
+  }, [mockActiveTab, totalLength]);
 
   const triggerMockRun = () => {
     if (mockRunning) return;
+    setTypedLength(totalLength); // instantly complete typing
     setMockRunning(true);
     setMockFinished(false);
     setTimeout(() => {
@@ -57,6 +113,45 @@ export default function LandingPage() {
 
   const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
+  };
+
+  const renderTypedCode = () => {
+    let currentLen = 0;
+    const elements: React.ReactNode[] = [];
+
+    for (let i = 0; i < CODE_SEGMENTS.length; i++) {
+      const seg = CODE_SEGMENTS[i];
+      const segLen = seg.text.length;
+
+      if (currentLen >= typedLength) {
+        break;
+      }
+
+      if (currentLen + segLen >= typedLength) {
+        const visibleText = seg.text.slice(0, typedLength - currentLen);
+        elements.push(
+          <span key={i} className={seg.className}>
+            {visibleText}
+          </span>
+        );
+        break;
+      }
+
+      elements.push(
+        <span key={i} className={seg.className}>
+          {seg.text}
+        </span>
+      );
+      currentLen += segLen;
+    }
+
+    if (typedLength < totalLength) {
+      elements.push(
+        <span key="cursor" className="inline-block w-1.5 h-4 bg-accent animate-pulse ml-0.5 align-middle" />
+      );
+    }
+
+    return elements;
   };
 
   return (
@@ -146,9 +241,11 @@ export default function LandingPage() {
             see how it works
           </a>
         </div>
+      </section>
 
-        {/* --- High-Fidelity Workspace Mockup (Interactive) --- */}
-        <div className="mt-16 border border-border bg-surface/20 rounded-2xl overflow-hidden shadow-2xl relative max-w-5xl mx-auto backdrop-blur-sm">
+      {/* --- High-Fidelity Workspace Mockup (Interactive) --- */}
+      <section className="mx-auto w-full max-w-7xl px-6 pb-12">
+        <div className="border border-border bg-surface/20 rounded-2xl overflow-hidden shadow-2xl relative w-full backdrop-blur-sm">
           {/* Top Address & Control Bar */}
           <div className="h-11 bg-surface/60 border-b border-border flex items-center px-4 justify-between">
             <div className="flex gap-1.5">
@@ -163,45 +260,153 @@ export default function LandingPage() {
           </div>
 
           {/* Browser Workspace Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-12 min-h-[420px] text-left text-xs bg-background/40">
+          <div className="grid grid-cols-1 md:grid-cols-12 min-h-[700px] text-left text-xs bg-background/40">
             {/* Sidebar Column (Mock Challenges) - 3/12 cols */}
-            <div className="md:col-span-3 border-r border-border bg-surface/10 p-4 flex flex-col justify-between">
+            <div className="md:col-span-3 border-r border-border bg-surface/10 p-4 flex flex-col justify-between overflow-y-auto max-h-[700px]">
               <div>
                 <h3 className="font-bold text-foreground/85 tracking-wide uppercase text-[10px] mb-3 flex items-center gap-1.5">
                   <Layers className="w-3.5 h-3.5 text-accent" />
                   Syllabus Tracks
                 </h3>
-                <div className="space-y-1">
-                  {[
-                    { id: 1, label: "01. Hello, Rust!", status: "completed" },
-                    { id: 2, label: "02. Variables & Mutability", status: "active" },
-                    { id: 3, label: "03. References & Borrowing", status: "locked" },
-                    { id: 4, label: "04. Control Flow (if/else)", status: "locked" },
-                    { id: 5, label: "05. Pattern Matching", status: "locked" }
-                  ].map((item) => (
-                    <div
-                      key={item.id}
-                      className={`flex items-center justify-between p-2 rounded-lg transition select-none ${
-                        item.status === "active"
-                          ? "bg-accent/10 border border-accent/20 text-accent font-semibold"
-                          : "text-muted/80 hover:bg-surface/20"
-                      }`}
-                    >
-                      <span className="truncate">{item.label}</span>
-                      {item.status === "completed" && <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />}
-                      {item.status === "active" && <span className="w-1.5 h-1.5 rounded-full bg-accent animate-ping shrink-0" />}
-                      {item.status === "locked" && <span className="text-[10px] opacity-40 shrink-0">🔒</span>}
-                    </div>
-                  ))}
+
+                {/* Module 1: Foundations */}
+                <div className="mb-3">
+                  <div className="text-[9px] font-bold uppercase tracking-widest text-muted/50 mb-1.5 px-1 flex items-center justify-between">
+                    <span>Module 1 — Foundations</span>
+                    <span className="text-accent/70 tabular-nums">4/6</span>
+                  </div>
+                  <div className="space-y-0.5">
+                    {[
+                      { id: 1, label: "01. Hello, Rust!", status: "completed" },
+                      { id: 2, label: "02. Variables & Mutability", status: "completed" },
+                      { id: 3, label: "03. Data Types", status: "completed" },
+                      { id: 4, label: "04. Functions", status: "completed" },
+                      { id: 5, label: "05. Control Flow (if/else)", status: "active" },
+                      { id: 6, label: "06. Loops", status: "locked" }
+                    ].map((item) => (
+                      <div
+                        key={item.id}
+                        className={`flex items-center justify-between p-2 rounded-lg transition select-none text-[11px] ${
+                          item.status === "active"
+                            ? "bg-accent/10 border border-accent/20 text-accent font-semibold"
+                            : item.status === "completed"
+                            ? "text-muted/80"
+                            : "text-muted/50"
+                        }`}
+                      >
+                        <span className="truncate">{item.label}</span>
+                        {item.status === "completed" && <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />}
+                        {item.status === "active" && <span className="w-1.5 h-1.5 rounded-full bg-accent animate-ping shrink-0" />}
+                        {item.status === "locked" && <span className="text-[9px] opacity-40 shrink-0">🔒</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Module 2: Ownership & Memory */}
+                <div className="mb-3">
+                  <div className="text-[9px] font-bold uppercase tracking-widest text-muted/50 mb-1.5 px-1 flex items-center justify-between">
+                    <span>Module 2 — Ownership & Memory</span>
+                    <span className="text-muted/40 tabular-nums">0/4</span>
+                  </div>
+                  <div className="space-y-0.5">
+                    {[
+                      { id: 7, label: "07. Ownership Basics", status: "locked" },
+                      { id: 8, label: "08. References & Borrowing", status: "locked" },
+                      { id: 9, label: "09. Slices", status: "locked" },
+                      { id: 10, label: "10. Move vs Copy", status: "locked" }
+                    ].map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between p-2 rounded-lg transition select-none text-[11px] text-muted/50"
+                      >
+                        <span className="truncate">{item.label}</span>
+                        <span className="text-[9px] opacity-40 shrink-0">🔒</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Module 3: Structs, Enums & Patterns */}
+                <div className="mb-3">
+                  <div className="text-[9px] font-bold uppercase tracking-widest text-muted/50 mb-1.5 px-1 flex items-center justify-between">
+                    <span>Module 3 — Structs & Enums</span>
+                    <span className="text-muted/40 tabular-nums">0/4</span>
+                  </div>
+                  <div className="space-y-0.5">
+                    {[
+                      { id: 11, label: "11. Defining Structs", status: "locked" },
+                      { id: 12, label: "12. Struct Methods", status: "locked" },
+                      { id: 13, label: "13. Enums & Variants", status: "locked" },
+                      { id: 14, label: "14. Pattern Matching", status: "locked" }
+                    ].map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between p-2 rounded-lg transition select-none text-[11px] text-muted/50"
+                      >
+                        <span className="truncate">{item.label}</span>
+                        <span className="text-[9px] opacity-40 shrink-0">🔒</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Module 4: Error Handling & Collections */}
+                <div className="mb-3">
+                  <div className="text-[9px] font-bold uppercase tracking-widest text-muted/50 mb-1.5 px-1 flex items-center justify-between">
+                    <span>Module 4 — Error Handling</span>
+                    <span className="text-muted/40 tabular-nums">0/3</span>
+                  </div>
+                  <div className="space-y-0.5">
+                    {[
+                      { id: 15, label: "15. Option<T>", status: "locked" },
+                      { id: 16, label: "16. Result<T, E>", status: "locked" },
+                      { id: 17, label: "17. The ? Operator", status: "locked" }
+                    ].map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between p-2 rounded-lg transition select-none text-[11px] text-muted/50"
+                      >
+                        <span className="truncate">{item.label}</span>
+                        <span className="text-[9px] opacity-40 shrink-0">🔒</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Module 5: Traits & Generics */}
+                <div className="mb-3">
+                  <div className="text-[9px] font-bold uppercase tracking-widest text-muted/50 mb-1.5 px-1 flex items-center justify-between">
+                    <span>Module 5 — Traits & Generics</span>
+                    <span className="text-muted/40 tabular-nums">0/4</span>
+                  </div>
+                  <div className="space-y-0.5">
+                    {[
+                      { id: 18, label: "18. Defining Traits", status: "locked" },
+                      { id: 19, label: "19. Generic Functions", status: "locked" },
+                      { id: 20, label: "20. Lifetimes", status: "locked" },
+                      { id: 21, label: "21. Closures & Iterators", status: "locked" }
+                    ].map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between p-2 rounded-lg transition select-none text-[11px] text-muted/50"
+                      >
+                        <span className="truncate">{item.label}</span>
+                        <span className="text-[9px] opacity-40 shrink-0">🔒</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-              <div className="p-2.5 border border-border/60 bg-surface/30 rounded-xl mt-4">
+
+              {/* Overall progress */}
+              <div className="p-2.5 border border-border/60 bg-surface/30 rounded-xl mt-4 shrink-0">
                 <div className="flex items-center justify-between text-[10px] text-muted-foreground font-semibold mb-1">
-                  <span>CURRICULUM MODULE 1</span>
-                  <span>20% Complete</span>
+                  <span>OVERALL PROGRESS</span>
+                  <span>4/21 Challenges</span>
                 </div>
                 <div className="w-full bg-border h-1.5 rounded-full overflow-hidden">
-                  <div className="h-full bg-accent rounded-full w-1/5" />
+                  <div className="h-full bg-gradient-to-r from-accent to-amber-400 rounded-full" style={{ width: '19%' }} />
                 </div>
               </div>
             </div>
@@ -234,20 +439,10 @@ export default function LandingPage() {
                 </div>
 
                 {/* Editor Space */}
-                <div className="p-4 font-mono text-[11.5px] text-muted-foreground leading-relaxed overflow-x-auto min-h-[200px]">
+                <div className="p-4 font-mono text-[11.5px] text-muted-foreground leading-relaxed overflow-x-auto min-h-[450px]">
                   {mockActiveTab === "main.rs" ? (
-                    <pre className="text-foreground/90">
-                      <code>
-                        <span className="text-accent">fn</span> <span className="text-blue-400">main</span>() &#123;{"\n"}
-                        {"  "}<span className="text-accent">let</span> language = <span className="text-emerald-400">"Rust"</span>;{"\n"}
-                        {"  "}println!(<span className="text-emerald-400">"Hello, &#123;&#125; learner!"</span>, language);{"\n\n"}
-                        {"  "}<span className="text-muted-foreground">// Compiler checks test cases</span>{"\n"}
-                        {"  "}<span className="text-accent">let mut</span> lines_written = <span className="text-amber-500">1</span>;{"\n"}
-                        {"  "}lines_written += <span className="text-amber-500">999</span>;{"\n\n"}
-                        {"  "}assert_eq!(lines_written, <span className="text-amber-500">1000</span>);{"\n"}
-                        {"  "}println!(<span className="text-emerald-400">"Muscle memory unlocked: &#123;&#125; lines."</span>, lines_written);{"\n"}
-                        &#125;
-                      </code>
+                    <pre className="text-foreground/90 whitespace-pre">
+                      <code>{renderTypedCode()}</code>
                     </pre>
                   ) : (
                     <pre className="text-foreground/80">
@@ -277,7 +472,7 @@ export default function LandingPage() {
                     <span>{mockRunning ? "Compiling..." : "Run Code"}</span>
                   </button>
                 </div>
-                <div className="p-4 font-mono text-[10.5px] min-h-[90px] text-muted-foreground bg-black/15 select-none">
+                <div className="p-4 font-mono text-[10.5px] min-h-[180px] text-muted-foreground bg-black/15 select-none">
                   {mockRunning && (
                     <div className="space-y-1 text-accent animate-pulse">
                       <div>$ cargo test</div>

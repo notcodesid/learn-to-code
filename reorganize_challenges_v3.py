@@ -5,80 +5,63 @@ after their related basic concepts.
 """
 
 import re
-import json
 
 # Read the file
 with open('/Users/siddharth/projects/learn-to-code/src/data/challenges.ts', 'r') as f:
     content = f.read()
 
-# Extract the challenges array
-# Find the start of the array
-start_marker = 'export const challenges: Challenge[] = ['
-end_marker = '];'
-
-start_idx = content.find(start_marker)
-end_idx = content.rfind(end_marker)
-
-if start_idx == -1 or end_idx == -1:
-    print("Could not find challenges array")
+# Extract the header (interface definition and array start)
+header_match = re.search(r'(.*?export const challenges: Challenge \[\] = \[)', content, re.DOTALL)
+if not header_match:
+    print("Could not find header")
     exit(1)
 
-# Extract the header (interface definition and array start)
-header = content[:start_idx + len(start_marker)]
+header = header_match.group(1)
 
-# Extract the challenges array content (without the brackets)
-challenges_str = content[start_idx + len(start_marker):end_idx].strip()
+# Extract the challenges array content
+array_start = content.find('export const challenges: Challenge[] = [')
+array_end = content.rfind('];')
 
-# Parse each challenge object
-# This is a bit tricky because we need to parse the TypeScript objects
-# We'll split by looking for the pattern '  {' at the start of each challenge
+if array_start == -1 or array_end == -1:
+    print("Could not find array")
+    exit(1)
 
+array_content = content[array_start + len('export const challenges: Challenge[] = ['):array_end]
+
+# Simple brace counting to split challenges
 challenges = []
-current_challenge = ""
-in_challenge = False
+current = []
 brace_count = 0
+in_challenge = False
 
-lines = challenges_str.split('\n')
-for line in lines:
-    stripped = line.strip()
-    if stripped.startswith('{'):
-        if in_challenge:
-            challenges.append(current_challenge.strip())
-        current_challenge = line
+for char in array_content:
+    current.append(char)
+    if char == '{':
+        brace_count += 1
         in_challenge = True
-        brace_count = line.count('{') - line.count('}')
-    elif in_challenge:
-        current_challenge += '\n' + line
-        brace_count += line.count('{') - line.count('}')
-        if brace_count == 0 and stripped.endswith('},'):
-            challenges.append(current_challenge.strip())
-            current_challenge = ""
+    elif char == '}':
+        brace_count -= 1
+        if brace_count == 0 and in_challenge:
+            challenge_str = ''.join(current).strip()
+            if challenge_str.startswith('{') and challenge_str.endswith('}'):
+                challenges.append(challenge_str)
+            current = []
             in_challenge = False
-
-if current_challenge.strip():
-    challenges.append(current_challenge.strip())
 
 print(f"Found {len(challenges)} challenges")
 
-# Now reorganize according to the plan
-# IDs 1-6: Basics - keep
-# IDs 7-21: For Loops muscle memory - keep
-# IDs 22-100: Basic concepts
-# IDs 101-150: Ownership/Borrowing/Structs/Error/Collections muscle memory
-# IDs 151-162: Enums muscle memory
-# IDs 163-174: Generics/Traits muscle memory
-# IDs 175-182: Testing muscle memory
+# Function to extract ID from a challenge string
+def get_id(challenge):
+    match = re.search(r'id:\s*(\d+)', challenge)
+    return int(match.group(1)) if match else None
 
-# Extract sections by ID range
+# Function to extract section by ID range
 def extract_section(start_id, end_id):
     section = []
     for challenge in challenges:
-        # Extract ID from the challenge
-        match = re.search(r'id:\s*(\d+),', challenge)
-        if match:
-            challenge_id = int(match.group(1))
-            if start_id <= challenge_id <= end_id:
-                section.append((challenge_id, challenge))
+        challenge_id = get_id(challenge)
+        if challenge_id and start_id <= challenge_id <= end_id:
+            section.append((challenge_id, challenge))
     return section
 
 # Extract all sections
@@ -110,11 +93,9 @@ for section in [basics, for_loops, ownership_basics, structs_basics, enums_basic
 
 advanced = []
 for challenge in challenges:
-    match = re.search(r'id:\s*(\d+),', challenge)
-    if match:
-        challenge_id = int(match.group(1))
-        if challenge_id not in all_used_ids:
-            advanced.append((challenge_id, challenge))
+    challenge_id = get_id(challenge)
+    if challenge_id and challenge_id not in all_used_ids:
+        advanced.append((challenge_id, challenge))
 
 # Reassemble in new order
 new_order = []
@@ -147,9 +128,12 @@ for idx, (_, challenge) in enumerate(new_order, 1):
 
 # Reconstruct the file
 new_content = header + '\n'
-for challenge in renumbered_challenges:
-    new_content += '  ' + challenge + ',\n'
-new_content = new_content.rstrip(',\n') + '\n' + end_marker + '\n'
+for i, challenge in enumerate(renumbered_challenges):
+    new_content += '  ' + challenge
+    if i < len(renumbered_challenges) - 1:
+        new_content += ','
+    new_content += '\n'
+new_content += '];\n'
 
 # Write the new file
 with open('/Users/siddharth/projects/learn-to-code/src/data/challenges.ts', 'w') as f:

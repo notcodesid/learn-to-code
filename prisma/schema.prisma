@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -59,15 +59,32 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Challenge {
+  id             Int      @id @default(autoincrement())
+  title          String
+  difficulty     String
+  category       String
+  description    String
+  instructions   String   @db.Text
+  starterCode    String   @db.Text
+  hint           String   @db.Text
+  expectedOutput String?  @db.Text
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  progress       Progress[]
+}
+
 model Progress {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   userId      String
   challengeId Int
-  completed   Boolean  @default(false)
+  completed   Boolean    @default(false)
   code        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge   Challenge  @relation(fields: [challengeId], references: [id], onDelete: Cascade)
 
   @@unique([userId, challengeId])
 }

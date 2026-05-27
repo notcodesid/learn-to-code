@@ -10,7 +10,8 @@ export interface Challenge {
   expectedOutput?: string;
 }
 
-export const challenges: Challenge[] = [
+// Static challenges data - kept for reference and seeding
+export const staticChallenges: Challenge[] = [
   {
     id: 1,
     title: "Hello, Rust!",
@@ -3979,5 +3980,59 @@ fn main() {
 }`,
     hint: "Use `for (key, value) in &hashmap` for iteration. HashMaps don't guarantee order, so sort explicitly if needed.",
     expectedOutput: "Iterating:\n  Alice scored 95\n  Bob scored 87\n  Charlie scored 92\n\nSorted by score:\n  Bob scored 87\n  Charlie scored 92\n  Alice scored 95",
+  },
+  {
+    id: 151,
+    title: "Basic Enum Definition",
+    difficulty: "beginner",
+    category: "Enums - Basic Definition",
+    description: "Practice defining basic enums with variants.",
+    instructions: "Define a simple enum with a few variants and create instances of it.",
+    starterCode: `enum Direction {
+    North,
+    South,
+    East,
+    West,
+}
+
+fn main() {
+    let direction = Direction::North;
+    println!("Direction: {:?}", direction);
+}`,
+    hint: "Enums are defined with `enum Name { Variant1, Variant2 }`. Create instances with `Name::Variant`.",
+    expectedOutput: "Direction: North",
+  },
+  {
+    id: 152,
+    title: "Match with Enums",
+    difficulty: "intermediate",
+    category: "Enums - Pattern Matching",
+    description: "Practice using match expressions with enums.",
+    instructions: "Define an enum and use match to handle different variants.",
+    starterCode: `enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter,
+}
+
+fn value_in_cents(coin: Coin) -> u32 {
+    match coin {
+        Coin::Penny => 1,
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter => 25,
+    }
+}
+
+fn main() {
+    let penny = Coin::Penny;
+    let quarter = Coin::Quarter;
+    
+    println!("Penny: {} cents", value_in_cents(penny));
+    println!("Quarter: {} cents", value_in_cents(quarter));
+}`,
+    hint: "Use `match enum_value { Enum::Variant => result, ... }` to handle each variant.",
+    expectedOutput: "Penny: 1 cents\nQuarter: 25 cents",
   }
 ];

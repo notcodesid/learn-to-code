@@ -6,7 +6,11 @@
     "dev": "bun --bun next dev",
     "build": "bun --bun next build",
     "start": "bun --bun next start",
-    "lint": "bun --bun eslint"
+    "lint": "bun --bun eslint",
+    "seed": "bun --bun tsx prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "bun --bun tsx prisma/seed.ts"
   },
   "dependencies": {
     "@auth/core": "^0.34.3",
@@ -29,6 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
+    "tsx": "^4.22.3",
     "typescript": "^5"
   }
 }
