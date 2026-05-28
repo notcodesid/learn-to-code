@@ -89,6 +89,7 @@ model Challenge {
   starterCode    String   @db.Text
   hint           String   @db.Text
   expectedOutput String?  @db.Text
+  explanation    String?  @db.Text
   order          Int      @default(0)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

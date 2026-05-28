@@ -9,6 +9,7 @@ export interface Challenge {
   hint: string;
   expectedOutput?: string;
   locked?: boolean;
+  explanation?: string;
 }
 
 // Static challenges data - kept for reference and seeding
@@ -18,7 +19,7 @@ export const staticChallenges: Challenge[] = [
     title: "Hello, Rust!",
     difficulty: "beginner",
     category: "Basics",
-    description: "Learn the most fundamental Rust program — printing to the console.",
+    description: "Use `println!` to print text to the console. Example: `println!(\"Hello, World!\");`",
     instructions:
       "Write a program that prints `Hello, Rust!` to the console using the `println!` macro.",
     starterCode: `fn main() {
@@ -33,7 +34,7 @@ export const staticChallenges: Challenge[] = [
     title: "Variables & Mutability",
     difficulty: "beginner",
     category: "Basics",
-    description: "Understand how variables work in Rust and the difference between immutable and mutable bindings.",
+    description: "Variables are immutable by default. Use `let` for immutable, `let mut` for mutable. Example: `let x = 5; let mut y = 10; y = 15;`",
     instructions:
       "Declare an immutable variable `x` with value `5`, then declare a mutable variable `y` with value `10`. Reassign `y` to `y + x`. Print both values on separate lines.",
     starterCode: `fn main() {
@@ -54,7 +55,7 @@ export const staticChallenges: Challenge[] = [
     title: "Data Types",
     difficulty: "beginner",
     category: "Basics",
-    description: "Explore Rust's scalar and compound data types.",
+    description: "Common types: `i32` (integers), `f64` (decimals), `bool` (true/false), `char` (single character). Example: `let x: i32 = 42;`",
     instructions:
       "Create variables of these types: an `i32` integer with value `42`, a `f64` float with value `3.14`, a `bool` with value `true`, and a `char` with value `'R'`. Print each on a separate line.",
     starterCode: `fn main() {

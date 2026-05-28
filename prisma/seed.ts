@@ -23,6 +23,7 @@ async function main() {
         starterCode: challenge.starterCode,
         hint: challenge.hint,
         expectedOutput: challenge.expectedOutput || null,
+        explanation: challenge.explanation || null,
         order: challenge.id, // Use ID as order for now
       },
     });
