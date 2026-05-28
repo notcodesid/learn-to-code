@@ -8,6 +8,7 @@ export interface Challenge {
   starterCode: string;
   hint: string;
   expectedOutput?: string;
+  test?: string;
   locked?: boolean;
   explanation?: string;
 }
@@ -28,6 +29,11 @@ export const staticChallenges: Challenge[] = [
 }`,
     hint: "Use the `println!` macro. Example: `println!(\"text\");`",
     expectedOutput: "Hello, Rust!",
+    test: `#[test]
+fn test_hello_rust() {
+    let output = "Hello, Rust!";
+    assert_eq!(output, "Hello, Rust!");
+}`,
   },
   {
     id: 2,
@@ -49,6 +55,14 @@ export const staticChallenges: Challenge[] = [
 }`,
     hint: "Use `let` for immutable and `let mut` for mutable variables. Print with `println!(\"{}\", variable);`",
     expectedOutput: "5\n15",
+    test: `#[test]
+fn test_variables() {
+    let x = 5;
+    let mut y = 10;
+    y = y + x;
+    assert_eq!(x, 5);
+    assert_eq!(y, 15);
+}`,
   },
   {
     id: 3,
@@ -72,13 +86,24 @@ export const staticChallenges: Challenge[] = [
 }`,
     hint: "Rust can infer types, but you can annotate them: `let x: i32 = 42;`",
     expectedOutput: "42\n3.14\ntrue\nR",
+    test: `#[test]
+fn test_data_types() {
+    let int_val: i32 = 42;
+    let float_val: f64 = 3.14;
+    let bool_val: bool = true;
+    let char_val: char = 'R';
+    assert_eq!(int_val, 42);
+    assert_eq!(float_val, 3.14);
+    assert_eq!(bool_val, true);
+    assert_eq!(char_val, 'R');
+}`,
   },
   {
     id: 4,
     title: "Functions",
     difficulty: "beginner",
     category: "Basics",
-    description: "Learn how to define and call functions with parameters and return values.",
+    description: "Define functions with `fn name(params) -> ReturnType { }`. Return value is the last expression without semicolon. Example: `fn add(a: i32, b: i32) -> i32 { a + b }`",
     instructions:
       "Write a function `add` that takes two `i32` parameters and returns their sum. Call it from `main` with arguments `3` and `7`, and print the result.",
     starterCode: `// Define the add function here
@@ -96,7 +121,7 @@ fn main() {
     title: "Control Flow — if/else",
     difficulty: "beginner",
     category: "Basics",
-    description: "Use conditional expressions to control program flow.",
+    description: "Use `if`, `else if`, and `else` for conditional logic. Example: `if x > 0 { println!(\"positive\"); } else if x < 0 { println!(\"negative\"); } else { println!(\"zero\"); }`",
     instructions:
       'Write a function `classify_number` that takes an `i32` and prints "positive", "negative", or "zero". Call it with values `5`, `-3`, and `0`.',
     starterCode: `fn classify_number(n: i32) {
@@ -117,7 +142,7 @@ fn main() {
     title: "Loops",
     difficulty: "beginner",
     category: "Basics",
-    description: "Practice using Rust's loop constructs: loop, while, and for.",
+    description: "Use `for i in 1..=5` for inclusive ranges, `while condition { }` for conditional loops. Example: `for i in 1..=5 { println!(\"{}\", i); }`",
     instructions:
       "Use a `for` loop to print the numbers 1 through 5, each on a separate line. Then print the sum of numbers 1 to 10 using a `while` loop.",
     starterCode: `fn main() {

@@ -42,7 +42,9 @@ interface CodeEditorProps {
   onChange: (code: string) => void;
   onRun: () => void;
   onReset: () => void;
+  onTest?: () => void;
   isRunning: boolean;
+  hasTest?: boolean;
 }
 
 export function CodeEditor({
@@ -50,7 +52,9 @@ export function CodeEditor({
   onChange,
   onRun,
   onReset,
+  onTest,
   isRunning,
+  hasTest,
 }: CodeEditorProps) {
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -80,7 +84,7 @@ export function CodeEditor({
         <div className="flex items-center gap-2">
           <button
             onClick={onReset}
-            className="px-2.5 py-1 text-xs font-medium rounded-md bg-surface-hover text-muted hover:text-foreground transition-all duration-200 btn-press border border-transparent hover:border-border flex items-center gap-1.5"
+            className="h-8 px-3 text-xs font-medium rounded-md bg-surface-hover text-muted hover:text-foreground transition-all duration-200 btn-press border border-transparent hover:border-border flex items-center justify-center gap-1.5 min-w-[80px]"
           >
             <svg
               width="11"
@@ -99,7 +103,7 @@ export function CodeEditor({
           <button
             onClick={onRun}
             disabled={isRunning}
-            className="group px-4 py-1.5 text-xs font-bold rounded-md bg-accent text-white hover:bg-accent-hover transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 btn-glow btn-press shadow-sm shadow-accent/20"
+            className="group h-8 px-4 text-xs font-bold rounded-md bg-accent text-white hover:bg-accent-hover transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 min-w-[80px] btn-glow btn-press shadow-sm shadow-accent/20"
           >
             {isRunning ? (
               <>
@@ -144,6 +148,27 @@ export function CodeEditor({
               </>
             )}
           </button>
+
+          {hasTest && onTest && (
+            <button
+              onClick={onTest}
+              disabled={isRunning}
+              className="h-8 px-3 text-xs font-medium rounded-md bg-blue-500 text-white hover:bg-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 min-w-[80px] btn-press border border-transparent"
+            >
+              <svg
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M9 12l2 2 4-4" />
+                <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Test
+            </button>
+          )}
         </div>
       </div>
 

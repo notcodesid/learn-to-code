@@ -268,6 +268,37 @@ export function AppShell() {
     });
   }, [selectedChallenge]);
 
+  const handleTestCode = useCallback(async () => {
+    if (!selectedChallenge) return;
+
+    if (status === "unauthenticated") {
+      setShowAuthPrompt(true);
+      return;
+    }
+
+    setIsRunning(true);
+    setOutput("Running tests...");
+
+    try {
+      const res = await fetch("/api/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, test: selectedChallenge.test }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setOutput(data.stdout || "Tests passed!");
+      } else {
+        setOutput(data.stderr || "Test failed");
+      }
+    } catch (err) {
+      setOutput(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
+    } finally {
+      setIsRunning(false);
+    }
+  }, [code, selectedChallenge, status]);
+
   // Wrapped code change handler: guests can type and see the editor fully.
   // We gently prompt them once the first time they start writing code.
   const handleCodeChange = useCallback((newCode: string) => {
@@ -427,7 +458,9 @@ export function AppShell() {
               onChange={handleCodeChange}
               onRun={handleRunCode}
               onReset={handleResetCode}
+              onTest={handleTestCode}
               isRunning={isRunning}
+              hasTest={!!selectedChallenge.test}
             />
             {/* Drag Handle Divider */}
             <div

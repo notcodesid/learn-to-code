@@ -14,11 +14,9 @@ export function ChallengePane({
   justCompleted,
   compact,
 }: ChallengePaneProps) {
-  const [showHint, setShowHint] = useState(false);
   const [animKey, setAnimKey] = useState(0);
 
   useEffect(() => {
-    setShowHint(false);
     setAnimKey((k) => k + 1);
   }, [challenge.id]);
 
@@ -74,43 +72,6 @@ export function ChallengePane({
           <p className="text-sm text-foreground/85 leading-relaxed">
             {challenge.instructions}
           </p>
-        </div>
-
-        <button
-          onClick={() => setShowHint(!showHint)}
-          className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 btn-press border ${
-            showHint
-              ? "bg-accent/15 border-accent/30 text-accent"
-              : "bg-surface-hover border-border text-muted hover:text-foreground hover:border-border"
-          }`}
-        >
-          <span className="flex items-center gap-1.5">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              className={`transition-transform duration-200 ${showHint ? "rotate-180" : ""}`}
-            >
-              <path d="M12 2a7 7 0 017 7c0 2.5-1.3 4-3 5.5V17a1 1 0 01-1 1h-6a1 1 0 01-1-1v-2.5C6.3 13 5 11.5 5 9a7 7 0 017-7z" />
-              <path d="M10 21h4" />
-            </svg>
-            {showHint ? "Hide" : "Hint"}
-          </span>
-        </button>
-      </div>
-
-      {/* Hint with slide-down animation */}
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-out ${
-          showHint ? "max-h-40 opacity-100 mt-3" : "max-h-0 opacity-0 mt-0"
-        }`}
-      >
-        <div className="p-3 bg-accent/8 border border-accent/15 rounded-lg text-sm text-accent/90 leading-relaxed">
-          <span className="font-semibold text-accent">Hint: </span>
-          {challenge.hint}
         </div>
       </div>
     </div>
