@@ -3,7 +3,21 @@
 import dynamic from "next/dynamic";
 import { loader } from "@monaco-editor/react";
 
-loader.config({ paths: { vs: "/monaco/vs" } });
+// Suppress Monaco cancellation errors
+loader.config({ 
+  paths: { vs: "/monaco/vs" }
+});
+
+// Suppress cancellation errors in browser console
+if (typeof window !== "undefined") {
+  const originalError = console.error;
+  console.error = (...args) => {
+    if (typeof args[0] === "string" && args[0].includes("Canceled")) {
+      return; // Suppress Monaco cancellation errors
+    }
+    originalError.apply(console, args);
+  };
+}
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,

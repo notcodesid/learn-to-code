@@ -415,7 +415,7 @@ export function AppShell() {
             </div>
           ) : (
             <button
-              onClick={() => router.push("/auth/signin")}
+              onClick={() => setShowAuthPrompt(true)}
               className="px-3 py-1.5 text-xs font-medium rounded-md bg-accent text-white hover:opacity-90 transition-opacity"
             >
               Sign in

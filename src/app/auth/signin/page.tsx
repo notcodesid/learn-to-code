@@ -78,10 +78,6 @@ export default function SignInPage() {
             </svg>
             {isGoogleLoading ? "Connecting to Google..." : "Continue with Google"}
           </button>
-
-          <p className="mt-6 text-center text-xs text-muted">
-            One-click sign in. No passwords, no email verification.
-          </p>
         </div>
 
         <p className="text-center mt-6 text-xs text-muted/70">
