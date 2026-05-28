@@ -58,7 +58,7 @@ export default function SignInPage() {
           </p>
         </div>
 
-        <div className="bg-surface border border-border rounded-2xl p-8 shadow-xl">
+        <div className="px-6">
           {error && (
             <div className="mb-6 rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-2.5 text-sm text-red-400">
               {error}
@@ -79,10 +79,6 @@ export default function SignInPage() {
             {isGoogleLoading ? "Connecting to Google..." : "Continue with Google"}
           </button>
         </div>
-
-        <p className="text-center mt-6 text-xs text-muted/70">
-          Your first 35 challenges are free after signing in
-        </p>
       </div>
     </div>
   );

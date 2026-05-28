@@ -59,7 +59,7 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user, account, trigger }: any) {
+    async jwt({ token, user, account }: any) {
       if (user) {
         token.id = user.id;
         token.picture = user.image;
@@ -68,26 +68,12 @@ export const authOptions: NextAuthOptions = {
       if (account) {
         token.provider = account.provider;
       }
-      // Refresh hasPaid on session-update (or first sign-in) so paywall flips
-      // without requiring full sign-out after a successful payment.
-      if (token.id && (trigger === "update" || user || typeof token.hasPaid === "undefined")) {
-        try {
-          const dbUser = await prisma.user.findUnique({
-            where: { id: token.id as string },
-            select: { hasPaid: true },
-          });
-          token.hasPaid = !!dbUser?.hasPaid;
-        } catch (e) {
-          console.error("Failed to refresh hasPaid in jwt callback:", e);
-        }
-      }
       return token;
     },
     async session({ session, token }: any) {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.image = token.picture as string;
-        session.user.hasPaid = !!token.hasPaid;
         console.log("Session callback - Set session.user.id from token:", token.id);
       }
       return session;
