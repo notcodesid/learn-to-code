@@ -42,6 +42,8 @@ export async function canAccessChallenge(
   userId: string | null | undefined,
   challengeId: number
 ): Promise<boolean> {
+  if (!isPaywallEnabled()) return true;
+
   const freeIds = await getFreeChallengeIds();
   if (freeIds.has(challengeId)) return true;
   if (!userId) return false;
@@ -58,4 +60,23 @@ export async function markUserPaid(userId: string) {
     where: { id: userId },
     data: { hasPaid: true, paidAt: new Date() },
   });
+}
+
+/**
+ * Returns true if the paywall is currently active.
+ * Set PAYWALL_ENABLED=false in environment to disable all payment gating
+ * (useful for reviews, demos, or launches where you want the UI visible
+ * but no actual payment required).
+ */
+export function isPaywallEnabled(): boolean {
+  return process.env.PAYWALL_ENABLED !== "false";
+}
+
+/**
+ * Client-safe version of isPaywallEnabled.
+ * Use NEXT_PUBLIC_PAYWALL_ENABLED=false on the frontend when you want
+ * to keep payment UI visible but disable actual checkout during reviews.
+ */
+export function isPaywallEnabledClient(): boolean {
+  return process.env.NEXT_PUBLIC_PAYWALL_ENABLED !== "false";
 }

@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { PricingCard } from "./PricingCard";
+import { isPaywallEnabledClient } from "@/lib/payments";
 
 interface PaywallModalProps {
   open: boolean;
@@ -16,7 +17,15 @@ export function PaywallModal({ open, onClose, triggerTitle }: PaywallModalProps)
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const paywallEnabled = isPaywallEnabledClient();
+
   const handleDodoCheckout = useCallback(async () => {
+    if (!paywallEnabled) {
+      // In review/demo mode, just close the modal (user already has full access)
+      onClose();
+      return;
+    }
+
     if (!session?.user) {
       setError("Please sign in first to purchase.");
       return;
@@ -34,7 +43,7 @@ export function PaywallModal({ open, onClose, triggerTitle }: PaywallModalProps)
       setError(e.message || "Checkout failed");
       setIsLoading(false);
     }
-  }, [session]);
+  }, [session, paywallEnabled, onClose]);
 
   if (!open) return null;
 
@@ -68,6 +77,7 @@ export function PaywallModal({ open, onClose, triggerTitle }: PaywallModalProps)
           onCheckout={handleDodoCheckout}
           isLoading={isLoading}
           error={error}
+          reviewMode={!paywallEnabled}
         />
       </div>
     </div>

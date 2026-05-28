@@ -1,14 +1,14 @@
 import { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { canAccessChallenge } from "@/lib/payments";
+import { canAccessChallenge, isPaywallEnabled } from "@/lib/payments";
 
 export async function POST(request: NextRequest) {
   const { code, challengeId } = await request.json();
 
-  // Enforce paywall: locked challenges can't be run by free users.
-  // `challengeId` is optional for backwards compat but recommended.
-  if (typeof challengeId === "number") {
+  // Enforce paywall only when enabled.
+  // When PAYWALL_ENABLED=false, all challenges can be run.
+  if (isPaywallEnabled() && typeof challengeId === "number") {
     const session = await getServerSession(authOptions);
     const allowed = await canAccessChallenge(session?.user?.id, challengeId);
     if (!allowed) {

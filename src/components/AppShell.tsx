@@ -10,6 +10,7 @@ import { CodeEditor } from "./CodeEditor";
 import { OutputPanel } from "./OutputPanel";
 import { PaywallModal } from "./PaywallModal";
 import { AuthPromptModal } from "./AuthPromptModal";
+import { isPaywallEnabledClient } from "@/lib/payments";
 
 
 // Custom SVG Logo Icon
@@ -390,7 +391,7 @@ export function AppShell() {
             />
           </div>
 
-          {session && !session.user?.hasPaid && (
+          {session && (isPaywallEnabledClient() ? !session.user?.hasPaid : true) && (
             <button
               onClick={() => setPaywall({ open: true })}
               className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider rounded-md bg-gradient-to-r from-accent to-amber-400 text-black hover:opacity-90 transition-opacity"
