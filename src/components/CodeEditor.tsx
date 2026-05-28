@@ -3,9 +3,11 @@
 import dynamic from "next/dynamic";
 import { loader } from "@monaco-editor/react";
 
-// Suppress Monaco cancellation errors
-loader.config({ 
-  paths: { vs: "/monaco/vs" }
+// Use CDN for Monaco Editor files
+loader.config({
+  paths: {
+    vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs"
+  }
 });
 
 // Suppress cancellation errors in browser console
