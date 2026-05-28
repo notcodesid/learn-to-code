@@ -72,22 +72,22 @@ The AI mentor works in two modes:
 
 The platform supports two payment methods for the lifetime unlock ($1):
 
-### Dodo Payments (Cards, UPI)
+### Dodo Payments (Cards) — USD First
 
 1. Create an account at [dodopayments.com](https://dodopayments.com)
-2. Create two products in the dashboard:
+2. Create a product in the dashboard:
    - **Lifetime Unlock (USD)**: $1 one-time
-   - **Lifetime Unlock (INR)**: ₹85 one-time
+   (INR product can be added later)
 3. Get your API key from Developer > API Keys
 4. Create a webhook endpoint at `/api/webhooks/dodo` and subscribe to `payment.succeeded` events
 5. Copy the webhook secret from the dashboard
-6. Add to `.env.local`:
+6. Add to `.env.local` (INR product is optional for now):
    ```
-   DODO_PAYMENTS_API_KEY=sk_live_xxx
-   DODO_PAYMENTS_ENVIRONMENT=test_mode  # or live_mode
+   DODO_PAYMENTS_API_KEY=sk_test_xxx
+   DODO_PAYMENTS_ENVIRONMENT=test_mode
    DODO_WEBHOOK_SECRET=whsec_xxx
-   DODO_PRODUCT_ID_USD=prod_xxx
-   DODO_PRODUCT_ID_INR=prod_xxx
+   DODO_PRODUCT_ID_USD=prod_xxx_usd
+   # DODO_PRODUCT_ID_INR=prod_xxx_inr   # add later
    ```
 
 ### Solana Pay (USDC)
