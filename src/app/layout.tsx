@@ -15,9 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "learn-to-code — Learn Rust with AI",
-  description:
-    "An AI-powered platform to learn Rust through curated challenges and instant mentorship.",
+  title: "Learn Rust",
 };
 
 export default function RootLayout({
