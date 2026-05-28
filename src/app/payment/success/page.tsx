@@ -1,16 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-/**
- * Post-checkout landing page. Checks the `status` query param from Dodo.
- * On success, polls the session so the JWT picks up `hasPaid=true` after
- * the webhook fires. On failure, shows an error and a retry link.
- */
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const status = searchParams.get("status");
   const isFailed = status === "failed" || status === "cancelled";
@@ -95,5 +90,17 @@ export default function PaymentSuccessPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-background p-6">
+        <div className="text-muted">Loading…</div>
+      </div>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }

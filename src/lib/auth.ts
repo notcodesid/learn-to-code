@@ -59,14 +59,22 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user, account }: any) {
+    async jwt({ token, user, account, trigger }: any) {
       if (user) {
         token.id = user.id;
         token.picture = user.image;
-        console.log("JWT callback - Set token.id from user:", user.id);
       }
       if (account) {
         token.provider = account.provider;
+      }
+      // Always refresh hasPaid from DB (on sign-in, session update, etc.)
+      if (token.id) {
+        const { prisma } = await import("@/lib/prisma");
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id },
+          select: { hasPaid: true },
+        });
+        token.hasPaid = dbUser?.hasPaid || false;
       }
       return token;
     },
@@ -74,7 +82,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.image = token.picture as string;
-        console.log("Session callback - Set session.user.id from token:", token.id);
+        session.user.hasPaid = token.hasPaid as boolean;
       }
       return session;
     }
