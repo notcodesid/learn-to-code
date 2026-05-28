@@ -33,7 +33,14 @@ export async function POST(_request: NextRequest) {
     const baseUrl =
       process.env.NEXT_PUBLIC_APP_URL ||
       process.env.NEXTAUTH_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
       "http://localhost:3000";
+
+    if (baseUrl.includes("localhost")) {
+      console.warn(
+        "[Dodo Checkout] baseUrl is localhost. Make sure NEXT_PUBLIC_APP_URL is set in production (Vercel)."
+      );
+    }
 
     const checkout = await client.checkoutSessions.create({
       product_cart: [{ product_id: productId, quantity: 1 }],
