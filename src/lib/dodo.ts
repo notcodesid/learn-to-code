@@ -23,13 +23,20 @@ export function getDodoClient(): DodoPayments {
 
 /** Map of currency to product ID configured in the Dodo dashboard. */
 export function getDodoProductId(currency: "USD" | "INR" = "USD"): string {
-  const id =
-    currency === "INR"
-      ? process.env.DODO_PRODUCT_ID_INR
-      : process.env.DODO_PRODUCT_ID_USD;
+  if (currency === "INR") {
+    const id = process.env.DODO_PRODUCT_ID_INR;
+    if (!id) {
+      throw new Error(
+        "DODO_PRODUCT_ID_INR is not configured yet. We are currently only supporting USD payments."
+      );
+    }
+    return id;
+  }
+
+  const id = process.env.DODO_PRODUCT_ID_USD;
   if (!id) {
     throw new Error(
-      `DODO_PRODUCT_ID_${currency} is not configured. Create the product in the Dodo dashboard first.`
+      "DODO_PRODUCT_ID_USD is not configured. Create the USD product in the Dodo dashboard first."
     );
   }
   return id;

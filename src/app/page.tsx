@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { PricingCard } from "@/components/PricingCard";
 import {
   Play,
   Terminal,
@@ -71,6 +72,30 @@ export default function LandingPage() {
   const { data: session } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+
+  // Pricing checkout states on landing page
+  const [isLoadingCheckout, setIsLoadingCheckout] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  const handleLandingCheckout = async () => {
+    if (!session?.user) {
+      window.location.href = `/auth/signin?callbackUrl=${encodeURIComponent("/learn")}`;
+      return;
+    }
+    setIsLoadingCheckout(true);
+    setCheckoutError(null);
+    try {
+      const res = await fetch("/api/checkout/dodo", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || "Failed to start checkout");
+      }
+      window.location.href = data.url;
+    } catch (e: any) {
+      setCheckoutError(e.message || "Checkout failed");
+      setIsLoadingCheckout(false);
+    }
+  };
 
   // Mock Workspace Interactive Preview States
   const [mockRunning, setMockRunning] = useState(false);
@@ -593,6 +618,25 @@ export default function LandingPage() {
               the browser sandbox verifies your safety constraints and unlocks the next level.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="mx-auto w-full max-w-5xl px-6 py-20 border-t border-border/30 scroll-mt-6">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <h2 className="font-sans text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
+            simple, transparent pricing
+          </h2>
+          <p className="mt-4 text-[16px] text-muted leading-relaxed">
+            Get unlimited lifetime access to all current and future challenges. No subscriptions, no hidden fees.
+          </p>
+        </div>
+        <div className="flex justify-center items-center">
+          <PricingCard
+            onCheckout={handleLandingCheckout}
+            isLoading={isLoadingCheckout}
+            error={checkoutError}
+          />
         </div>
       </section>
 

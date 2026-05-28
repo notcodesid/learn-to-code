@@ -28,7 +28,7 @@ export async function POST(_request: NextRequest) {
     }
 
     const client = getDodoClient();
-    const productId = getDodoProductId("USD"); // USD product; Dodo handles FX/currency display
+    const productId = getDodoProductId("USD"); // USD product only for now. Dodo can still show localized pricing/FX for many customers.
 
     const baseUrl =
       process.env.NEXT_PUBLIC_APP_URL ||
