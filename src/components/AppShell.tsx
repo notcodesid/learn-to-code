@@ -200,11 +200,11 @@ export function AppShell() {
 
   const handleSelectChallenge = useCallback(
     (challenge: Challenge) => {
-      // Locked challenges open the paywall instead of being selected.
-      if (challenge.locked) {
-        setPaywall({ open: true, title: challenge.title });
-        return;
-      }
+      // Temporarily disabled during review — all challenges are accessible
+      // if (challenge.locked) {
+      //   setPaywall({ open: true, title: challenge.title });
+      //   return;
+      // }
 
       // Save current code before switching (only for authenticated users)
       if (selectedChallenge && status === "authenticated") {
@@ -240,12 +240,13 @@ export function AppShell() {
       });
       const data = await res.json();
 
-      if (res.status === 402 || data.locked) {
-        setPaywall({ open: true, title: selectedChallenge.title });
-        setOutput("");
-        setIsRunning(false);
-        return;
-      }
+      // Temporarily disabled during review
+      // if (res.status === 402 || data.locked) {
+      //   setPaywall({ open: true, title: selectedChallenge.title });
+      //   setOutput("");
+      //   setIsRunning(false);
+      //   return;
+      // }
 
       if (data.success) {
         setOutput(data.stdout || "(no output)");
@@ -391,7 +392,8 @@ export function AppShell() {
             />
           </div>
 
-          {session && (isPaywallEnabledClient() ? !session.user?.hasPaid : true) && (
+          {/* Temporarily commented out for review period */}
+          {/* {session && (isPaywallEnabledClient() ? !session.user?.hasPaid : true) && (
             <button
               onClick={() => setPaywall({ open: true })}
               className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider rounded-md bg-gradient-to-r from-accent to-amber-400 text-black hover:opacity-90 transition-opacity"
@@ -399,7 +401,7 @@ export function AppShell() {
             >
               Unlock Pro
             </button>
-          )}
+          )} */}
 
           {session ? (
             <div className="relative">
@@ -508,11 +510,12 @@ export function AppShell() {
 
       </div>
 
-      <PaywallModal
+      {/* Temporarily commented out for review period */}
+      {/* <PaywallModal
         open={paywall.open}
         onClose={() => setPaywall({ open: false })}
         triggerTitle={paywall.title}
-      />
+      /> */}
 
       <AuthPromptModal
         open={showAuthPrompt}
