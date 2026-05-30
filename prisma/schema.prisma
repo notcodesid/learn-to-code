@@ -17,31 +17,11 @@ model User {
   emailVerified DateTime?
   password      String?
   image         String?
-  hasPaid       Boolean   @default(false)
-  paidAt        DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   progress      Progress[]
   accounts      Account[]
   sessions      Session[]
-  payments      Payment[]
-}
-
-model Payment {
-  id          String   @id @default(cuid())
-  userId      String
-  provider    String
-  providerRef String
-  amount      Decimal  @db.Decimal(18, 6)
-  currency    String
-  status      String
-  rawPayload  Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerRef])
-  @@index([userId])
 }
 
 model Account {

@@ -8,9 +8,7 @@ import { Sidebar } from "./Sidebar";
 import { ChallengePane } from "./ChallengePane";
 import { CodeEditor } from "./CodeEditor";
 import { OutputPanel } from "./OutputPanel";
-import { PaywallModal } from "./PaywallModal";
 import { AuthPromptModal } from "./AuthPromptModal";
-import { isPaywallEnabledClient } from "@/lib/payments";
 
 
 // Custom SVG Logo Icon
@@ -51,9 +49,6 @@ export function AppShell() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [isLoadingChallenges, setIsLoadingChallenges] = useState(true);
-  const [paywall, setPaywall] = useState<{ open: boolean; title?: string }>({
-    open: false,
-  });
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
   // Track if we've already shown the "please sign up" prompt for typing.
@@ -392,17 +387,6 @@ export function AppShell() {
             />
           </div>
 
-          {/* Temporarily commented out for review period */}
-          {/* {session && (isPaywallEnabledClient() ? !session.user?.hasPaid : true) && (
-            <button
-              onClick={() => setPaywall({ open: true })}
-              className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider rounded-md bg-gradient-to-r from-accent to-amber-400 text-black hover:opacity-90 transition-opacity"
-              title="Unlock all 155 challenges"
-            >
-              Unlock Pro
-            </button>
-          )} */}
-
           {session ? (
             <div className="relative">
               <button
@@ -509,13 +493,6 @@ export function AppShell() {
 
 
       </div>
-
-      {/* Temporarily commented out for review period */}
-      {/* <PaywallModal
-        open={paywall.open}
-        onClose={() => setPaywall({ open: false })}
-        triggerTitle={paywall.title}
-      /> */}
 
       <AuthPromptModal
         open={showAuthPrompt}

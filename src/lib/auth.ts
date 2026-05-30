@@ -67,22 +67,12 @@ export const authOptions: NextAuthOptions = {
       if (account) {
         token.provider = account.provider;
       }
-      // Always refresh hasPaid from DB (on sign-in, session update, etc.)
-      if (token.id) {
-        const { prisma } = await import("@/lib/prisma");
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id },
-          select: { hasPaid: true },
-        });
-        token.hasPaid = dbUser?.hasPaid || false;
-      }
       return token;
     },
     async session({ session, token }: any) {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.image = token.picture as string;
-        session.user.hasPaid = token.hasPaid as boolean;
       }
       return session;
     }
