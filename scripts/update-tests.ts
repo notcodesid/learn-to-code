@@ -1,5 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 
+/**
+ * @deprecated DO NOT RUN THIS SCRIPT.
+ *
+ * This was used to inject the original (broken) test values for challenges 1-3.
+ * Those tests were self-contained tautologies that never inspected student code.
+ *
+ * Use scripts/clear-fake-tests.ts instead to remove the bad data.
+ * Real `test` fields should only be added for challenges that implement
+ * pure functions (not print-based main() programs) where we can write
+ * meaningful assertions against the student's implementation.
+ */
+
 const prisma = new PrismaClient();
 
 async function main() {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Challenge } from "@/data/challenges";
+import { Challenge } from "@/types/challenge";
 
 interface SidebarProps {
   challenges: Challenge[];
@@ -65,7 +65,7 @@ export function Sidebar({
               .map((challenge) => {
                 const isSelected = challenge.id === selectedId;
                 const isCompleted = completedIds.has(challenge.id);
-                const diff = difficultyConfig[challenge.difficulty];
+                const diff = difficultyConfig[challenge.difficulty as keyof typeof difficultyConfig];
                 return (
                   <button
                     key={challenge.id}

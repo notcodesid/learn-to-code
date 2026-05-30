@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Challenge } from "@/data/challenges";
+import { Challenge } from "@/types/challenge";
 
 interface Message {
   role: "user" | "assistant";

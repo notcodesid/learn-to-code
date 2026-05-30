@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Challenge } from "@/data/challenges";
+import { Challenge } from "@/types/challenge";
 import { Sidebar } from "./Sidebar";
 import { ChallengePane } from "./ChallengePane";
 import { CodeEditor } from "./CodeEditor";
@@ -500,7 +500,7 @@ export function AppShell() {
 
             <OutputPanel
               output={output}
-              expectedOutput={selectedChallenge.expectedOutput}
+              expectedOutput={selectedChallenge.expectedOutput || undefined}
               isRunning={isRunning}
               height={outputHeight}
             />
