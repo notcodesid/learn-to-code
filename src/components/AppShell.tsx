@@ -195,12 +195,6 @@ export function AppShell() {
 
   const handleSelectChallenge = useCallback(
     (challenge: Challenge) => {
-      // Temporarily disabled during review — all challenges are accessible
-      // if (challenge.locked) {
-      //   setPaywall({ open: true, title: challenge.title });
-      //   return;
-      // }
-
       // Save current code before switching (only for authenticated users)
       if (selectedChallenge && status === "authenticated") {
         saveProgressToServer(selectedChallenge.id, completedChallenges.has(selectedChallenge.id), code);
@@ -234,14 +228,6 @@ export function AppShell() {
         body: JSON.stringify({ code, challengeId: selectedChallenge.id }),
       });
       const data = await res.json();
-
-      // Temporarily disabled during review
-      // if (res.status === 402 || data.locked) {
-      //   setPaywall({ open: true, title: selectedChallenge.title });
-      //   setOutput("");
-      //   setIsRunning(false);
-      //   return;
-      // }
 
       if (data.success) {
         setOutput(data.stdout || "(no output)");
