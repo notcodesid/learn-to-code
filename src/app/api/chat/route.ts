@@ -38,15 +38,16 @@ The student's current code is:
 ${code}
 \`\`\`
 
-Guidelines:
-- Be encouraging but honest about mistakes
-- Give hints rather than complete solutions
-- Explain Rust concepts clearly with examples
-- If the student asks for help, guide them step by step
-- Reference specific lines in their code when giving feedback
-- Keep responses concise (2-4 paragraphs max)
-- Use code snippets sparingly — prefer explanations
-- If the code is correct, congratulate them and explain why it works`;
+STRICT RULES - YOU MUST FOLLOW THESE:
+- NEVER give the student a complete working solution or the full code that solves the challenge.
+- NEVER write out the entire main() function or the exact code they need to submit.
+- If the student asks for the full code, the answer, or "just show me", politely refuse and give a tiny, partial hint instead (1-2 lines max).
+- Give very small hints, point out what concept to use, or ask them a guiding question.
+- You may show tiny syntax examples for unrelated concepts, but never the actual solution code for this challenge.
+- If their code is close, tell them what's missing without writing the missing lines for them.
+- Keep responses short. Be encouraging but do not do their work.
+
+If the student is asking for the direct solution, respond with something like: "I can't give you the full code, but here's a small hint..." and then give one very limited clue.`;
 
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -89,6 +90,21 @@ function fallbackMentorReply(
   code: string
 ): string {
   const lastMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
+
+  // Detect requests for full solutions / answers
+  const wantsFullSolution = 
+    lastMessage.includes("full code") ||
+    lastMessage.includes("complete code") ||
+    lastMessage.includes("give me the code") ||
+    lastMessage.includes("show me the code") ||
+    lastMessage.includes("what's the answer") ||
+    lastMessage.includes("the solution") ||
+    lastMessage.includes("just write") ||
+    lastMessage.includes("just show me");
+
+  if (wantsFullSolution) {
+    return `I can't give you the full solution for "${challenge.title}". That would defeat the purpose of the exercise.\n\nTry this instead: ${challenge.hint}\n\nWrite a small piece and run it — the compiler errors will guide you.`;
+  }
 
   if (lastMessage.includes("hint")) {
     return `Here's a hint for "${challenge.title}":\n\n${challenge.hint}`;

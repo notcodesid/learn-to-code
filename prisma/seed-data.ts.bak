@@ -264,7 +264,7 @@ fn main() {
     println!("5 * 4 = {}", result);
 }`
     hint: "Use a for loop to add the first number `b` times to simulate multiplication.",
-    expectedOutput: "5 * 4 = 20",
+    expectedOutput: null,
   },
   {
     id: 13,
@@ -287,7 +287,7 @@ fn main() {
     
 }`
     hint: "Multiply the base by itself `exp` times using a for loop.",
-    expectedOutput: "2^5 = 32",
+    expectedOutput: null,
   },
   {
     id: 14,
@@ -310,7 +310,7 @@ fn main() {
     
 }`
     hint: "A number is prime if it's not divisible by any number from 2 to its square root.",
-    expectedOutput: "Is 7 prime? true\nIs 12 prime? false",
+    expectedOutput: null,
   },
   {
     id: 15,
@@ -348,7 +348,7 @@ fn main() {
     
 }`
     hint: "Iterate backwards from n-1 to 1 and return the first divisor found.",
-    expectedOutput: "Largest proper divisor of 12: Some(6)\nLargest proper divisor of 7: Some(1)",
+    expectedOutput: null,
   },
   {
     id: 17,
@@ -372,7 +372,7 @@ fn main() {
     
 }`
     hint: "Use two variables to track the previous two Fibonacci numbers, updating them in each iteration.",
-    expectedOutput: "Fibonacci(7): 13\nFibonacci(10): 55",
+    expectedOutput: null,
   },
   {
     id: 18,
@@ -395,7 +395,7 @@ fn main() {
     
 }`
     hint: "Multiply all integers from 1 to n to calculate factorial.",
-    expectedOutput: "5! = 120\n7! = 5040",
+    expectedOutput: null,
   },
   {
     id: 19,
