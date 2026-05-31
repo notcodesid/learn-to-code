@@ -59,6 +59,10 @@ export function AppShell() {
   // We only auto-show once on write, but re-show on Run attempts (stronger intent).
   const hasSeenWritePromptRef = useRef(false);
 
+  // Track if we've already restored saved code after initial load
+  // to prevent the restore effect from running during auto-save operations.
+  const hasRestoredCodeRef = useRef(false);
+
   // Load challenges from the database
   useEffect(() => {
     const loadChallenges = async () => {
@@ -191,11 +195,15 @@ export function AppShell() {
     if (isLoadingProgress || isLoadingChallenges) return;
     if (!selectedChallenge) return;
 
+    // Only restore once after initial load to prevent interfering with auto-save
+    if (hasRestoredCodeRef.current) return;
+    hasRestoredCodeRef.current = true;
+
     const saved = savedCode[selectedChallenge.id];
     if (saved && saved !== code) {
       setCode(saved);
     }
-  }, [isLoadingProgress, isLoadingChallenges, selectedChallenge?.id, savedCode]);
+  }, [isLoadingProgress, isLoadingChallenges, selectedChallenge?.id, savedCode, code]);
 
   const saveProgressToServer = async (challengeId: number, completed: boolean, code: string) => {
     if (status !== "authenticated") return false;
@@ -252,6 +260,8 @@ export function AppShell() {
       const saved = savedCode[challenge.id] || challenge.starterCode;
       setCode(saved);
       setOutput("");
+      // Reset the restore flag so saved code is restored when switching challenges
+      hasRestoredCodeRef.current = false;
     },
     [selectedChallenge, code, savedCode, status]
   );
