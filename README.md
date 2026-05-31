@@ -1,12 +1,13 @@
 # learn-to-code
 
-An AI-powered platform to learn Rust through curated challenges and instant mentorship. Inspired by [RareCode.ai](https://rarecode.ai/).
+The best place on the internet for anyone learning a programming language. An AI-powered platform for mastering programming through curated challenges and instant mentorship. Inspired by [RareCode.ai](https://rarecode.ai/).
 
 ## Features
 
-- **155 curated Rust challenges** — from "Hello, Rust!" to advanced capstone projects, covering variables, ownership, borrowing, structs, enums, traits, generics, lifetimes, closures, and more
-- **Monaco code editor** — VS Code-quality editing with Rust syntax highlighting
-- **Live code execution** — compile and run Rust code via the Rust Playground API
+- **Multi-language support** — currently featuring 155+ curated challenges for Rust, with architecture designed to expand to any programming language
+- **Curated learning paths** — from "Hello, World!" to advanced capstone projects, covering language-specific concepts and best practices
+- **Monaco code editor** — VS Code-quality editing with syntax highlighting for multiple languages
+- **Live code execution** — compile and run code in various languages (currently Rust via Rust Playground API)
 - **AI mentor chat** — get hints, explanations, and feedback on your code (uses OpenAI API, with a built-in fallback)
 - **Progress tracking** — completed challenges are tracked in the database with a visual progress bar
 - **Dark theme** — clean, focused UI designed for extended coding sessions
@@ -31,7 +32,7 @@ cp .env.example .env.local
 bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to start learning Rust.
+Open [http://localhost:3000](http://localhost:3000) to start learning. Currently featuring Rust challenges with more languages coming soon.
 
 ## Tech Stack
 
@@ -40,10 +41,12 @@ Open [http://localhost:3000](http://localhost:3000) to start learning Rust.
 - **NextAuth** for authentication
 - **Tailwind CSS** for styling
 - **Monaco Editor** (same editor as VS Code)
-- **Rust Playground API** for code compilation and execution
+- **Language execution APIs** — currently Rust Playground API, designed to support multiple language runtimes
 - **OpenAI API** (optional) for AI mentor chat
 
-## Challenge Categories
+## Current Curriculum: Rust
+
+*Note: This is our first language. We're designed to expand to Python, JavaScript, Go, and more.*
 
 | Category | Challenges | Difficulty |
 |---|---|---|
@@ -55,6 +58,12 @@ Open [http://localhost:3000](http://localhost:3000) to start learning Rust.
 | Traits & Generics | Traits, Generics, Lifetimes | Advanced |
 | Functional Patterns | Closures & Iterators | Advanced |
 | Capstone | Mini CLI Statistics Tool | Advanced |
+
+## Vision
+
+Our goal is to become the best place on the internet for anyone learning a programming language. We're starting with Rust because of its growing importance in systems programming, blockchain, and performance-critical applications.
+
+The platform is architected to support any programming language — we plan to expand to Python, JavaScript/TypeScript, Go, and other popular languages based on community demand.
 
 ## AI Mentor
 
