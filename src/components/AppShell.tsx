@@ -45,6 +45,10 @@ export function AppShell() {
   const [completedChallenges, setCompletedChallenges] = useState<Set<number>>(
     new Set()
   );
+  // Keep a ref to the latest completed set so the auto-save effect doesn't
+  // re-run every time we create a new Set instance.
+  const completedChallengesRef = useRef(completedChallenges);
+  completedChallengesRef.current = completedChallenges;
   const [savedCode, setSavedCode] = useState<Record<number, string>>({});
   const [showSidebar, setShowSidebar] = useState(true);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
@@ -179,17 +183,60 @@ export function AppShell() {
     }
   }, [status]);
 
+  // After both challenges and progress have loaded, restore any saved code
+  // for the initially selected challenge. This fixes the case where we
+  // blindly set starterCode during the challenges load, before we knew
+  // the user's saved progress.
+  useEffect(() => {
+    if (isLoadingProgress || isLoadingChallenges) return;
+    if (!selectedChallenge) return;
+
+    const saved = savedCode[selectedChallenge.id];
+    if (saved && saved !== code) {
+      setCode(saved);
+    }
+  }, [isLoadingProgress, isLoadingChallenges, selectedChallenge?.id, savedCode]);
+
   const saveProgressToServer = async (challengeId: number, completed: boolean, code: string) => {
-    if (status !== "authenticated") return;
-    
+    if (status !== "authenticated") return false;
+
     try {
-      await fetch("/api/progress", {
+      const res = await fetch("/api/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ challengeId, completed, code }),
       });
+
+      if (res.ok) {
+        setSavedCode(prev => ({ ...prev, [challengeId]: code }));
+        return true;
+      }
+
+      // If user row is missing (can happen in some OAuth timing cases), try to sync once
+      if (res.status === 404) {
+        try {
+          const syncRes = await fetch("/api/auth/sync-user", { method: "POST" });
+          if (syncRes.ok) {
+            const retryRes = await fetch("/api/progress", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ challengeId, completed, code }),
+            });
+            if (retryRes.ok) {
+              setSavedCode(prev => ({ ...prev, [challengeId]: code }));
+              return true;
+            }
+          }
+        } catch (syncErr) {
+          console.error("User sync during save failed:", syncErr);
+        }
+      }
+
+      console.error("Failed to save progress, status:", res.status);
+      return false;
     } catch (error) {
       console.error("Failed to save progress:", error);
+      return false;
     }
   };
 
@@ -197,15 +244,16 @@ export function AppShell() {
     (challenge: Challenge) => {
       // Save current code before switching (only for authenticated users)
       if (selectedChallenge && status === "authenticated") {
-        saveProgressToServer(selectedChallenge.id, completedChallenges.has(selectedChallenge.id), code);
+        const isCompleted = completedChallengesRef.current.has(selectedChallenge.id);
+        saveProgressToServer(selectedChallenge.id, isCompleted, code);
       }
-      
+
       setSelectedChallenge(challenge);
       const saved = savedCode[challenge.id] || challenge.starterCode;
       setCode(saved);
       setOutput("");
     },
-    [selectedChallenge, code, savedCode, status, completedChallenges]
+    [selectedChallenge, code, savedCode, status]
   );
 
   const handleRunCode = useCallback(async () => {
@@ -236,10 +284,10 @@ export function AppShell() {
           (data.stdout || "").trim() === selectedChallenge.expectedOutput.trim();
         
         if (isCorrect) {
-          const updated = new Set(completedChallenges);
+          const updated = new Set(completedChallengesRef.current);
           updated.add(selectedChallenge.id);
           setCompletedChallenges(updated);
-          
+
           // Save completion to server (authenticated users only)
           if (status === "authenticated") {
             saveProgressToServer(selectedChallenge.id, true, code);
@@ -253,19 +301,27 @@ export function AppShell() {
     } finally {
       setIsRunning(false);
     }
-  }, [code, selectedChallenge, completedChallenges, status]);
+  }, [code, selectedChallenge, status]);
 
   const handleResetCode = useCallback(() => {
     if (!selectedChallenge) return;
-    setCode(selectedChallenge.starterCode);
+
+    const starter = selectedChallenge.starterCode;
+    setCode(starter);
     setOutput("");
-    // Clear saved code
+
+    // Remove from local cache
     setSavedCode(prev => {
       const updated = { ...prev };
       delete updated[selectedChallenge.id];
       return updated;
     });
-  }, [selectedChallenge]);
+
+    // Persist the reset to the server so it stays cleared across refreshes
+    if (status === "authenticated") {
+      void saveProgressToServer(selectedChallenge.id, false, starter);
+    }
+  }, [selectedChallenge, status]);
 
   const handleTestCode = useCallback(async () => {
     if (!selectedChallenge) return;
@@ -312,15 +368,19 @@ export function AppShell() {
   // Auto-save code when it changes (only for authenticated users now)
   useEffect(() => {
     if (!selectedChallenge || status !== "authenticated") return;
-    
+
     const challengeId = selectedChallenge.id;
     const timer = setTimeout(() => {
-      saveProgressToServer(challengeId, completedChallenges.has(challengeId), code);
+      // Use ref to get latest completed state without causing this effect to re-run
+      // every time a new Set is created in setCompletedChallenges.
+      const isCompleted = completedChallengesRef.current.has(challengeId);
+      saveProgressToServer(challengeId, isCompleted, code);
+      // Optimistic local update (saveProgressToServer also does this on success)
       setSavedCode(prev => ({ ...prev, [challengeId]: code }));
     }, 1000);
-    
+
     return () => clearTimeout(timer);
-  }, [code, selectedChallenge, status, completedChallenges]);
+  }, [code, selectedChallenge, status]);
 
   if (status === "loading" || isLoadingProgress || isLoadingChallenges || !selectedChallenge) {
     return (
