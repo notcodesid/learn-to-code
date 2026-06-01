@@ -225,7 +225,7 @@ export default function LandingPage() {
           write your first 1,000 lines of Rust
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-[16px] leading-relaxed text-muted">
-          Build coding muscle memory and make Rust syntax second nature.
+          Build coding muscle memory and make Rust syntax second nature. Learn through <Link href="/blog/learn-rust-online-interactive" className="text-accent hover:text-accent/80">interactive practice</Link> with real browser compilation.
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
           <Link
@@ -234,12 +234,12 @@ export default function LandingPage() {
           >
             start coding →
           </Link>
-          <a
-            href="#how"
+          <Link
+            href="/blog"
             className="rounded-full px-5 py-3 text-[15px] font-medium text-muted transition hover:bg-surface hover:text-foreground"
           >
-            see how it works
-          </a>
+            learning guides
+          </Link>
         </div>
       </section>
 
