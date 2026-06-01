@@ -4,7 +4,9 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Best Rust Online Compilers: Browser vs Desktop vs Remote Options",
   description: "Compare Rust Playpen, Rust Explorer, and browser-based IDEs for interactive learning without local setup. Find the best online Rust compiler for your needs.",
-  canonical: "https://learntocode.notcodesid.com/blog/rust-online-compiler",
+  alternates: {
+    canonical: "https://learntocode.notcodesid.com/blog/rust-online-compiler",
+  },
   keywords: ["rust online compiler", "rust playground", "browser rust ide", "online rust editor"],
   openGraph: {
     title: "Best Rust Online Compilers: Browser vs Desktop vs Remote Options",

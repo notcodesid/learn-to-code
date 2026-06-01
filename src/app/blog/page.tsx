@@ -5,7 +5,9 @@ import { getAllBlogPosts } from "@/lib/blog-posts";
 export const metadata: Metadata = {
   title: "Blog - Rust Learning Guides and Tutorials",
   description: "Expert guides on learning Rust programming through interactive practice, online compilers, and hands-on tutorials.",
-  canonical: "https://learntocode.notcodesid.com/blog",
+  alternates: {
+    canonical: "https://learntocode.notcodesid.com/blog",
+  },
 };
 
 export default function BlogPage() {
@@ -14,10 +16,13 @@ export default function BlogPage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="border-b border-border/30">
-        <div className="max-w-4xl mx-auto px-6 py-8">
+      <header className="border-b border-border/30 bg-surface/20">
+        <div className="max-w-3xl mx-auto px-6 py-8">
           <div className="flex items-center gap-2 mb-4">
-            <Link href="/" className="text-accent hover:text-accent/80 text-sm">
+            <Link 
+              href="/" 
+              className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors"
+            >
               ← Back to Learn to Code
             </Link>
           </div>
@@ -31,7 +36,7 @@ export default function BlogPage() {
       </header>
 
       {/* Posts Grid */}
-      <section className="max-w-4xl mx-auto px-6 py-12">
+      <section className="max-w-3xl mx-auto px-6 py-12">
         <div className="grid gap-8 md:gap-12">
           {posts.map((post) => (
             <article key={post.slug} className="border-b border-border/20 pb-8 last:border-b-0">
