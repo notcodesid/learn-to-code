@@ -9,6 +9,7 @@ import { ChallengePane } from "./ChallengePane";
 import { CodeEditor } from "./CodeEditor";
 import { OutputPanel } from "./OutputPanel";
 import { AuthPromptModal } from "./AuthPromptModal";
+import { formatRustTestResult } from "@/lib/format-test-output";
 
 
 // Custom SVG Logo Icon
@@ -54,6 +55,24 @@ export function AppShell() {
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [isLoadingChallenges, setIsLoadingChallenges] = useState(true);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeTab, setActiveTab] = useState<"challenge" | "editor" | "output">("challenge");
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+    };
+    handleResize();
+
+    // Close sidebar by default on mobile on first load
+    if (window.innerWidth < 768) {
+      setShowSidebar(false);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Track if we've already shown the "please sign up" prompt for typing.
   // We only auto-show once on write, but re-show on Run attempts (stronger intent).
@@ -262,9 +281,38 @@ export function AppShell() {
       setOutput("");
       // Reset the restore flag so saved code is restored when switching challenges
       hasRestoredCodeRef.current = false;
+
+      // On mobile, auto-close sidebar and switch to challenge description
+      if (window.innerWidth < 768) {
+        setShowSidebar(false);
+        setActiveTab("challenge");
+      }
     },
-    [selectedChallenge, code, savedCode, status]
+    [selectedChallenge, code, savedCode, status, setShowSidebar, setActiveTab]
   );
+
+  const markChallengeComplete = useCallback(() => {
+    if (!selectedChallenge) return;
+    const updated = new Set(completedChallengesRef.current);
+    updated.add(selectedChallenge.id);
+    setCompletedChallenges(updated);
+    if (status === "authenticated") {
+      saveProgressToServer(selectedChallenge.id, true, code);
+    }
+  }, [selectedChallenge, status, code]);
+
+  const runChallengeTests = useCallback(async (): Promise<{
+    success: boolean;
+    stdout: string;
+    stderr: string;
+  }> => {
+    const res = await fetch("/api/test", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, test: selectedChallenge?.test }),
+    });
+    return res.json();
+  }, [code, selectedChallenge?.test]);
 
   const handleRunCode = useCallback(async () => {
     if (!selectedChallenge) return;
@@ -274,6 +322,11 @@ export function AppShell() {
     if (status === "unauthenticated") {
       setShowAuthPrompt(true);
       return;
+    }
+
+    // On mobile, auto-switch to output tab
+    if (window.innerWidth < 768) {
+      setActiveTab("output");
     }
 
     setIsRunning(true);
@@ -288,20 +341,33 @@ export function AppShell() {
       const data = await res.json();
 
       if (data.success) {
-        setOutput(data.stdout || "(no output)");
-        const isCorrect = 
-          selectedChallenge.expectedOutput &&
-          (data.stdout || "").trim() === selectedChallenge.expectedOutput.trim();
-        
-        if (isCorrect) {
-          const updated = new Set(completedChallengesRef.current);
-          updated.add(selectedChallenge.id);
-          setCompletedChallenges(updated);
+        const stdout = (data.stdout || "").trim();
+        const expected = selectedChallenge.expectedOutput?.trim();
+        let outputText = data.stdout || "(no output)";
+        let passed = false;
 
-          // Save completion to server (authenticated users only)
-          if (status === "authenticated") {
-            saveProgressToServer(selectedChallenge.id, true, code);
+        if (selectedChallenge.test) {
+          const testData = await runChallengeTests();
+          const formatted = formatRustTestResult(
+            testData.success,
+            testData.stdout || "",
+            testData.stderr || ""
+          );
+          if (formatted.passed) {
+            passed = true;
+            outputText += `\n\n${formatted.display}`;
+          } else {
+            outputText += `\n\n${formatted.display}`;
           }
+        }
+
+        if (!passed && expected && stdout === expected) {
+          passed = true;
+        }
+
+        setOutput(outputText);
+        if (passed) {
+          markChallengeComplete();
         }
       } else {
         setOutput(data.stderr || "Compilation error");
@@ -311,7 +377,7 @@ export function AppShell() {
     } finally {
       setIsRunning(false);
     }
-  }, [code, selectedChallenge, status]);
+  }, [code, selectedChallenge, status, markChallengeComplete, runChallengeTests, setActiveTab]);
 
   const handleResetCode = useCallback(() => {
     if (!selectedChallenge) return;
@@ -341,28 +407,40 @@ export function AppShell() {
       return;
     }
 
+    if (!selectedChallenge.test) {
+      setOutput("No tests defined for this challenge.");
+      return;
+    }
+
+    // On mobile, auto-switch to output tab
+    if (window.innerWidth < 768) {
+      setActiveTab("output");
+    }
+
     setIsRunning(true);
     setOutput("Running tests...");
 
     try {
-      const res = await fetch("/api/test", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, test: selectedChallenge.test }),
-      });
-      const data = await res.json();
+      const data = await runChallengeTests();
 
-      if (data.success) {
-        setOutput(data.stdout || "Tests passed!");
+      const formatted = formatRustTestResult(
+        data.success,
+        data.stdout || "",
+        data.stderr || ""
+      );
+
+      if (formatted.passed) {
+        setOutput(formatted.display);
+        markChallengeComplete();
       } else {
-        setOutput(data.stderr || "Test failed");
+        setOutput(formatted.display);
       }
     } catch (err) {
       setOutput(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
     } finally {
       setIsRunning(false);
     }
-  }, [code, selectedChallenge, status]);
+  }, [selectedChallenge, status, runChallengeTests, markChallengeComplete, setActiveTab]);
 
   // Wrapped code change handler: guests can type and see the editor fully.
   // We gently prompt them once the first time they start writing code.
@@ -499,51 +577,127 @@ export function AppShell() {
       </header>
 
       {/* Main content */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        {showSidebar && (
-          <Sidebar
-            challenges={challenges}
-            selectedId={selectedChallenge.id}
-            completedIds={completedChallenges}
-            onSelect={handleSelectChallenge}
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Mobile Sidebar Overlay/Backdrop */}
+        {showSidebar && isMobile && (
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden animate-fade-in"
+            onClick={() => setShowSidebar(false)}
           />
         )}
 
-        {/* Center: challenge + editor + output */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Challenge description */}
-          <ChallengePane challenge={selectedChallenge} />
+        {/* Sidebar */}
+        <Sidebar
+          challenges={challenges}
+          selectedId={selectedChallenge.id}
+          completedIds={completedChallenges}
+          onSelect={handleSelectChallenge}
+          className={`
+            transition-transform duration-300 ease-in-out z-50
+            fixed inset-y-0 left-0 w-80 h-full border-r border-border
+            md:static md:translate-x-0 md:z-auto
+            ${showSidebar ? "translate-x-0" : "-translate-x-full md:hidden"}
+          `}
+        />
 
-          {/* Editor + output — always visible so guests can see the code and starter.
-              We intercept writes/runs via modal for unauthenticated users. */}
+        {/* Center: challenge + editor + output */}
+        <div className="flex-1 flex flex-col min-w-0 bg-background relative">
+          
+          {/* Mobile Tab Bar */}
+          <div className="flex md:hidden border-b border-border bg-surface shrink-0 z-10">
+            <button
+              onClick={() => setActiveTab("challenge")}
+              className={`flex-1 py-3.5 text-center text-xs font-bold tracking-wider uppercase border-b-2 transition-all duration-200 cursor-pointer ${
+                activeTab === "challenge"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-muted hover:text-foreground"
+              }`}
+            >
+              Challenge
+            </button>
+            <button
+              onClick={() => setActiveTab("editor")}
+              className={`flex-1 py-3.5 text-center text-xs font-bold tracking-wider uppercase border-b-2 transition-all duration-200 cursor-pointer ${
+                activeTab === "editor"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-muted hover:text-foreground"
+              }`}
+            >
+              Editor
+            </button>
+            <button
+              onClick={() => setActiveTab("output")}
+              className={`flex-1 py-3.5 text-center text-xs font-bold tracking-wider uppercase border-b-2 transition-all duration-200 cursor-pointer relative ${
+                activeTab === "output"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-muted hover:text-foreground"
+              }`}
+            >
+              Output
+              {output && !isRunning && activeTab !== "output" && (
+                <span className={`absolute top-3 right-4.5 w-1.5 h-1.5 rounded-full ${
+                  output.trim() === selectedChallenge.expectedOutput?.trim() || output.includes("✓ ") || output.includes("\n\n✓ ")
+                    ? "bg-success animate-pulse"
+                    : "bg-error animate-pulse"
+                }`} />
+              )}
+            </button>
+          </div>
+
+          {/* Challenge Description (Scrollable container on mobile, block layout on desktop) */}
+          <div className={`
+            md:block shrink-0
+            ${isMobile && activeTab === "challenge" ? "flex-1 overflow-y-auto block" : "hidden"}
+          `}>
+            <ChallengePane challenge={selectedChallenge} />
+          </div>
+
+          {/* Editor + Output Area */}
           <div
             ref={containerRef}
-            className={`flex-1 flex flex-col min-h-0 relative ${isDragging ? "select-none" : ""}`}
+            className={`
+              flex-1 flex flex-col min-h-0 relative
+              ${isMobile && activeTab !== "editor" && activeTab !== "output" ? "hidden" : "flex"}
+              ${isDragging ? "select-none" : ""}
+            `}
           >
-            <CodeEditor
-              code={code}
-              onChange={handleCodeChange}
-              onRun={handleRunCode}
-              onReset={handleResetCode}
-              onTest={handleTestCode}
-              isRunning={isRunning}
-              hasTest={!!selectedChallenge.test}
-            />
-            {/* Drag Handle Divider */}
+            {/* Code Editor */}
+            <div className={`
+              flex-1 flex flex-col min-h-0
+              ${isMobile && activeTab !== "editor" ? "hidden" : "flex"}
+            `}>
+              <CodeEditor
+                code={code}
+                onChange={handleCodeChange}
+                onRun={handleRunCode}
+                onReset={handleResetCode}
+                onTest={handleTestCode}
+                isRunning={isRunning}
+                hasTest={!!selectedChallenge.test}
+              />
+            </div>
+
+            {/* Resizable Divider (Desktop only) */}
             <div
-              className={`h-2 cursor-ns-resize bg-border/50 hover:bg-accent/40 active:bg-accent transition-colors shrink-0 flex items-center justify-center relative group z-10 select-none touch-none`}
+              className={`hidden md:flex h-2 cursor-ns-resize bg-border/50 hover:bg-accent/40 active:bg-accent transition-colors shrink-0 items-center justify-center relative group z-10 select-none touch-none`}
               onPointerDown={startDragging}
             >
               <div className="w-8 h-0.5 rounded-full bg-muted/20 group-hover:bg-accent/60 group-active:bg-accent transition-colors" />
             </div>
 
-            <OutputPanel
-              output={output}
-              expectedOutput={selectedChallenge.expectedOutput || undefined}
-              isRunning={isRunning}
-              height={outputHeight}
-            />
+            {/* Output Panel */}
+            <div className={`
+              ${isMobile && activeTab !== "output" ? "hidden" : "flex flex-col"}
+              ${isMobile ? "flex-1 min-h-0 h-full" : "shrink-0"}
+            `}>
+              <OutputPanel
+                output={output}
+                expectedOutput={selectedChallenge.expectedOutput || undefined}
+                isRunning={isRunning}
+                height={isMobile ? undefined : outputHeight}
+                className={isMobile ? "border-t-0" : ""}
+              />
+            </div>
           </div>
         </div>
 

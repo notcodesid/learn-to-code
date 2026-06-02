@@ -64,7 +64,7 @@ export function CodeEditor({
       <div className="flex items-center justify-between px-3 md:px-4 py-2 border-b border-border bg-surface/80 backdrop-blur-sm shrink-0">
         <div className="flex items-center gap-2">
           {/* File tab */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-surface-hover/60 rounded-md border border-border/50">
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-surface-hover/60 rounded-md border border-border/50">
             <svg
               width="12"
               height="12"

@@ -6,6 +6,7 @@ interface OutputPanelProps {
   isRunning: boolean;
   justCompleted?: boolean;
   height?: number;
+  className?: string;
 }
 
 export function OutputPanel({
@@ -14,27 +15,38 @@ export function OutputPanel({
   isRunning,
   justCompleted,
   height,
+  className = "",
 }: OutputPanelProps) {
-  const isMatch = expectedOutput && output.trim() === expectedOutput.trim();
-  const isError =
+  const trimmed = output.trim();
+  const isMatch = expectedOutput && trimmed === expectedOutput.trim();
+  const isTestFailure =
+    !isRunning && trimmed.startsWith("✗ Tests did not pass");
+  const isTestPass =
     !isRunning &&
+    (trimmed.startsWith("✓ ") || trimmed.includes("\n\n✓ "));
+  const isCompileError =
+    !isRunning &&
+    !isTestFailure &&
     output.length > 0 &&
     !isMatch &&
-    (output.includes("error") || output.includes("Error"));
+    (output.includes("error[E") ||
+      output.startsWith("Compilation") ||
+      (output.includes("error") && !isTestPass));
+  const isError = isTestFailure || isCompileError;
   const hasOutput = output.length > 0;
 
   return (
     <div
       style={height !== undefined ? { height: `${height}px` } : undefined}
-      className={`shrink-0 border-t flex flex-col transition-colors duration-500 ${
-        height === undefined ? "h-36 md:h-40" : ""
+      className={`border-t flex flex-col transition-colors duration-500 ${
+        height === undefined ? "flex-1 md:shrink-0 md:h-40" : "shrink-0"
       } ${
         justCompleted
           ? "border-success/30 bg-success/5"
           : isError
             ? "border-error/20 bg-error/5"
             : "border-border bg-[#111]"
-      }`}
+      } ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-3 md:px-4 py-1.5 border-b border-border/50 bg-surface/60 backdrop-blur-sm">
@@ -71,7 +83,36 @@ export function OutputPanel({
                 </svg>
                 Output matches expected
               </span>
-            ) : isError ? (
+            ) : isTestPass ? (
+              <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-success">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+                All tests passed
+              </span>
+            ) : isTestFailure ? (
+              <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-error">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M15 9l-6 6M9 9l6 6" />
+                </svg>
+                Tests failed
+              </span>
+            ) : isCompileError ? (
               <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-error">
                 <svg
                   width="12"
@@ -85,6 +126,10 @@ export function OutputPanel({
                   <path d="M15 9l-6 6M9 9l6 6" />
                 </svg>
                 Compilation error
+              </span>
+            ) : expectedOutput ? (
+              <span className="text-[10px] font-mono text-muted">
+                Expected: <span className="text-foreground/70">{expectedOutput}</span>
               </span>
             ) : null}
           </div>
