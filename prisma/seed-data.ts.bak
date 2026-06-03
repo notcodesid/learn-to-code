@@ -162,7 +162,7 @@ fn main() {
     title: "For Loop Counter",
     difficulty: "beginner",
     category: "Control Flow - For Loops",
-    description: "Learn basic for loop iteration with a counter.",
+    description: "Use `for i in start..=end` to iterate over inclusive ranges. Example: `for i in 1..=5 { println!(\"{}\", i); }`",
     instructions: "Use a for loop to count from 1 to 5 and print each number.",
     starterCode: `fn main() {
     // Use a for loop to count from 1 to 5
@@ -177,7 +177,7 @@ fn main() {
     title: "Variable Range Loop",
     difficulty: "beginner",
     category: "Control Flow - For Loops",
-    description: "Use for loops with variables to define ranges.",
+    description: "Range bounds can be variables, not just literals. Example: `let start = 3; let end = 7; for i in start..=end { println!(\"{}\", i); }`",
     instructions: "Create variables `start` and `end`, then use a for loop with these variables to iterate and print numbers.",
     starterCode: `fn main() {
     // Create variables start and end
@@ -193,7 +193,7 @@ fn main() {
     title: "Loop Counter with Mutable Variable",
     difficulty: "beginner",
     category: "Control Flow - For Loops",
-    description: "Combine mutable variables with for loops for counting.",
+    description: "Use `let mut` to update state inside a loop; use `_` when you don't need the loop variable. Example: `let mut count = 0; for _ in 1..=5 { count += 1; }`",
     instructions: "Use a mutable counter variable inside a for loop to track total iterations.",
     starterCode: `fn main() {
     // Create a mutable counter variable
@@ -211,47 +211,62 @@ fn main() {
     title: "Count Even Numbers",
     difficulty: "beginner",
     category: "Control Flow - For Loops",
-    description: "Use for loops to count specific values in a range.",
-    instructions: "Use a for loop to count how many even numbers are between 1 and 10.",
-    starterCode: `fn main() {
+    description: "Use `%` (modulus) to test divisibility inside a loop. Example: `if i % 2 == 0 { evens += 1; }`",
+    instructions:
+      "Use a for loop to count how many even numbers are between 1 and 10. Implement `count_evens_in_range(start, end)` and print the result from `main` as a single number (e.g. `5`).",
+    starterCode: `fn count_evens_in_range(start: i32, end: i32) -> i32 {
     // Initialize a counter for even numbers
-    
-    // Use a for loop to iterate from 1 to 10
-    
-    // Check if each number is even and increment the counter
-    
-    // Print the count of even numbers
-    
+    let mut counter = 0;
+
+    // Use a for loop from start to end (inclusive)
+    for x in start..=end {
+        // If x is even, increment the counter
+    }
+
+    counter
+}
+
+fn main() {
+    let count = count_evens_in_range(1, 10);
+    println!("{}", count);
 }`,
     hint: "Use the modulus operator `%` to check for even numbers: `i % 2 == 0`.",
-    expectedOutput: "Even numbers: 5",
+    expectedOutput: "5",
+    test: `#[test]
+fn test_count_evens_in_range() {
+    assert_eq!(count_evens_in_range(1, 10), 5);
+    assert_eq!(count_evens_in_range(1, 1), 0);
+    assert_eq!(count_evens_in_range(2, 3), 1);
+}`,
   },
   {
     id: 11,
     title: "Sum of Even Numbers",
     difficulty: "beginner",
     category: "Control Flow - For Loops",
-    description: "Use for loops to accumulate values with conditions.",
-    instructions: "Use a for loop to calculate the sum of all even numbers between 1 and 10.",
+    description: "Accumulate a running total in a mutable variable while looping. Example: `let mut sum = 0; for i in 1..=10 { if i % 2 == 0 { sum += i; } }`",
+    instructions: "Use a for loop to calculate the sum of all even numbers between 1 and 10. Print the result as a single number (e.g. `30`).",
     starterCode: `fn main() {
     // Initialize a sum variable
-    
+    let mut sum = 0;
+
     // Use a for loop to iterate from 1 to 10
-    
-    // Check if each number is even and add it to the sum
-    
+    for x in 1..=10 {
+        // Check if each number is even and add it to the sum
+    }
+
     // Print the sum of even numbers
-    
+    println!("{}", sum);
 }`,
     hint: "Accumulate values in a mutable variable: `sum += i`.",
-    expectedOutput: "Sum of evens: 30",
+    expectedOutput: "30",
   },
   {
     id: 12,
     title: "Product by Addition",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to implement multiplication through repeated addition.",
+    description: "Multiply by adding one number repeatedly in a loop. Example: `let mut product = 0; for _ in 0..b { product += a; }`",
     instructions: "Implement multiplication using a for loop with repeated addition. Calculate 5 * 4.",
     starterCode: `fn multiply_by_addition(a: i32, b: i32) -> i32 {
     // TODO: implement multiplication using repeated addition
@@ -271,7 +286,7 @@ fn main() {
     title: "Power Function",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to implement exponentiation.",
+    description: "Raise a number to a power by multiplying in a loop. Example: `let mut result = 1; for _ in 0..exp { result *= base; }`",
     instructions: "Implement a power function using for loops. Calculate 2^5.",
     starterCode: `fn power(base: i32, exp: u32) -> i32 {
     // TODO: implement exponentiation using for loops
@@ -294,7 +309,7 @@ fn main() {
     title: "Prime Number Checker",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to check if a number is prime.",
+    description: "A prime has no divisors except 1 and itself — test with a loop from 2 upward. Example: `for d in 2..n { if n % d == 0 { return false; } }`",
     instructions: "Write a function that checks if a number is prime using a for loop to test divisibility.",
     starterCode: `fn is_prime(n: u32) -> bool {
     // TODO: implement prime number check
@@ -317,7 +332,7 @@ fn main() {
     title: "Countdown Loop",
     difficulty: "beginner",
     category: "Control Flow - For Loops",
-    description: "Use for loops to count backwards.",
+    description: "Iterate a range in reverse with `.rev()`. Example: `for i in (1..=5).rev() { println!(\"{}\", i); }`",
     instructions: "Use a for loop to count down from 5 to 1, printing each number.",
     starterCode: `fn main() {
     // Use a for loop to count down from 5 to 1
@@ -332,7 +347,7 @@ fn main() {
     title: "Largest Proper Divisor",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to find the largest proper divisor of a number.",
+    description: "The largest proper divisor is the biggest number less than n that divides n evenly. Example: `for d in (1..n).rev() { if n % d == 0 { return Some(d); } }`",
     instructions: "Write a function that finds the largest proper divisor (largest number less than n that divides n) using a for loop.",
     starterCode: `fn largest_proper_divisor(n: u32) -> Option<u32> {
     // TODO: implement largest proper divisor finder
@@ -355,7 +370,7 @@ fn main() {
     title: "Fibonacci Function",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to generate Fibonacci sequence.",
+    description: "Each Fibonacci number is the sum of the two before it; track the last two values in a loop. Example: `let (mut a, mut b) = (0, 1); for _ in 0..n { let next = a + b; a = b; b = next; }`",
     instructions: "Write a function that generates the nth Fibonacci number using a for loop.",
     starterCode: `fn fibonacci(n: u32) -> u64 {
     // TODO: implement fibonacci function
@@ -379,7 +394,7 @@ fn main() {
     title: "Factorial Function",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to calculate factorial.",
+    description: "Factorial multiplies every integer from 1 to n. Example: `let mut fact = 1; for i in 1..=n { fact *= i; }`",
     instructions: "Write a function that calculates the factorial of a number using a for loop.",
     starterCode: `fn factorial(n: u32) -> u64 {
     // TODO: implement factorial function
@@ -402,7 +417,7 @@ fn main() {
     title: "Nested Loops",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use nested for loops to work with 2D patterns.",
+    description: "An inner loop runs completely for each outer iteration. Example: `for i in 1..=3 { for j in 1..=3 { print!(\"{}x{}={} \", i, j, i * j); } }`",
     instructions: "Use nested for loops to print a 3x3 multiplication table.",
     starterCode: `fn main() {
     // Use nested loops to print a pattern
@@ -420,7 +435,7 @@ fn main() {
     title: "Early Loop Termination",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use break to exit loops early based on conditions.",
+    description: "`break` exits a loop as soon as a condition is met. Example: `for i in 1..=100 { if i % 7 == 0 && i > 50 { println!(\"Found: {}\", i); break; } }`",
     instructions: "Use a for loop to find the first number greater than 50 that's divisible by 7.",
     starterCode: `fn main() {
     // Use a for loop with early termination
@@ -438,7 +453,7 @@ fn main() {
     title: "Loop with Continue",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use continue to skip iterations in loops.",
+    description: "`continue` skips the rest of the current iteration and moves to the next. Example: `for i in 1..=20 { if i % 3 == 0 { continue; } println!(\"{}\", i); }`",
     instructions: "Use a for loop to print all numbers from 1 to 20 except multiples of 3.",
     starterCode: `fn main() {
     for i in 1..=20 {
@@ -3739,7 +3754,7 @@ fn main() {
     title: "Basic Move Semantics",
     difficulty: "intermediate",
     category: "Ownership - Move Semantics",
-    description: "Practice basic ownership transfer between variables.",
+    description: "In Rust, each value has one owner. Assigning a heap value like `String` to another variable moves ownership — the first variable can no longer be used. Example: `let s1 = String::from(\"hi\"); let s2 = s1;` — only `s2` is valid afterward.",
     instructions: "Create a String, assign it to another variable, and observe that the original variable is no longer valid.",
     starterCode: `fn main() {
     let s1 = String::from("hello");
@@ -3760,7 +3775,7 @@ fn main() {
     title: "Function Ownership Transfer",
     difficulty: "intermediate",
     category: "Ownership - Move Semantics",
-    description: "Practice ownership transfer through function calls.",
+    description: "Passing a `String` into a function moves it unless you use a reference. The function owns the value while it runs and can return it to give ownership back. Example: `fn process(s: String) -> String { s }` called with `process(my_string)`.",
     instructions: "Create a function that takes ownership of a String, modifies it, and returns it.",
     starterCode: `fn take_and_modify(s: String) -> String {
     let mut modified = s;
@@ -3792,7 +3807,7 @@ fn main() {
     title: "Clone vs Move",
     difficulty: "intermediate",
     category: "Ownership - Clone vs Move",
-    description: "Practice the difference between cloning and moving values.",
+    description: "Move transfers ownership cheaply (no deep copy). `clone()` duplicates heap data so both variables stay independent — use it only when you need two owners. Example: `let b = a.clone();` keeps both `a` and `b` valid.",
     instructions: "Create a String, clone it to another variable, and show both variables remain valid.",
     starterCode: `fn main() {
     let s1 = String::from("hello");
@@ -3813,7 +3828,7 @@ fn main() {
     title: "Stack vs Heap Ownership",
     difficulty: "intermediate",
     category: "Ownership - Stack vs Heap",
-    description: "Understand which types are copied vs moved.",
+    description: "Types that implement `Copy` (like `i32`, `bool`) are duplicated on assignment. Heap types like `String` and `Vec` are moved instead — the source becomes invalid. Example: `let y = x;` works for both bindings when `x` is `i32`, not when `x` is `String`.",
     instructions: "Create both a stack-allocated type (i32) and a heap-allocated type (String). Show that copying works for stack types but moving for heap types.",
     starterCode: `fn main() {
     let x = 5;
@@ -3842,7 +3857,7 @@ fn main() {
     title: "Ownership in Structs",
     difficulty: "intermediate",
     category: "Ownership - Structs",
-    description: "Practice ownership with custom structs containing heap data.",
+    description: "When you move a struct, every field moves with it. If a field is a `String`, that heap data moves too and the old struct binding is mostly unusable. Example: `let b = a;` after `struct User { name: String, age: i32 }`.",
     instructions: "Create a struct with a String field. Move instances between variables and observe ownership behavior.",
     starterCode: `struct Person {
     name: String,
@@ -3879,7 +3894,7 @@ fn main() {
     title: "Partial Move with Structs",
     difficulty: "advanced",
     category: "Ownership - Partial Moves",
-    description: "Practice partial moves where some fields are moved but others remain valid.",
+    description: "You can move individual fields out of a struct. `Copy` fields (like `i32`) may still be read from the struct; moved fields (like `String`) cannot. Example: `let title = book.title;` moves only `title`, not the whole struct at once.",
     instructions: "Create a struct with multiple fields. Move some fields to show partial ownership.",
     starterCode: `struct Data {
     id: i32,
@@ -3921,7 +3936,7 @@ fn main() {
     title: "Ownership with Vectors",
     difficulty: "intermediate",
     category: "Ownership - Collections",
-    description: "Practice ownership with vectors and iteration.",
+    description: "`.into_iter()` consumes a collection — you lose the original `Vec`. `.iter()` borrows each element; the vector stays valid. Example: `for n in nums.iter() { ... }` vs `for n in nums.into_iter() { ... }`.",
     instructions: "Create a vector, iterate over it with ownership transfer, and show how the vector becomes invalid after iteration.",
     starterCode: `fn main() {
     let numbers = vec![1, 2, 3];
@@ -3947,7 +3962,7 @@ fn main() {
     title: "Ownership and Return Values",
     difficulty: "intermediate",
     category: "Ownership - Return Values",
-    description: "Practice returning ownership from functions.",
+    description: "Functions can return owned values, transferring heap data to the caller. Chain them by passing the return value into the next call. Example: `fn build() -> String { String::from(\"a\") }` then `let s = append(build());`.",
     instructions: "Write functions that return ownership of different types and show how to chain them.",
     starterCode: `fn create_string() -> String {
     String::from("created")
@@ -3982,7 +3997,7 @@ fn main() {
     title: "Multiple Ownership with Clone",
     difficulty: "intermediate",
     category: "Ownership - Multiple Owners",
-    description: "Practice enabling multiple ownership through cloning.",
+    description: "Rust allows only one owner at a time. If two parts of your program need their own `String`, `clone()` creates a separate copy. Example: `let second = first.clone();` — changes to one do not affect the other.",
     instructions: "Create a scenario where you need multiple owners of the same data by cloning.",
     starterCode: `fn main() {
     let original = String::from("shared data");
@@ -4010,7 +4025,7 @@ fn main() {
     title: "Ownership in Pattern Matching",
     difficulty: "advanced",
     category: "Ownership - Pattern Matching",
-    description: "Practice ownership transfer in pattern matching.",
+    description: "`match` can move data out of enums and structs — the matched value is consumed. After a branch moves a field, the original binding is gone. Example: `match msg { Message::Text(s) => println!(\"{s}\"), ... }` takes ownership of inner `s`.",
     instructions: "Use pattern matching to move values out of enums and structs.",
     starterCode: `enum Message {
     Quit,
@@ -4053,7 +4068,7 @@ fn main() {
     title: "Immutable Borrowing Basics",
     difficulty: "intermediate",
     category: "Borrowing - Immutable References",
-    description: "Practice borrowing values immutably with references.",
+    description: "An immutable reference `&T` lets you read data without taking ownership. The owner stays valid; you can have many `&` borrows at once (if nothing mutably borrows). Example: `fn len(s: &String) -> usize { s.len() }` and `len(&text)`.",
     instructions: "Create a String and pass an immutable reference to a function that prints its length.",
     starterCode: `fn calculate_length(s: &String) -> usize {
     s.len()
@@ -4079,7 +4094,7 @@ fn main() {
     title: "Mutable Borrowing",
     difficulty: "intermediate",
     category: "Borrowing - Mutable References",
-    description: "Practice borrowing values mutably to modify them.",
+    description: "A mutable reference `&mut T` lets you modify data in place — only one `&mut` at a time to the same data. Example: `fn push_hi(s: &mut String) { s.push_str(\" hi\"); }` called with `push_hi(&mut message)`.",
     instructions: "Create a String and pass a mutable reference to a function that modifies it.",
     starterCode: `fn append_world(s: &mut String) {
     s.push_str(" world");
@@ -4105,7 +4120,7 @@ fn main() {
     title: "Multiple Immutable References",
     difficulty: "intermediate",
     category: "Borrowing - Multiple References",
-    description: "Practice having multiple immutable references simultaneously.",
+    description: "Multiple immutable references to the same data are allowed because readers cannot mutate. Use them before any `&mut` borrow starts. Example: `let a = &s; let b = &s;` then use `a` and `b` while `s` is still borrowed immutably.",
     instructions: "Create a String and pass multiple immutable references to different functions.",
     starterCode: `fn print_length(s: &String) {
     println!("Length: {}", s.len());
@@ -4141,7 +4156,7 @@ fn main() {
     title: "Borrowing Rules Violation",
     difficulty: "intermediate",
     category: "Borrowing - Borrowing Rules",
-    description: "Understand the borrowing rules through examples.",
+    description: "The borrow rule: at any moment you may have many `&` OR one `&mut`, not both while `&` are still active. This prevents data races at compile time. Example: finish using `r1` and `r2` before creating `&mut s`.",
     instructions: "Show that you cannot have a mutable reference while immutable references exist.",
     starterCode: `fn main() {
     let mut s = String::from("hello");
@@ -4168,7 +4183,7 @@ fn main() {
     title: "Borrowing in Structs",
     difficulty: "intermediate",
     category: "Borrowing - Structs",
-    description: "Practice borrowing struct fields.",
+    description: "Structs are borrowed with `&self` (read) and `&mut self` (modify) in methods — same rules as variables. Example: `impl Counter { fn add(&mut self, n: i32) { self.value += n; } }`.",
     instructions: "Create a struct and borrow its fields immutably and mutably.",
     starterCode: `struct Point {
     x: i32,
@@ -4213,7 +4228,7 @@ fn main() {
     title: "Borrowing with Slices",
     difficulty: "intermediate",
     category: "Borrowing - Slices",
-    description: "Practice borrowing different types of slices.",
+    description: "A slice (`&str`, `&[T]`) is a borrowed view into contiguous data — it does not own the backing storage. Several slices can borrow different parts of one `String`. Example: `let mid = &s[2..5];` while `s` stays valid.",
     instructions: "Create a String and borrow different slices of it simultaneously.",
     starterCode: `fn main() {
     let s = String::from("hello world");
@@ -4239,7 +4254,7 @@ fn main() {
     title: "Borrowing in Functions",
     difficulty: "intermediate",
     category: "Borrowing - Functions",
-    description: "Practice passing references to functions and returning references.",
+    description: "Functions can take `&str` or `&String` and return `&str` that borrows from the input — the caller must keep the original alive. Example: `fn first_word(s: &str) -> &str` returning a substring slice.",
     instructions: "Write functions that take and return references, respecting borrowing rules.",
     starterCode: `fn first_word(s: &String) -> &str {
     let bytes = s.as_bytes();
@@ -4281,7 +4296,7 @@ fn main() {
     title: "Borrowing with Collections",
     difficulty: "intermediate",
     category: "Borrowing - Collections",
-    description: "Practice borrowing from vectors and other collections.",
+    description: "Borrow from a `Vec` with indexing (`&v[i]`) or iteration (`for x in &v`). The vector is not consumed. Example: `let peek = &items[0];` and `for item in &items { ... }`.",
     instructions: "Create a vector and borrow elements from it using indexing and iteration.",
     starterCode: `fn main() {
     let numbers = vec![10, 20, 30, 40, 50];
@@ -4320,7 +4335,7 @@ fn main() {
     title: "Borrowing and Iterators",
     difficulty: "intermediate",
     category: "Borrowing - Iterators",
-    description: "Practice borrowing through iterator methods.",
+    description: "Iterator adapters often borrow: `.iter()` gives `&T`, `.iter_mut()` gives `&mut T`, `.into_iter()` takes ownership. Example: `let doubled: Vec<_> = nums.iter().map(|x| x * 2).collect();` leaves `nums` intact.",
     instructions: "Use iterator methods that borrow values from the collection.",
     starterCode: `fn main() {
     let numbers = vec![1, 2, 3, 4, 5];
@@ -4348,7 +4363,7 @@ fn main() {
     title: "Borrow Checker Understanding",
     difficulty: "advanced",
     category: "Borrowing - Borrow Checker",
-    description: "Practice understanding the borrow checker through complex scenarios.",
+    description: "The borrow checker enforces memory safety at compile time — no dangling pointers, no double-free, no data races. If code breaks the rules, the compiler rejects it with a clear error. Example: you cannot use `s` while `&mut s` is still active.",
     instructions: "Create a scenario that demonstrates why the borrow checker prevents data races.",
     starterCode: `struct Data {
     value: i32,
@@ -5619,6 +5634,44 @@ fn main() {
     // TODO: implement`
     hint: "Use `match enum_value { Enum::Variant => result, ... }` to handle each variant.",
     expectedOutput: "Penny: 1 cents\nQuarter: 25 cents",
+  },
+  // Added via scripts/add-data-type-question.ts (after original "Data Types" challenge)
+  {
+    id: 999,
+    title: "Tuples and Arrays",
+    difficulty: "beginner",
+    category: "Basics",
+    description:
+      "Tuples group a fixed number of values (different types allowed). Arrays hold a fixed number of the *same* type with size known at compile time. Destructure tuples with pattern matching and index into arrays with `[n]`.",
+    instructions:
+      "Create a tuple `info` containing an i32 (42), a char ('R'), and a bool (true). Destructure it into three variables. Create an array `nums` of type [i32; 4] with the values [5, 10, 15, 20]. Print the char from the tuple, the third element of the array, and the array length — each on its own line.",
+    starterCode: `fn main() {
+    // Create the info tuple: (42, 'R', true)
+    
+    // Destructure it into num, ch, flag
+    
+    // Create the nums array: [5, 10, 15, 20]
+    
+    // Print: the char, the 3rd element (15), and the length (4)
+    
+}`,
+    hint: "Tuple literal + destructuring: `let t = (42, 'R', true); let (n, c, f) = t;`. Array: `let a: [i32; 4] = [5,10,15,20];` then `a[2]` (0-based) and `a.len()`.",
+    expectedOutput: "R\n15\n4",
+    explanation:
+      "Tuples are perfect for ad-hoc grouping of a few related values without creating a full struct. They can be destructured directly in let bindings. Arrays have their length encoded in the type ([T; N]), so the compiler knows the exact size. Both live on the stack and are very fast. When you need a growable list, reach for Vec<T> instead.",
+    test: `#[test]
+fn test_tuples_and_arrays() {
+    let info = (42i32, 'R', true);
+    let (num, ch, flag) = info;
+    assert_eq!(num, 42);
+    assert_eq!(ch, 'R');
+    assert_eq!(flag, true);
+
+    let nums: [i32; 4] = [5, 10, 15, 20];
+    assert_eq!(nums[2], 15);
+    assert_eq!(nums.len(), 4);
+}`,
+    order: 4,
   }
 ];
 

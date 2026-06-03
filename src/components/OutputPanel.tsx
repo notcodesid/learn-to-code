@@ -3,6 +3,8 @@
 interface OutputPanelProps {
   output: string;
   expectedOutput?: string;
+  /** When false, pass/fail is stdout match only (no unit tests). */
+  hasTest?: boolean;
   isRunning: boolean;
   justCompleted?: boolean;
   height?: number;
@@ -12,6 +14,7 @@ interface OutputPanelProps {
 export function OutputPanel({
   output,
   expectedOutput,
+  hasTest = false,
   isRunning,
   justCompleted,
   height,
@@ -127,9 +130,10 @@ export function OutputPanel({
                 </svg>
                 Compilation error
               </span>
-            ) : expectedOutput ? (
+            ) : expectedOutput && !hasTest ? (
               <span className="text-[10px] font-mono text-muted">
-                Expected: <span className="text-foreground/70">{expectedOutput}</span>
+                Expected output:{" "}
+                <span className="text-foreground/70">{expectedOutput}</span>
               </span>
             ) : null}
           </div>

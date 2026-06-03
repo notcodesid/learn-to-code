@@ -693,6 +693,7 @@ export function AppShell() {
               <OutputPanel
                 output={output}
                 expectedOutput={selectedChallenge.expectedOutput || undefined}
+                hasTest={!!selectedChallenge.test}
                 isRunning={isRunning}
                 height={isMobile ? undefined : outputHeight}
                 className={isMobile ? "border-t-0" : ""}
