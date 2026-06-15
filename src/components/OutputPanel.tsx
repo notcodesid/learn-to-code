@@ -48,7 +48,7 @@ export function OutputPanel({
           ? "border-success/30 bg-success/5"
           : isError
             ? "border-error/20 bg-error/5"
-            : "border-border bg-[#111]"
+            : "border-border bg-surface dark:bg-[#111]"
       } ${className}`}
     >
       {/* Header */}

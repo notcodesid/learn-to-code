@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllBlogPosts } from "@/lib/blog-posts";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata: Metadata = {
   title: "Blog - Rust Learning Guides and Tutorials",
@@ -18,13 +19,14 @@ export default function BlogPage() {
       {/* Header */}
       <header className="border-b border-border/30 bg-surface/20">
         <div className="max-w-3xl mx-auto px-6 py-8">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center justify-between gap-2 mb-4">
             <Link 
               href="/" 
               className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors"
             >
               ← Back to Learn to Code
             </Link>
+            <ThemeToggle />
           </div>
           <h1 className="text-4xl font-bold tracking-tight mb-4">
             Rust Learning Blog
