@@ -12,6 +12,7 @@ import {
   Layers,
   Check
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 // Custom SVG Logo Icon provided by the user
 const LogoIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
@@ -165,6 +166,7 @@ export default function LandingPage() {
           <span className="font-sans text-[17px] font-bold tracking-tight">learn-to-code</span>
         </div>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <Link
             className="rounded-full bg-foreground px-4 py-2 text-[14px] font-medium text-background transition hover:bg-foreground/90"
             href="/learn"
@@ -196,7 +198,7 @@ export default function LandingPage() {
                     className="fixed inset-0 z-40 cursor-default" 
                     onClick={() => setIsProfileOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-48 bg-[#161616] border border-border/80 rounded-xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-100 origin-top-right">
+                  <div className="absolute right-0 mt-2 w-48 bg-surface dark:bg-[#161616] border border-border/80 rounded-xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-100 origin-top-right">
                     <div className="px-4 py-1.5 text-xs text-muted-foreground truncate border-b border-border/30 pb-2 mb-1 select-none">
                       <div className="font-semibold text-foreground truncate">
                         {session.user?.name || "User"}
@@ -457,7 +459,7 @@ export default function LandingPage() {
               </div>
 
               {/* Console/Run Panel */}
-              <div className="border-t border-border bg-black/30 flex flex-col justify-between">
+              <div className="border-t border-border bg-gray-10 dark:bg-black/30 flex flex-col justify-between">
                 <div className="h-9.5 px-4 flex items-center justify-between border-b border-border bg-surface/10">
                   <div className="flex items-center gap-1.5 text-muted-foreground font-semibold text-[10px]">
                     <Terminal className="w-3.5 h-3.5 text-accent" />
@@ -471,7 +473,7 @@ export default function LandingPage() {
                     <span>{mockRunning ? "Compiling..." : "Run Code"}</span>
                   </button>
                 </div>
-                <div className="p-4 font-mono text-[10.5px] min-h-[180px] text-muted-foreground bg-black/15 select-none">
+                <div className="p-4 font-mono text-[10.5px] min-h-[180px] text-muted-foreground bg-gray-10 dark:bg-black/15 select-none">
                   {mockRunning && (
                     <div className="space-y-1 text-accent animate-pulse">
                       <div>$ cargo test</div>
@@ -648,7 +650,7 @@ export default function LandingPage() {
                 </span>
               </button>
               {activeFaq === idx && (
-                <div className="px-5 pb-4.5 pt-1 text-[13.5px] text-muted leading-relaxed border-t border-border/30 bg-black/10">
+                <div className="px-5 pb-4.5 pt-1 text-[13.5px] text-muted leading-relaxed border-t border-border/30 bg-gray-50 dark:bg-black/10">
                   {item.a}
                 </div>
               )}

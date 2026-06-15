@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -21,10 +22,11 @@ export default function RustOnlineCompilerPage() {
       {/* Header */}
       <header className="border-b border-border/30">
         <div className="max-w-4xl mx-auto px-6 py-8">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center justify-between gap-2 mb-4">
             <Link href="/blog" className="text-accent hover:text-accent/80 text-sm">
               ← Back to Blog
             </Link>
+            <ThemeToggle />
           </div>
           <h1 className="text-4xl font-bold tracking-tight mb-4">
             Best Rust Online Compilers: Browser vs Desktop vs Remote Options

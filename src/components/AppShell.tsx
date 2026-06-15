@@ -10,6 +10,7 @@ import { CodeEditor } from "./CodeEditor";
 import { OutputPanel } from "./OutputPanel";
 import { AuthPromptModal } from "./AuthPromptModal";
 import { formatRustTestResult } from "@/lib/format-test-output";
+import { ThemeToggle } from "./ThemeToggle";
 
 
 // Custom SVG Logo Icon
@@ -521,6 +522,8 @@ export function AppShell() {
             />
           </div>
 
+          <ThemeToggle />
+
           {session ? (
             <div className="relative">
               <button
@@ -546,7 +549,7 @@ export function AppShell() {
                     className="fixed inset-0 z-40 cursor-default" 
                     onClick={() => setIsProfileOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-48 bg-[#161616] border border-border/80 rounded-xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-100 origin-top-right">
+                  <div className="absolute right-0 mt-2 w-48 bg-surface dark:bg-[#161616] border border-border/80 rounded-xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-100 origin-top-right">
                     <div className="px-4 py-1.5 text-xs text-muted-foreground truncate border-b border-border/30 pb-2 mb-1 select-none">
                       <div className="font-semibold text-foreground truncate">
                         {session.user?.name || "User"}

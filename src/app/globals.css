@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #0f0f0f;
-  --foreground: #e5e5e5;
+  --background: light-dark(#fffffb, #0f0f0f);
+  --foreground: light-dark(#0f0f0f, #e5e5e5);
   --accent: #f97316;
   --accent-hover: #ea580c;
-  --surface: #1a1a1a;
-  --surface-hover: #252525;
-  --border: #2a2a2a;
-  --muted: #737373;
+  --surface: light-dark(#fffffb, #1a1a1a);
+  --surface-hover: light-dark(#fffffb, #252525);
+  --border: light-dark(#e1e1e1, #2a2a2a);
+  --muted: light-dark(#0f0f0f, #737373);
   --success: #22c55e;
   --error: #ef4444;
 }
@@ -53,7 +55,7 @@ body {
 /* Monaco editor overrides */
 .monaco-editor .margin,
 .monaco-editor .monaco-editor-background {
-  background-color: #111 !important;
+  background-color: light-dark(#fffffb, #111) !important;
 }
 
 /* ── Animations ────────────────────────────── */
@@ -67,7 +69,7 @@ body {
 
 .blog-content {
   /* Base paragraph rhythm */
-  --blog-text: #d1d1d1;
+  --blog-text: light-dark(#848484, #d1d1d1);
   --blog-muted: #8a8a8a;
 }
 
@@ -87,7 +89,7 @@ body {
   line-height: 1.25;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #f1f1f1;
+  color: light-dark(#646464, #f1f1f1);
   margin-top: 2.25em;
   margin-bottom: 0.85em;
   padding-bottom: 0.35em;
@@ -102,7 +104,7 @@ body {
   font-size: 1.15rem;
   line-height: 1.35;
   font-weight: 600;
-  color: #e8e8e8;
+  color: light-dark(#5b5b5b, #e8e8e8);
   margin-top: 1.85em;
   margin-bottom: 0.6em;
 }
@@ -145,7 +147,7 @@ body {
 
 /* Code blocks (if used) */
 .blog-content pre {
-  background: #111;
+  background: light-dark(#fffffb, #111);
   border: 1px solid var(--border);
   padding: 1rem 1.25rem;
   border-radius: 8px;
@@ -191,7 +193,7 @@ body {
   text-align: left;
   padding: 0.85rem 1rem;
   border-bottom: 1px solid var(--border);
-  color: #e5e5e5;
+  color: light-dark(#585858, #e5e5e5);
 }
 
 .blog-content td {

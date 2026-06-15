@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ReactNode } from "react";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface BlogPostLayoutProps {
   title: string;
@@ -23,13 +24,14 @@ export function BlogPostLayout({
       {/* Header */}
       <header className="border-b border-border/30 bg-surface/20">
         <div className="max-w-3xl mx-auto px-6 py-8">
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex items-center justify-between gap-2 mb-6">
             <Link
               href="/blog"
               className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors"
             >
               ← Back to Blog
             </Link>
+            <ThemeToggle />
           </div>
 
           <div className="flex items-center gap-3 text-xs uppercase tracking-[1.5px] text-muted/70 mb-4">
@@ -54,7 +56,7 @@ export function BlogPostLayout({
 
       {/* Article Body */}
       <article className="max-w-3xl mx-auto px-6 py-12">
-        <div className="blog-content text-[15px] leading-[1.75] text-foreground/90">
+        <div className="blog-content text-[15px] leading-[1.75] dark:text-foreground/90">
           {children}
         </div>
 

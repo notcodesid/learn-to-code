@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { loader } from "@monaco-editor/react";
+import { useTheme } from "next-themes";
 
 // Use CDN for Monaco Editor files
 loader.config({
@@ -58,6 +59,7 @@ export function CodeEditor({
   isRunning,
   hasTest,
 }: CodeEditorProps) {
+  const { resolvedTheme } = useTheme();
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Toolbar */}
@@ -177,7 +179,7 @@ export function CodeEditor({
         <MonacoEditor
           height="100%"
           defaultLanguage="rust"
-          theme="vs-dark"
+          theme={resolvedTheme === "dark" ? "vs-dark" : "light"}
           value={code}
           onChange={(value) => onChange(value || "")}
           options={{
