@@ -73,4 +73,22 @@ export const CHALLENGE_TEST_SPECS: Record<number, TestCaseSpec> = {
       { id: 2, label: "Case 2", args: [5], expected: 120 },
     ],
   },
+
+  32: {
+    functionName: "calculate_length",
+    cases: [
+      { id: 1, label: "Case 1", args: ["hello"], expected: 5 },
+      { id: 2, label: "Case 2", args: [""], expected: 0 },
+      { id: 3, label: "Case 3", args: ["Rustacean"], expected: 9 },
+    ],
+  },
+
+  38: {
+    functionName: "first_word",
+    cases: [
+      { id: 1, label: "Case 1", args: ["hello world"], expected: "hello" },
+      { id: 2, label: "Case 2", args: ["solo"], expected: "solo" },
+      { id: 3, label: "Case 3", args: ["hi there friend"], expected: "hi" },
+    ],
+  },
 };

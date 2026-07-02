@@ -653,206 +653,42 @@ fn main() {
   },
   {
     id: 31,
-    title: "Traits",
+    title: "Ownership in Pattern Matching",
     difficulty: "advanced",
-    category: "Traits & Generics",
-    description: "Define shared behavior with traits — Rust's version of interfaces.",
+    category: "Ownership & Borrowing",
+    description: "`match` can move data out of enums and structs — the matched value is consumed. After a branch moves a field, the original binding is gone. Example: `match msg { Message::Text(s) => println!(\"{s}\"), ... }` takes ownership of inner `s`.",
     instructions:
-      'Define a trait `Describable` with a method `describe(&self) -> String`. Implement it for a `Dog` struct (with `name: String` and `breed: String`) and a `Car` struct (with `make: String` and `year: u32`). Create one of each and print their descriptions.',
-    starterCode: `// Define the Describable trait
-
-
-// Define Dog struct and implement Describable
-
-
-// Define Car struct and implement Describable
-
+      "Define a `Message` enum with a `Write(String)` variant. Match on `Message::Write` to move the inner `String` out and print `Text: hello`.",
+    starterCode: `enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+}
 
 fn main() {
-    // Create a Dog and Car, print their descriptions
-    
+    let message = Message::Write(String::from("hello"));
 
-
-// Define Dog struct and implement Describable
-
-
-// Define Car struct and implement Describable
-
-
-fn main() {
-    // Create a Dog and Car, print their descriptions
-    
+    match message {
+        Message::Write(text) => {
+            // text is moved out here
+            println!("Text: {}", text);
+        }
+        _ => println!("Other message"),
+    }
 }`,
-    hint: 'Use `trait Describable { fn describe(&self) -> String; }` and `impl Describable for Dog { ... }`.',
-    expectedOutput: "Buddy is a Golden Retriever\n2024 Tesla",
+    hint: "Pattern matching can move values. Once matched, the original variable becomes invalid.",
+    expectedOutput: "Text: hello",
   },
   {
     id: 32,
-    title: "Generics",
-    difficulty: "advanced",
-    category: "Traits & Generics",
-    description: "Write flexible, reusable code with generic type parameters.",
-    instructions:
-      "Write a generic function `largest<T>` that takes a slice `&[T]` where `T: PartialOrd` and returns a reference to the largest element. Test it with a slice of integers `[34, 50, 25, 100, 65]` and a slice of chars `['y', 'm', 'a', 'q']`.",
-    starterCode: `fn largest<T: PartialOrd>(list: &[T]) -> &T {
-    // Find and return the largest element
-    
-}
-
-fn main() {
-    let numbers = vec![34, 50, 25, 100, 65];
-    println!("Largest number: {}", largest(&numbers));
-
-    let chars = vec!['y', 'm', 'a', 'q'];
-    println!("Largest char: {}", largest(&chars));
-`    // Find and return the largest element
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "Start with `let mut largest = &list[0];` then iterate and compare.",
-    expectedOutput: "Largest number: 100\nLargest char: y",
-  },
-  {
-    id: 33,
-    title: "Lifetimes",
-    difficulty: "advanced",
-    category: "Traits & Generics",
-    description: "Understand lifetime annotations that help the compiler ensure references are valid.",
-    instructions:
-      "Write a function `longest<'a>` that takes two string slices with the same lifetime and returns the longer one. Test it with different string pairs.",
-    starterCode: `fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
-    // Return the longer string
-    
-}
-
-fn main() {
-    let string1 = String::from("long string");
-    let result;
-    {
-        let string2 = String::from("xyz");
-        result = longest(string1.as_str(), string2.as_str());
-        println!("Longest: {}", result);
-    }
-`    // Return the longer string
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    }
-    // TODO: implement`
-    hint: "Compare lengths with `x.len()` and `y.len()`, return the longer one.",
-    expectedOutput: "Longest: long string",
-  },
-  {
-    id: 34,
-    title: "Closures & Iterators",
-    difficulty: "advanced",
-    category: "Functional Patterns",
-    description: "Use closures (anonymous functions) and iterator adaptors for expressive code.",
-    instructions:
-      "Given a vector of names, use closures and iterators to: (1) filter names longer than 4 characters, (2) convert them to uppercase, (3) collect and print the results.",
-    starterCode: `fn main() {
-    let names = vec!["Alice", "Bob", "Charlie", "Dave", "Eve", "Franklin"];
-    
-    // Filter names longer than 4 chars, uppercase them, collect
-    
-    // Print the result
-    
-    let names = vec!["Alice", "Bob", "Charlie", "Dave", "Eve", "Franklin"];
-    
-    // Filter names longer than 4 chars, uppercase them, collect
-    
-    // Print the result
-    
-}`,
-    hint: "Chain `.iter().filter(|n| n.len() > 4).map(|n| n.to_uppercase()).collect::<Vec<_>>()`",
-    expectedOutput: "[\"ALICE\", \"CHARLIE\", \"FRANKLIN\"]",
-  },
-  {
-    id: 35,
-    title: "Final Challenge: Mini CLI Tool",
-    difficulty: "advanced",
-    category: "Capstone",
-    description: "Combine everything you've learned to build a small but complete program.",
-    instructions:
-      'Build a simple statistics calculator. Given a vector of f64 values `[4.0, 8.0, 15.0, 16.0, 23.0, 42.0]`, write functions to compute: (1) `mean` — the average, (2) `median` — the middle value(s), (3) `mode_range` — the difference between max and min. Print all three statistics formatted nicely.',
-    starterCode: `fn mean(data: &[f64]) -> f64 {
-    // Calculate the average
-    
-}
-
-fn median(data: &mut Vec<f64>) -> f64 {
-    // Sort and find the middle value
-    
-}
-
-fn range(data: &[f64]) -> f64 {
-    // Find max - min
-    
-}
-
-fn main() {
-    let mut numbers = vec![4.0, 8.0, 15.0, 16.0, 23.0, 42.0];
-    
-    println!("Data: {:?}", numbers);
-    println!("Mean: {:.1}", mean(&numbers));
-    println!("Median: {:.1}", median(&mut numbers));
-    println!("Range: {:.1}", range(&numbers));
-`    // Calculate the average
-}
-fn median(data: &mut Vec<f64>) -> f64 {
-    // Sort and find the middle value
-}
-fn range(data: &[f64]) -> f64 {
-    // Find max - min
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "For mean: sum / count. For median: sort first, then average the two middle elements if even length. For range: use `.iter().cloned().reduce(f64::max)` and similar for min.",
-    expectedOutput: "Data: [4.0, 8.0, 15.0, 16.0, 23.0, 42.0]\nMean: 18.0\nMedian: 15.5\nRange: 38.0",
-  },
-  {
-    id: 36,
-    title: "Ownership Basics",
+    title: "Immutable Borrowing Basics",
     difficulty: "intermediate",
-    category: "Chapter 4 - Ownership",
-    description: "Understand Rust's ownership system.",
-    instructions: "Create a String and assign it to a new variable. Try to use the original variable to see the ownership transfer.",
-    starterCode: `fn main() {
-    let s1 = String::from("hello");
-    let s2 = s1; // s1 is moved to s1
-    
-    // This would cause an error: println!("{}", s1);
-    println!("{}", s2);
-`    // TODO: implement
-    // TODO: implement
-    // This would cause an error: println!("{}", s1);
-    // TODO: implement
-    // TODO: implement`
-    hint: "When a value is moved, the original variable can no longer be used. This prevents double-free errors.",
-    expectedOutput: "hello",
-  },
-  {
-    id: 37,
-    title: "Borrowing",
-    difficulty: "intermediate",
-    category: "Chapter 4 - Ownership",
-    description: "Learn about borrowing references in Rust.",
-    instructions: "Create a function that takes a string reference and prints its length. Call it with both a String and a string slice.",
-    starterCode: `fn calculate_length(s: &String) -> usize {
+    category: "Ownership & Borrowing",
+    description: "An immutable reference `&T` lets you read data without taking ownership. The owner stays valid; you can have many `&` borrows at once (if nothing mutably borrows). Example: `fn len(s: &String) -> usize { s.len() }` and `len(&text)`.",
+    instructions:
+      "Implement `calculate_length(s: &str) -> usize`. Borrow `\"hello\"` immutably from `main` and print `Length of 'hello' is 5` — `s1` must still be usable after the call.",
+    starterCode: `fn calculate_length(s: &str) -> usize {
+    // Return the length of the borrowed string
     s.len()
 }
 
@@ -860,140 +696,195 @@ fn main() {
     let s1 = String::from("hello");
     let len = calculate_length(&s1);
     println!("Length of '{}' is {}", s1, len);
-    
-    let s2 = "world";
-    let len2 = calculate_length(&String::from(s2));
-    println!("Length of '{}' is {}", s2, len2);
-`    // TODO: implement
+}`,
+    hint: "Use `&` to create an immutable reference. The original value remains valid and can still be used.",
+    expectedOutput: "Length of 'hello' is 5",
+  },
+  {
+    id: 33,
+    title: "Mutable Borrowing",
+    difficulty: "intermediate",
+    category: "Ownership & Borrowing",
+    description: "A mutable reference `&mut T` lets you modify data in place — only one `&mut` at a time to the same data. Example: `fn push_hi(s: &mut String) { s.push_str(\" hi\"); }` called with `push_hi(&mut message)`.",
+    instructions:
+      "Implement `append_world(s: &mut String)` to append `\" world\"` via a mutable borrow. From `main`, print `Modified: hello world`.",
+    starterCode: `fn append_world(s: &mut String) {
+    // Mutably borrow and append " world"
+    s.push_str(" world");
 }
+
 fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "References allow you to use values without taking ownership. The `&` operator creates a reference.",
-    expectedOutput: "Length of 'hello' is 5\nLength of 'world' is 5",
+    let mut s1 = String::from("hello");
+    append_world(&mut s1);
+    println!("Modified: {}", s1);
+}`,
+    hint: "Use `&mut` to create a mutable reference. This allows modification without taking ownership.",
+    expectedOutput: "Modified: hello world",
+  },
+  {
+    id: 34,
+    title: "Multiple Immutable References",
+    difficulty: "intermediate",
+    category: "Ownership & Borrowing",
+    description: "Multiple immutable references to the same data are allowed because readers cannot mutate. Use them before any `&mut` borrow starts. Example: `let a = &s; let b = &s;` then use `a` and `b` while `s` is still borrowed immutably.",
+    instructions:
+      "Implement `print_length` and `print_first_char` taking `&String`. Borrow `\"hello\"` twice immutably from `main`, then print `Original: hello`. Expected lines: `Length: 5`, `First: h`, `Original: hello`.",
+    starterCode: `fn print_length(s: &String) {
+    println!("Length: {}", s.len());
+}
+
+fn print_first_char(s: &String) {
+    println!("First: {}", s.chars().next().unwrap());
+}
+
+fn main() {
+    let s = String::from("hello");
+    print_length(&s);
+    print_first_char(&s);
+    println!("Original: {}", s);
+}`,
+    hint: "Rust allows multiple immutable references (`&T`) simultaneously because they can't modify the data.",
+    expectedOutput: "Length: 5\nFirst: h\nOriginal: hello",
+  },
+  {
+    id: 35,
+    title: "Borrowing Rules Violation",
+    difficulty: "intermediate",
+    category: "Ownership & Borrowing",
+    description: "The borrow rule: at any moment you may have many `&` OR one `&mut`, not both while `&` are still active. This prevents data races at compile time. Example: finish using `r1` and `r2` before creating `&mut s`.",
+    instructions:
+      "Create `s = \"hello\"` and two immutable references `r1` and `r2`. Print `Both immutable refs: hello, hello`. Leave the commented `&mut s` line to show it would not compile while `r1`/`r2` are active.",
+    starterCode: `fn main() {
+    let mut s = String::from("hello");
+
+    let r1 = &s;
+    let r2 = &s;
+    println!("Both immutable refs: {}, {}", r1, r2);
+
+    // let r3 = &mut s; // would not compile while r1 and r2 are in scope
+}`,
+    hint: "Rust's borrowing rules: you can have either multiple immutable references OR one mutable reference, but not both simultaneously.",
+    expectedOutput: "Both immutable refs: hello, hello",
+  },
+  {
+    id: 36,
+    title: "Borrowing in Structs",
+    difficulty: "intermediate",
+    category: "Ownership & Borrowing",
+    description: "Structs are borrowed with `&self` (read) and `&mut self` (modify) in methods — same rules as variables. Example: `impl Counter { fn add(&mut self, n: i32) { self.value += n; } }`.",
+    instructions:
+      "On a `Point { x: 5, y: 10 }`, use `print_x(&point)` to print `X: 5`, then `double_y(&mut point)` to double `y`. Print `After: (5, 20)`.",
+    starterCode: `struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn print_x(point: &Point) {
+    println!("X: {}", point.x);
+}
+
+fn double_y(point: &mut Point) {
+    point.y *= 2;
+}
+
+fn main() {
+    let mut point = Point { x: 5, y: 10 };
+    print_x(&point);
+    double_y(&mut point);
+    println!("After: ({}, {})", point.x, point.y);
+}`,
+    hint: "You can borrow individual fields of structs. The borrowing rules apply to each field independently.",
+    expectedOutput: "X: 5\nAfter: (5, 20)",
+  },
+  {
+    id: 37,
+    title: "Borrowing with Slices",
+    difficulty: "intermediate",
+    category: "Ownership & Borrowing",
+    description: "A slice (`&str`, `&[T]`) is a borrowed view into contiguous data — it does not own the backing storage. Several slices can borrow different parts of one `String`. Example: `let mid = &s[2..5];` while `s` stays valid.",
+    instructions:
+      "From `\"hello world\"`, borrow slices `&s[0..5]` and `&s[6..11]` at the same time. Print `First: hello`, `Second: world`, then `Original: hello world`.",
+    starterCode: `fn main() {
+    let s = String::from("hello world");
+
+    let hello = &s[0..5];
+    let world = &s[6..11];
+
+    println!("First: {}", hello);
+    println!("Second: {}", world);
+    println!("Original: {}", s);
+}`,
+    hint: "String slices are immutable references (`&str`). Multiple slices can exist simultaneously because they don't modify the data.",
+    expectedOutput: "First: hello\nSecond: world\nOriginal: hello world",
   },
   {
     id: 38,
-    title: "Slices",
+    title: "Borrowing in Functions",
     difficulty: "intermediate",
-    category: "Chapter 4 - Ownership",
-    description: "Learn about string slices and array slices.",
-    instructions: "Create a string and get a slice of the first word. Also create an array and get a slice of the first three elements.",
-    starterCode: `fn main() {
+    category: "Ownership & Borrowing",
+    description: "Functions can take `&str` or `&String` and return `&str` that borrows from the input — the caller must keep the original alive. Example: `fn first_word(s: &str) -> &str` returning a substring slice.",
+    instructions:
+      "Implement `first_word(s: &str) -> &str` returning the substring before the first space. From `main`, print `First word: hello` and `Original: hello world`.",
+    starterCode: `fn first_word(s: &str) -> &str {
+    let end = s.find(' ').unwrap_or(s.len());
+    &s[..end]
+}
+
+fn main() {
     let s = String::from("hello world");
-    let hello = &s[0..5];
-    let world = &s[6..11];
-    
-    println!("First word: {}", hello);
-    println!("Second word: {}", world);
-    
-    let a = [1, 2, 3, 4, 5];
-    let slice = &a[0..3];
-    println!("Array slice: {:?}", slice);
-`    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "Slices let you reference a contiguous sequence of elements in a collection without taking ownership.",
-    expectedOutput: "First word: hello\nSecond word: world\nArray slice: [1, 2, 3]",
+    let word = first_word(&s);
+    println!("First word: {}", word);
+    println!("Original: {}", s);
+}`,
+    hint: "Functions can return references that borrow from the input. The lifetime must be valid for the returned reference.",
+    expectedOutput: "First word: hello\nOriginal: hello world",
   },
   {
     id: 39,
-    title: "Struct Methods",
+    title: "Borrowing with Collections",
     difficulty: "intermediate",
-    category: "Chapter 5 - Structs",
-    description: "Implement methods on structs to define behavior associated with data.",
-    instructions: "Define a `Player` struct with `name: String` and `score: i32`. Implement methods `new()` to create a new player with score 0, `add_points()` to increase score, and `get_score()` to return the current score.",
-    starterCode: `struct Player {
-    name: String,
-    score: i32,
-}
+    category: "Ownership & Borrowing",
+    description: "Borrow from a `Vec` with indexing (`&v[i]`) or iteration (`for x in &v`). The vector is not consumed. Example: `let peek = &items[0];` and `for item in &items { ... }`.",
+    instructions:
+      "Borrow from `vec![10, 20, 30, 40, 50]`: print `First: 10`, iterate with `&numbers` to print values > 25, then print `Original: [10, 20, 30, 40, 50]`.",
+    starterCode: `fn main() {
+    let numbers = vec![10, 20, 30, 40, 50];
 
-impl Player {
-    fn new(name: String) -> Self {
-        Player { name, score: 0 }
-    }
-    
-    fn add_points(&mut self, points: i32) {
-        self.score += points;
-    }
-    
-    fn get_score(&self) -> i32 {
-        self.score
-    }
-}
+    let first = &numbers[0];
+    println!("First: {}", first);
 
-fn main() {
-    let mut player = Player::new(String::from("Alice"));
-    player.add_points(100);
-    println!("Player: {}, Score: {}", player.name, player.get_score());
-`    // TODO: implement
-    // TODO: implement
-}
-impl Player {
-    fn new(name: String) -> Self {
-    // TODO: implement
+    for num in &numbers {
+        if *num > 25 {
+            println!("Greater than 25: {}", num);
+        }
     }
-    fn add_points(&mut self, points: i32) {
-    // TODO: implement
-    }
-    fn get_score(&self) -> i32 {
-    // TODO: implement
-    }
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "Use `impl Struct` block to define methods. Associated functions use `fn new()` and methods use `&self` or `&mut self`.",
-    expectedOutput: "Player: Alice, Score: 100",
+
+    println!("Original: {:?}", numbers);
+}`,
+    hint: "Use `&vector[i]` to borrow individual elements, or `&vector` to borrow the entire collection for iteration.",
+    expectedOutput: "First: 10\nGreater than 25: 30\nGreater than 25: 40\nGreater than 25: 50\nOriginal: [10, 20, 30, 40, 50]",
   },
   {
     id: 40,
-    title: "Associated Functions",
+    title: "Borrowing and Iterators",
     difficulty: "intermediate",
-    category: "Chapter 5 - Structs",
-    description: "Learn about associated functions that don't take self as a parameter.",
-    instructions: "Define a `Rectangle` struct with `width` and `height` (both f64). Implement an associated function `square(size: f64) -> Rectangle` that creates a square rectangle.",
-    starterCode: `struct Rectangle {
-    width: f64,
-    height: f64,
-}
+    category: "Ownership & Borrowing",
+    description: "Iterator adapters often borrow: `.iter()` gives `&T`, `.iter_mut()` gives `&mut T`, `.into_iter()` takes ownership. Example: `let doubled: Vec<_> = nums.iter().map(|x| x * 2).collect();` leaves `nums` intact.",
+    instructions:
+      "Use `.iter()` on `vec![1, 2, 3, 4, 5]` to build a doubled vector without consuming the original. Print `Original: [1, 2, 3, 4, 5]` then `Doubled: [2, 4, 6, 8, 10]`.",
+    starterCode: `fn main() {
+    let numbers = vec![1, 2, 3, 4, 5];
 
-impl Rectangle {
-    fn square(size: f64) -> Self {
-        Rectangle { width: size, height: size }
-    }
-}
+    let doubled: Vec<i32> = numbers
+        .iter()
+        .map(|x| x * 2)
+        .collect();
 
-fn main() {
-    let square = Rectangle::square(5.0);
-    println!("Square: {} x {}", square.width, square.height);
-`    // TODO: implement
-    // TODO: implement
-}
-impl Rectangle {
-    fn square(size: f64) -> Self {
-    // TODO: implement
-    }
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "Associated functions don't take `&self` and are called with `StructName::function_name()`.",
-    expectedOutput: "Square: 5.0 x 5.0",
+    println!("Original: {:?}", numbers);
+    println!("Doubled: {:?}", doubled);
+}`,
+    hint: "`.iter()` creates an iterator that yields immutable references. The original collection remains valid.",
+    expectedOutput: "Original: [1, 2, 3, 4, 5]\nDoubled: [2, 4, 6, 8, 10]",
   },
   {
     id: 41,
