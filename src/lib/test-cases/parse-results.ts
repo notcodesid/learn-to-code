@@ -1,5 +1,8 @@
 import { TestCaseSpec, TestCaseResult, TestRunResult } from "./types";
-import { formatFunctionCall, toDisplayValue } from "./generate-rust";
+import {
+  formatCaseInput,
+  toDisplayExpected,
+} from "./generate-rust";
 
 export function buildTestRunResult(
   spec: TestCaseSpec,
@@ -34,8 +37,8 @@ export function buildTestRunResult(
 
   const cases: TestCaseResult[] = spec.cases.map((c) => {
     const passed = caseStatus.get(c.id) ?? false;
-    const input = formatFunctionCall(spec.functionName, c.args);
-    const expected = toDisplayValue(c.expected);
+    const input = formatCaseInput(spec, c);
+    const expected = toDisplayExpected(c.expected);
     const panic = stderr.match(
       new RegExp(
         `challenge_tests::case_${c.id}[\\s\\S]*?left: ([^\\n]+)\\s+right: ([^\\n]+)`,

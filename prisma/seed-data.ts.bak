@@ -656,9 +656,9 @@ fn main() {
     title: "Ownership in Pattern Matching",
     difficulty: "advanced",
     category: "Ownership & Borrowing",
-    description: "`match` can move data out of enums and structs — the matched value is consumed. After a branch moves a field, the original binding is gone. Example: `match msg { Message::Text(s) => println!(\"{s}\"), ... }` takes ownership of inner `s`.",
+    description: "`match` can move data out of enums — the matched value is consumed. Example: `Message::Write(text) => println!(\"{text}\")`. **Run** only — demonstrates move in `main`.",
     instructions:
-      "Define a `Message` enum with a `Write(String)` variant. Match on `Message::Write` to move the inner `String` out and print `Text: hello`.",
+      "Define `Message` with `Write(String)`. Match on `Write` to move the inner string out and print `Text: hello`.",
     starterCode: `enum Message {
     Quit,
     Move { x: i32, y: i32 },
@@ -684,12 +684,12 @@ fn main() {
     title: "Immutable Borrowing Basics",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
-    description: "An immutable reference `&T` lets you read data without taking ownership. The owner stays valid; you can have many `&` borrows at once (if nothing mutably borrows). Example: `fn len(s: &String) -> usize { s.len() }` and `len(&text)`.",
+    description: "An immutable reference `&str` lets you read without taking ownership. Example: `fn len(s: &str) -> usize { s.len() }`. **Submit** tests `calculate_length`; **Run** prints `Length of 'hello' is 5`.",
     instructions:
-      "Implement `calculate_length(s: &str) -> usize`. Borrow `\"hello\"` immutably from `main` and print `Length of 'hello' is 5` — `s1` must still be usable after the call.",
+      "Implement `calculate_length(s: &str) -> usize`. Borrow `\"hello\"` from `main` and print `Length of 'hello' is 5` — `s1` must still work after the call. Submit tests hidden strings.",
     starterCode: `fn calculate_length(s: &str) -> usize {
     // Return the length of the borrowed string
-    s.len()
+    0
 }
 
 fn main() {
@@ -705,12 +705,11 @@ fn main() {
     title: "Mutable Borrowing",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
-    description: "A mutable reference `&mut T` lets you modify data in place — only one `&mut` at a time to the same data. Example: `fn push_hi(s: &mut String) { s.push_str(\" hi\"); }` called with `push_hi(&mut message)`.",
+    description: "A mutable reference `&mut String` lets you modify in place — only one `&mut` at a time. Example: `s.push_str(\" world\")` inside `fn append_world(s: &mut String)`. **Submit** tests mutation; **Run** prints `Modified: hello world`.",
     instructions:
-      "Implement `append_world(s: &mut String)` to append `\" world\"` via a mutable borrow. From `main`, print `Modified: hello world`.",
+      "Implement `append_world(s: &mut String)` to append `\" world\"`. From `main`, print `Modified: hello world`. Submit verifies the string after mutation on hidden inputs.",
     starterCode: `fn append_world(s: &mut String) {
     // Mutably borrow and append " world"
-    s.push_str(" world");
 }
 
 fn main() {
@@ -726,9 +725,9 @@ fn main() {
     title: "Multiple Immutable References",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
-    description: "Multiple immutable references to the same data are allowed because readers cannot mutate. Use them before any `&mut` borrow starts. Example: `let a = &s; let b = &s;` then use `a` and `b` while `s` is still borrowed immutably.",
+    description: "Multiple `&` borrows to the same data are allowed simultaneously. Example: `let a = &s; let b = &s;` then use both before `s` goes out of scope. **Run** only — tests reading via two helper functions.",
     instructions:
-      "Implement `print_length` and `print_first_char` taking `&String`. Borrow `\"hello\"` twice immutably from `main`, then print `Original: hello`. Expected lines: `Length: 5`, `First: h`, `Original: hello`.",
+      "Implement `print_length` and `print_first_char` taking `&String`. Borrow `\"hello\"` twice from `main`, then print `Original: hello`. Expected: `Length: 5`, `First: h`, `Original: hello`.",
     starterCode: `fn print_length(s: &String) {
     println!("Length: {}", s.len());
 }
@@ -751,9 +750,9 @@ fn main() {
     title: "Borrowing Rules Violation",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
-    description: "The borrow rule: at any moment you may have many `&` OR one `&mut`, not both while `&` are still active. This prevents data races at compile time. Example: finish using `r1` and `r2` before creating `&mut s`.",
+    description: "Borrow rule: many `&` OR one `&mut`, never both while `&` are active. Example: `let r1 = &s; let r2 = &s;` then `// let r3 = &mut s;` would fail to compile. **Run** only — borrow-rules demo.",
     instructions:
-      "Create `s = \"hello\"` and two immutable references `r1` and `r2`. Print `Both immutable refs: hello, hello`. Leave the commented `&mut s` line to show it would not compile while `r1`/`r2` are active.",
+      "Create `s = \"hello\"` with two immutable refs. Print `Both immutable refs: hello, hello`. Keep the commented `&mut s` line to show it would not compile.",
     starterCode: `fn main() {
     let mut s = String::from("hello");
 
@@ -771,9 +770,9 @@ fn main() {
     title: "Borrowing in Structs",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
-    description: "Structs are borrowed with `&self` (read) and `&mut self` (modify) in methods — same rules as variables. Example: `impl Counter { fn add(&mut self, n: i32) { self.value += n; } }`.",
+    description: "Borrow struct fields with `&self` / `&mut self` in helper functions. Example: `fn read_x(p: &Point) { println!(\"{}\", p.x); }`. **Run** only — prints field values after borrow.",
     instructions:
-      "On a `Point { x: 5, y: 10 }`, use `print_x(&point)` to print `X: 5`, then `double_y(&mut point)` to double `y`. Print `After: (5, 20)`.",
+      "On `Point { x: 5, y: 10 }`, use `print_x(&point)` → `X: 5`, then `double_y(&mut point)` → print `After: (5, 20)`.",
     starterCode: `struct Point {
     x: i32,
     y: i32,
@@ -801,9 +800,9 @@ fn main() {
     title: "Borrowing with Slices",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
-    description: "A slice (`&str`, `&[T]`) is a borrowed view into contiguous data — it does not own the backing storage. Several slices can borrow different parts of one `String`. Example: `let mid = &s[2..5];` while `s` stays valid.",
+    description: "Slices are borrowed views into a `String` — several can coexist. Example: `let a = &s[0..5]; let b = &s[6..11];` while `s` stays valid. **Run** only.",
     instructions:
-      "From `\"hello world\"`, borrow slices `&s[0..5]` and `&s[6..11]` at the same time. Print `First: hello`, `Second: world`, then `Original: hello world`.",
+      "From `\"hello world\"`, borrow `&s[0..5]` and `&s[6..11]`. Print `First: hello`, `Second: world`, then `Original: hello world`.",
     starterCode: `fn main() {
     let s = String::from("hello world");
 
@@ -822,12 +821,12 @@ fn main() {
     title: "Borrowing in Functions",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
-    description: "Functions can take `&str` or `&String` and return `&str` that borrows from the input — the caller must keep the original alive. Example: `fn first_word(s: &str) -> &str` returning a substring slice.",
+    description: "Functions can return `&str` borrowing from the input — the caller keeps the original alive. Example: `fn first_word(s: &str) -> &str { &s[..s.find(' ').unwrap_or(s.len())] }`. **Submit** tests `first_word`; **Run** prints word + original.",
     instructions:
-      "Implement `first_word(s: &str) -> &str` returning the substring before the first space. From `main`, print `First word: hello` and `Original: hello world`.",
+      "Implement `first_word(s: &str) -> &str` (substring before first space). Print `First word: hello` and `Original: hello world`. Submit tests hidden phrases.",
     starterCode: `fn first_word(s: &str) -> &str {
-    let end = s.find(' ').unwrap_or(s.len());
-    &s[..end]
+    // Return the substring before the first space (or the whole string)
+    &s[..0]
 }
 
 fn main() {
@@ -844,9 +843,9 @@ fn main() {
     title: "Borrowing with Collections",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
-    description: "Borrow from a `Vec` with indexing (`&v[i]`) or iteration (`for x in &v`). The vector is not consumed. Example: `let peek = &items[0];` and `for item in &items { ... }`.",
+    description: "Borrow from a `Vec` via `&v[i]` or `for x in &v` without consuming it. Example: `let first = &nums[0];` and `for n in &nums { ... }`. **Run** only.",
     instructions:
-      "Borrow from `vec![10, 20, 30, 40, 50]`: print `First: 10`, iterate with `&numbers` to print values > 25, then print `Original: [10, 20, 30, 40, 50]`.",
+      "From `vec![10, 20, 30, 40, 50]`: print `First: 10`, loop with `&numbers` for values > 25, then `Original: [10, 20, 30, 40, 50]`.",
     starterCode: `fn main() {
     let numbers = vec![10, 20, 30, 40, 50];
 
@@ -869,9 +868,9 @@ fn main() {
     title: "Borrowing and Iterators",
     difficulty: "intermediate",
     category: "Ownership & Borrowing",
-    description: "Iterator adapters often borrow: `.iter()` gives `&T`, `.iter_mut()` gives `&mut T`, `.into_iter()` takes ownership. Example: `let doubled: Vec<_> = nums.iter().map(|x| x * 2).collect();` leaves `nums` intact.",
+    description: "`.iter()` borrows each element; the original `Vec` stays valid. Example: `nums.iter().map(|x| x * 2).collect()` leaves `nums` intact. **Run** only.",
     instructions:
-      "Use `.iter()` on `vec![1, 2, 3, 4, 5]` to build a doubled vector without consuming the original. Print `Original: [1, 2, 3, 4, 5]` then `Doubled: [2, 4, 6, 8, 10]`.",
+      "Use `.iter()` on `vec![1, 2, 3, 4, 5]` to build a doubled vec. Print `Original: [1, 2, 3, 4, 5]` then `Doubled: [2, 4, 6, 8, 10]`.",
     starterCode: `fn main() {
     let numbers = vec![1, 2, 3, 4, 5];
 
@@ -888,405 +887,289 @@ fn main() {
   },
   {
     id: 41,
-    title: "Multiple impl Blocks",
+    title: "Borrow Checker Understanding",
+    difficulty: "advanced",
+    category: "Ownership & Borrowing",
+    description: "The borrow checker enforces memory safety at compile time — no dangling pointers, no double-free, no data races. If code breaks the rules, the compiler rejects it with a clear error. Example: you cannot use `s` while `&mut s` is still active.",
+    instructions:
+      "Create a `Data { value: 42 }` and two immutable references `r1` and `r2`. Print `Multiple immutable refs: 42, 42`. Leave a commented `&mut` line showing it would not compile while `r1`/`r2` are active.",
+    starterCode: `struct Data {
+    value: i32,
+}
+
+fn main() {
+    let data = Data { value: 42 };
+
+    let r1 = &data;
+    let r2 = &data;
+    println!("Multiple immutable refs: {}, {}", r1.value, r2.value);
+
+    // let r3 = &mut data; // would not compile while r1 and r2 are active
+}`,
+    hint: "The borrow checker enforces memory safety at compile time by preventing invalid memory access patterns.",
+    expectedOutput: "Multiple immutable refs: 42, 42",
+  },
+  {
+    id: 42,
+    title: "Structs",
     difficulty: "intermediate",
-    category: "Chapter 5 - Structs",
-    description: "Learn that you can have multiple impl blocks for the same struct.",
-    instructions: "Define a `Counter` struct with `count: i32`. In one impl block, add methods `increment()` and `decrement()`. In another impl block, add a method `reset()` that sets count to 0.",
+    category: "Structs & Enums",
+    description: "Group related data in a `struct` and add behavior with `impl` methods. Example: `fn area(&self) -> f64 { self.width * self.height }`. **Submit** tests `area`; **Run** checks `describe` output.",
+    instructions:
+      "Define `Rectangle { width, height }` (both `f64`). Implement `area(&self)` and `describe(&self)` — `describe` prints `Rectangle: 10x5.5, area: 55` for a 10.0 × 5.5 rectangle. Submit verifies `area` on hidden rectangles.",
+    starterCode: `struct Rectangle {
+    width: f64,
+    height: f64,
+}
+
+impl Rectangle {
+    fn area(&self) -> f64 {
+        // Return self.width * self.height
+        0.0
+    }
+
+    fn describe(&self) {
+        println!("Rectangle: {}x{}, area: {}", self.width, self.height, self.area());
+    }
+}
+
+fn main() {
+    let rect = Rectangle { width: 10.0, height: 5.5 };
+    rect.describe();
+}`,
+    hint: "Use `struct Rectangle { width: f64, height: f64 }` and `impl Rectangle { fn area(&self) -> f64 { ... } }`",
+    expectedOutput: "Rectangle: 10x5.5, area: 55",
+  },
+  {
+    id: 43,
+    title: "Enums & Pattern Matching",
+    difficulty: "intermediate",
+    category: "Structs & Enums",
+    description: "Enums list variants; `match` must handle every variant. Example: `match coin { Coin::Penny => 1, Coin::Nickel => 5, _ => 0 }`. **Submit** tests `value_in_cents`; **Run** prints all four coin values.",
+    instructions:
+      "Define `Coin` (`Penny`, `Nickel`, `Dime`, `Quarter`). Implement `value_in_cents(&Coin) -> u32` with `match`. Print each value from `main` (`1`, `5`, `10`, `25`). Submit tests hidden coin variants.",
+    starterCode: `enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter,
+}
+
+fn value_in_cents(coin: &Coin) -> u32 {
+    match coin {
+        Coin::Penny => 1,
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter => 25,
+    }
+}
+
+fn main() {
+    println!("{}", value_in_cents(&Coin::Penny));
+    println!("{}", value_in_cents(&Coin::Nickel));
+    println!("{}", value_in_cents(&Coin::Dime));
+    println!("{}", value_in_cents(&Coin::Quarter));
+}`,
+    hint: "Define with `enum Coin { Penny, Nickel, Dime, Quarter }`. Match with `match coin { Coin::Penny => 1, ... }`",
+    expectedOutput: "1\n5\n10\n25",
+  },
+  {
+    id: 44,
+    title: "Basic Struct Definition",
+    difficulty: "beginner",
+    category: "Structs & Enums",
+    description: "Practice defining and using basic structs.",
+    instructions:
+      "Define a simple struct with a few fields and create instances of it.",
+    starterCode: `struct Person {
+    name: String,
+    age: u32,
+}
+
+fn main() {
+    // TODO: Create a Person instance and print its fields
+    let person = /* ... */;
+    
+    println!("Name: {}, Age: {}", person.name, person.age);
+    todo!()
+}`,
+    hint: "Structs are defined with `struct Name { field: Type }`. Create instances with `Name { field: value }`.",
+    expectedOutput: "Name: Alice, Age: 30",
+  },
+  {
+    id: 45,
+    title: "Struct Methods",
+    difficulty: "intermediate",
+    category: "Structs & Enums",
+    description: "Methods take `&self` to read fields without moving the struct. Example: `fn perimeter(&self) -> f64 { 2.0 * (self.width + self.height) }`. **Submit** tests `area` and `perimeter`; **Run** prints both for a 10 × 5 rectangle.",
+    instructions:
+      "On `Rectangle { width: 10.0, height: 5.0 }`, implement `area` and `perimeter`. Print `Area: 50` and `Perimeter: 30`. Submit verifies both methods on hidden sizes.",
+    starterCode: `struct Rectangle {
+    width: f64,
+    height: f64,
+}
+
+impl Rectangle {
+    fn area(&self) -> f64 {
+        // Return width * height
+        0.0
+    }
+
+    fn perimeter(&self) -> f64 {
+        // Return 2.0 * (width + height)
+        0.0
+    }
+}
+
+fn main() {
+    let rect = Rectangle { width: 10.0, height: 5.0 };
+    println!("Area: {}", rect.area());
+    println!("Perimeter: {}", rect.perimeter());
+}`,
+    hint: "Methods are defined in `impl StructName` blocks. Use `&self` for immutable methods and `&mut self` for mutable methods.",
+    expectedOutput: "Area: 50\nPerimeter: 30",
+  },
+  {
+    id: 46,
+    title: "Associated Functions",
+    difficulty: "intermediate",
+    category: "Structs & Enums",
+    description: "Associated functions use `::` and return `Self` without taking `self`. Example: `fn origin() -> Self { Point { x: 0.0, y: 0.0 } }`. **Submit** tests `Point::new` and `Point::origin`; **Run** prints both points.",
+    instructions:
+      "Implement `Point::new(x, y)` and `Point::origin()`. Print `Point 1: (3, 4)` and `Point 2: (0, 0)`. Submit verifies returned `x`/`y` fields on hidden inputs.",
+    starterCode: `struct Point {
+    x: f64,
+    y: f64,
+}
+
+impl Point {
+    fn new(x: f64, y: f64) -> Self {
+        Point { x, y }
+    }
+
+    fn origin() -> Self {
+        Point { x: 0.0, y: 0.0 }
+    }
+}
+
+fn main() {
+    let p1 = Point::new(3.0, 4.0);
+    let p2 = Point::origin();
+    println!("Point 1: ({}, {})", p1.x, p1.y);
+    println!("Point 2: ({}, {})", p2.x, p2.y);
+}`,
+    hint: "Associated functions don't take `self` and are called with `StructName::function_name()`. They're often used as constructors.",
+    expectedOutput: "Point 1: (3, 4)\nPoint 2: (0, 0)",
+  },
+  {
+    id: 47,
+    title: "Mutable Methods",
+    difficulty: "intermediate",
+    category: "Structs & Enums",
+    description: "Practice defining methods that modify struct data.",
+    instructions:
+      "Define a struct with a mutable method that changes its state.",
     starterCode: `struct Counter {
     count: i32,
 }
 
 impl Counter {
-    fn increment(&mut self) {
-        self.count += 1;
+    fn new() -> Self {
+        // TODO
+        todo!()
     }
     
-    fn decrement(&mut self) {
-        self.count -= 1;
+    fn increment(&mut self) {
+        // TODO
+        todo!()
     }
-}
-
-impl Counter {
+    
     fn reset(&mut self) {
-        self.count = 0;
+        // TODO
+        todo!()
     }
 }
 
 fn main() {
-    let mut counter = Counter { count: 0 };
+    let mut counter = Counter::new();
     counter.increment();
     counter.increment();
     println!("Count: {}", counter.count);
     counter.reset();
     println!("After reset: {}", counter.count);
-`    // TODO: implement
-}
-impl Counter {
-    fn increment(&mut self) {
-    // TODO: implement
-    }
-    fn decrement(&mut self) {
-    // TODO: implement
-    }
-}
-impl Counter {
-    fn reset(&mut self) {
-    // TODO: implement
-    }
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "You can have multiple `impl StructName` blocks. This is useful for organizing related methods.",
-    expectedOutput: "Count: 2\nAfter reset: 0",
+}`,
+    hint: "Use `&mut self` for methods that need to modify the struct's fields.",
+    expectedOutput: "Count: 3\nAfter reset: 0",
   },
   {
-    id: 42,
+    id: 48,
+    title: "Tuple Structs",
+    difficulty: "intermediate",
+    category: "Structs & Enums",
+    description: "Practice using tuple structs for data without field names.",
+    instructions:
+      "Define a tuple struct and use it for color values.",
+    starterCode: `struct Color(u8, u8, u8);
+
+fn main() {
+    let red = Color(255, 0, 0);
+    
+    // TODO: Destructure the tuple struct
+    let Color(r, g, b) = /* ... */;
+    println!("Red: R={}, G={}, B={}", r, g, b);
+    todo!()
+}`,
+    hint: "Tuple structs are defined with `StructName(Type1, Type2, ...)` and accessed with destructuring.",
+    expectedOutput: "Red: R=255, G=0, B=0\nBlack: R=0, G=0, B=0",
+  },
+  {
+    id: 49,
     title: "Struct Update Syntax",
     difficulty: "intermediate",
-    category: "Chapter 5 - Structs",
-    description: "Learn the struct update syntax for creating new instances from existing ones.",
-    instructions: "Define a `Point` struct with `x` and `y` (i32). Create a point at (1, 2). Use the struct update syntax to create a new point with the same y but x = 3.",
+    category: "Structs & Enums",
+    description: "Practice the struct update syntax for creating new instances from existing ones.",
+    instructions:
+      "Create a struct instance and use the update syntax to create a modified copy.",
     starterCode: `struct Point {
     x: i32,
     y: i32,
 }
 
 fn main() {
-    let point1 = Point { x: 1, y: 2 };
-    let point2 = Point { x: 3, ..point1 };
+    let p1 = Point { x: 1, y: 2 };
     
-    println!("Point 1: ({}, {})", point1.x, point1.y);
-    println!("Point 2: ({}, {})", point2.x, point2.y);
-`    // TODO: implement
-    // TODO: implement
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "Use `Point { x: 3, ..point1 }` to copy most fields and override specific ones.",
+    // TODO: Use struct update syntax
+    let p2 = Point { x: 3, .. /* p1 */ };
+    
+    println!("Point 2: ({}, {})", p2.x, p2.y);
+    todo!()
+}`,
+    hint: "Use `StructName { field: value, ..original }` to copy most fields and override specific ones.",
     expectedOutput: "Point 1: (1, 2)\nPoint 2: (3, 2)",
   },
   {
-    id: 43,
-    title: "Option Deep Dive",
-    difficulty: "intermediate",
-    category: "Chapter 6 - Enums and Pattern Matching",
-    description: "Master Option for handling the absence of values in a type-safe way.",
-    instructions: "Write a function `find_first_even` that takes a slice of i32 and returns `Option<usize>` (index of first even number). Use `match` to handle the result.",
-    starterCode: `fn find_first_even(numbers: &[i32]) -> Option<usize> {
-    for (index, &number) in numbers.iter().enumerate() {
-        if number % 2 == 0 {
-            return Some(index);
-        }
-    }
-    None
-}
-
-fn main() {
-    let numbers1 = vec![1, 3, 5, 7, 8];
-    let numbers2 = vec![1, 3, 5, 7];
-    
-    match find_first_even(&numbers1) {
-        Some(i) => println!("First even at index: {}", i),
-        None => println!("No even numbers found"),
-    }
-    
-    match find_first_even(&numbers2) {
-        Some(i) => println!("First even at index: {}", i),
-        None => println!("No even numbers found"),
-    }
-`    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-        }
-    }
-    // TODO: implement
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    }
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    }
-    // TODO: implement`
-    hint: "Use `match result { Some(i) => ..., None => ... }` to handle both success and error cases.",
-    expectedOutput: "First even at index: 4\nNo even numbers found",
-  },
-  {
-    id: 44,
-    title: "Match Control Flow",
-    difficulty: "intermediate",
-    category: "Chapter 6 - Enums and Pattern Matching",
-    description: "Use match as a powerful control flow construct.",
-    instructions: "Write a function `describe_number` that takes an `i32` and returns a description. Use match with ranges: \"small\" for 0-10, \"medium\" for 11-100, \"large\" for >100.",
-    starterCode: `fn describe_number(n: i32) -> &'static str {
-    match n {
-        0..=10 => "small",
-        11..=100 => "medium",
-        _ => "large",
-    }
-}
-
-fn main() {
-    println!("5 is {}", describe_number(5));
-    println!("50 is {}", describe_number(50));
-    println!("150 is {}", describe_number(150));
-`    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    }
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "Match arms can have range patterns like `0..=10` and the catch-all `_` pattern.",
-    expectedOutput: "5 is small\n50 is medium\n150 is large",
-  },
-  {
-    id: 45,
-    title: "If Let",
-    difficulty: "intermediate",
-    category: "Chapter 6 - Enums and Pattern Matching",
-    description: "Learn the if let syntax for concise pattern matching.",
-    instructions: "Write a function `get_second` that takes an optional tuple and returns the second element if it exists. Use `if let` to handle the Option.",
-    starterCode: `fn get_second(pair: Option<(i32, i32)>) -> Option<i32> {
-    if let Some((_, second)) = pair {
-        Some(second)
-    } else {
-        None
-    }
-}
-
-fn main() {
-    let pair1 = Some((1, 2));
-    let pair2: Option<(i32, i32)> = None;
-    
-    if let Some(second) = get_second(pair1) {
-        println!("Second: {}", second);
-    } else {
-        println!("No pair provided");
-    }
-    
-    if let Some(second) = get_second(pair2) {
-        println!("Second: {}", second);
-    } else {
-        println!("No pair provided");
-    }
-`    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    }
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    }
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    }
-    // TODO: implement`
-    hint: "Use `if let Some(pattern) = value` to destructure and use the values in one expression.",
-    expectedOutput: "Second: 2\nNo pair provided",
-  },
-  {
-    id: 46,
-    title: "Match with Options",
-    difficulty: "intermediate",
-    category: "Chapter 6 - Enums and Pattern Matching",
-    description: "Combine match and Option for elegant error handling.",
-    instructions: "Write a function `divide` that takes two f64 values and returns `Option<f64>`. Return `Some(result)` if divisor is not zero, `None` otherwise. Use match to print the result.",
-    starterCode: `fn divide(a: f64, b: f64) -> Option<f64> {
-    if b == 0.0 {
-        None
-    } else {
-        Some(a / b)
-    }
-}
-
-fn main() {
-    let result1 = divide(10.0, 2.0);
-    let result2 = divide(10.0, 0.0);
-    
-    match result1 {
-        Some(value) => println!("10.0 / 2.0 = {}", value),
-        None => println!("Cannot divide by zero"),
-    }
-    
-    match result2 {
-        Some(value) => println!("10.0 / 0.0 = {}", value),
-        None => println!("Cannot divide by zero"),
-    }
-`    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    }
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    }
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    }
-    // TODO: implement`
-    hint: "Use `match result { Some(value) => ..., None => ... }` for clean error handling.",
-    expectedOutput: "10.0 / 2.0 = 5.0\nCannot divide by zero",
-  },
-  {
-    id: 47,
-    title: "Basic Modules",
-    difficulty: "intermediate",
-    category: "Chapter 7 - Packages, Crates, Modules",
-    description: "Learn how to organize code using modules in Rust.",
-    instructions: "Create a module structure with a function `greet` that returns a greeting string. In this challenge, simulate a module by defining the function and calling it.",
-    starterCode: `mod utils {
-    pub fn greet(name: &str) -> String {
-        format!("Hello, {}!", name)
-    }
-}
-
-fn main() {
-    println!("{}", utils::greet("Rust"));
-`    pub fn greet(name: &str) -> String {
-    // TODO: implement
-    }
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement`
-    hint: "Modules are defined with `mod module_name;` and can be organized in separate files.",
-    expectedOutput: "Hello, Rust!",
-  },
-  {
-    id: 48,
-    title: "File Organization",
-    difficulty: "intermediate",
-    category: "Chapter 7 - Packages, Crates, Modules",
-    description: "Understand how to organize code across multiple files.",
-    instructions: "This challenge simulates file organization. Define two functions: `calculate_area` (width * height) and `calculate_perimeter` (2 * (width + height)). Call both with width=10 and height=5.",
-    starterCode: `fn calculate_area(width: f64, height: f64) -> f64 {
-    width * height
-}
-
-fn calculate_perimeter(width: f64, height: f64) -> f64 {
-    2.0 * (width + height)
-}
-
-fn main() {
-    let width = 10.0;
-    let height = 5.0;
-    
-    println!("Area: {}", calculate_area(width, height));
-    println!("Perimeter: {}", calculate_perimeter(width, height));
-`    // TODO: implement
-}
-fn calculate_perimeter(width: f64, height: f64) -> f64 {
-    // TODO: implement
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "In real projects, you'd use `mod geometry;` to bring functions from `geometry.rs` into scope.",
-    expectedOutput: "Area: 50\nPerimeter: 30",
-  },
-  {
-    id: 49,
-    title: "Use Declarations",
-    difficulty: "intermediate",
-    category: "Chapter 7 - Packages, Crates, Modules",
-    description: "Learn to bring paths into scope with use declarations.",
-    instructions: "Simulate the use declaration concept by creating two functions in different 'modules': `math::add` and `math::multiply`. Call both functions with different arguments.",
-    starterCode: `mod math {
-    pub fn add(a: i32, b: i32) -> i32 {
-        a + b
-    }
-    
-    pub fn multiply(a: i32, b: i32) -> i32 {
-        a * b
-    }
-}
-
-fn main() {
-    println!("3 + 4 = {}", math::add(3, 4));
-    println!("5 * 6 = {}", math::multiply(5, 6));
-`    pub fn add(a: i32, b: i32) -> i32 {
-    // TODO: implement
-    }
-    pub fn multiply(a: i32, b: i32) -> i32 {
-    // TODO: implement
-    }
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "In real projects, you'd use `use math::{add, multiply};` to bring functions into scope without the module prefix.",
-    expectedOutput: "3 + 4 = 7\n5 * 6 = 30",
-  },
-  {
     id: 50,
-    title: "Packages and Crates",
+    title: "Structs with References",
     difficulty: "intermediate",
-    category: "Chapter 7 - Packages, Crates, Modules",
-    description: "Understand Cargo's package management and the crates.io ecosystem.",
-    instructions: "Simulate using external crates by defining a function that mimics what an external library might provide. Create a `string_utils` module with a function `reverse_string`.",
-    starterCode: `mod string_utils {
-    pub fn reverse_string(s: &str) -> String {
-        s.chars().rev().collect()
-    }
+    category: "Structs & Enums",
+    description: "Practice defining structs that hold references.",
+    instructions:
+      "Define a struct that holds a string reference and use it.",
+    starterCode: `struct Text<'a> {
+    content: &'a str,
 }
 
 fn main() {
-    let original = "hello";
-    let reversed = string_utils::reverse_string(original);
+    let text = String::from("Hello, world!");
     
-    println!("Original: {}", original);
-    println!("Reversed: {}", reversed);
-`    pub fn reverse_string(s: &str) -> String {
-    // TODO: implement
-    }
-}
-fn main() {
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement
-    // TODO: implement`
-    hint: "In real projects, you'd add dependencies in Cargo.toml and use `extern crate crate_name;` to bring external libraries into scope.",
-    expectedOutput: "Original: hello\nReversed: olleh",
+    // TODO: Create a struct that holds a reference into the string
+    let excerpt = Text { content: /* &text[0..5] */ };
+    
+    println!("Excerpt: {}", excerpt.content);
+    todo!()
+}`,
+    hint: "Structs that hold references need lifetime annotations to ensure the reference outlives the struct.",
+    expectedOutput: "Excerpt: Hello",
   },
   {
     id: 51,
