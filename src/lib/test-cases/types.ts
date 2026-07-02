@@ -1,4 +1,9 @@
-export type TestCaseValue = number | string | boolean;
+export type TestCaseValue =
+  | number
+  | string
+  | boolean
+  | null
+  | { some: TestCaseValue };
 
 export interface TestCaseSpec {
   functionName: string;

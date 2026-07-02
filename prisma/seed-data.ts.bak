@@ -226,38 +226,45 @@ fn main() {
     title: "Sum of Even Numbers",
     difficulty: "beginner",
     category: "Control Flow - For Loops",
-    description: "Use for loops to accumulate values with conditions.",
-    instructions: "Use a for loop to calculate the sum of all even numbers between 1 and 10.",
+    description: "Accumulate a running total in a mutable variable while looping. Example: `let mut sum = 0; for i in 1..=10 { if i % 2 == 0 { sum += i; } }`",
+    instructions: "Use a for loop to calculate the sum of all even numbers between 1 and 10. Print the result as a single number (e.g. `30`).",
     starterCode: `fn main() {
     // Initialize a sum variable
-    
+    let mut sum = 0;
+
     // Use a for loop to iterate from 1 to 10
-    
-    // Check if each number is even and add it to the sum
-    
+    for x in 1..=10 {
+        // Check if each number is even and add it to the sum
+    }
+
     // Print the sum of even numbers
-    
+    println!("{}", sum);
 }`,
     hint: "Accumulate values in a mutable variable: `sum += i`.",
-    expectedOutput: "Sum of evens: 30",
+    expectedOutput: "30",
   },
   {
     id: 12,
     title: "Product by Addition",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to implement multiplication through repeated addition.",
-    instructions: "Implement multiplication using a for loop with repeated addition. Calculate 5 * 4.",
+    description: "Multiply by adding one number repeatedly in a loop. Example: `let mut product = 0; for _ in 0..b { product += a; }`",
+    instructions: "Implement `multiply_by_addition(a, b)` using a for loop with repeated addition (add `a` to a running total `b` times). From `main`, call `multiply_by_addition(5, 4)` and print the result as a single number (e.g. `20`).",
     starterCode: `fn multiply_by_addition(a: i32, b: i32) -> i32 {
-    // TODO: implement multiplication using repeated addition
+    let mut product = 0;
+
     // Use a for loop to add 'a' to product 'b' times
-    
+    for _ in 0..b {
+        // Add a each iteration
+    }
+
+    product
 }
 
 fn main() {
     let result = multiply_by_addition(5, 4);
-    println!("5 * 4 = {}", result);
-}`
+    println!("{}", result);
+}`,
     hint: "Use a for loop to add the first number `b` times to simulate multiplication.",
     expectedOutput: null,
   },
@@ -266,21 +273,23 @@ fn main() {
     title: "Power Function",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to implement exponentiation.",
-    instructions: "Implement a power function using for loops. Calculate 2^5.",
+    description: "Raise a number to a power by multiplying in a loop. Example: `let mut result = 1; for _ in 0..exp { result *= base; }`",
+    instructions: "Implement `power(base, exp)` using a for loop (multiply `base` by itself `exp` times; any number to the power 0 is 1). From `main`, call `power(2, 5)` and print the result as a single number (e.g. `32`).",
     starterCode: `fn power(base: i32, exp: u32) -> i32 {
-    // TODO: implement exponentiation using for loops
+    let mut result = 1;
+
     // Multiply base by itself exp times
-    
+    for _ in 0..exp {
+        // Multiply result by base each iteration
+    }
+
+    result
 }
 
 fn main() {
     let result = power(2, 5);
-    println!("2^5 = {}", result);
-}`fn main() {
-    // TODO: implement the solution
-    
-}`
+    println!("{}", result);
+}`,
     hint: "Multiply the base by itself `exp` times using a for loop.",
     expectedOutput: null,
   },
@@ -289,21 +298,19 @@ fn main() {
     title: "Prime Number Checker",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to check if a number is prime.",
-    instructions: "Write a function that checks if a number is prime using a for loop to test divisibility.",
+    description: "A prime has no divisors except 1 and itself — test with a loop from 2 upward. Example: `for d in 2..n { if n % d == 0 { return false; } }`",
+    instructions: "Implement `is_prime(n)` using a for loop to test divisibility (return `false` for `n < 2`). From `main`, print `is_prime(7)` and `is_prime(12)` on separate lines (e.g. `true` then `false`).",
     starterCode: `fn is_prime(n: u32) -> bool {
-    // TODO: implement prime number check
-    // Return true if n is prime, false otherwise
-    
+    // Return false for numbers less than 2
+    // Use a for loop to check divisibility from 2 to n-1
+
+    false
 }
 
 fn main() {
-    println!("Is 7 prime? {}", is_prime(7));
-    println!("Is 12 prime? {}", is_prime(12));
-}`fn main() {
-    // TODO: implement the solution
-    
-}`
+    println!("{}", is_prime(7));
+    println!("{}", is_prime(12));
+}`,
     hint: "A number is prime if it's not divisible by any number from 2 to its square root.",
     expectedOutput: null,
   },
@@ -312,13 +319,14 @@ fn main() {
     title: "Countdown Loop",
     difficulty: "beginner",
     category: "Control Flow - For Loops",
-    description: "Use for loops to count backwards.",
-    instructions: "Use a for loop to count down from 5 to 1, printing each number.",
+    description: "Iterate a range in reverse with `.rev()`. Example: `for i in (1..=5).rev() { println!(\"{}\", i); }`",
+    instructions: "Use a for loop with `.rev()` to count down from 5 to 1. Print each number on its own line (e.g. `5`, then `4`, …, then `1`).",
     starterCode: `fn main() {
-    // Use a for loop to count down from 5 to 1
-    // Print each number
-    
-}`
+    // Use a for loop with .rev() to count down from 5 to 1
+    for i in (1..=5).rev() {
+        // Print each number on its own line
+    }
+}`,
     hint: "Use `.rev()` on a range to iterate in reverse: `(1..=5).rev()`.",
     expectedOutput: "5\n4\n3\n2\n1",
   },
@@ -327,21 +335,21 @@ fn main() {
     title: "Largest Proper Divisor",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to find the largest proper divisor of a number.",
-    instructions: "Write a function that finds the largest proper divisor (largest number less than n that divides n) using a for loop.",
+    description: "The largest proper divisor is the biggest number less than n that divides n evenly. Example: `for d in (1..n).rev() { if n % d == 0 { return Some(d); } }`",
+    instructions: "Implement `largest_proper_divisor(n)` using a for loop (return the largest divisor less than `n`, or `None` for `n <= 1`). From `main`, print `largest_proper_divisor(12)` and `largest_proper_divisor(7)` using Debug format (e.g. `Some(6)` then `Some(1)`).",
     starterCode: `fn largest_proper_divisor(n: u32) -> Option<u32> {
-    // TODO: implement largest proper divisor finder
-    // Return the largest divisor of n that is less than n
-    
+    // Search divisors from n-1 down to 1
+    for d in (1..n).rev() {
+        // Return Some(d) when n is divisible by d
+    }
+
+    None
 }
 
 fn main() {
-    println!("Largest proper divisor of 12: {:?}", largest_proper_divisor(12));
-    println!("Largest proper divisor of 7: {:?}", largest_proper_divisor(7));
-}`fn main() {
-    // TODO: implement the solution
-    
-}`
+    println!("{:?}", largest_proper_divisor(12));
+    println!("{:?}", largest_proper_divisor(7));
+}`,
     hint: "Iterate backwards from n-1 to 1 and return the first divisor found.",
     expectedOutput: null,
   },
@@ -350,22 +358,22 @@ fn main() {
     title: "Fibonacci Function",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to generate Fibonacci sequence.",
-    instructions: "Write a function that generates the nth Fibonacci number using a for loop.",
+    description: "Each Fibonacci number is the sum of the two before it; track the last two values in a loop. Example: `let (mut a, mut b) = (0, 1); for _ in 0..n { let next = a + b; a = b; b = next; }`",
+    instructions: "Implement `fibonacci(n)` using a for loop (the 0th number is 0, the 1st is 1). From `main`, call `fibonacci(10)` and print the result as a single number (e.g. `55`).",
     starterCode: `fn fibonacci(n: u32) -> u64 {
-    // TODO: implement fibonacci function
-    // Return the nth fibonacci number
-    
+    let (mut a, mut b) = (0, 1);
+
+    // Iterate n times, shifting (a, b) forward
+    for _ in 0..n {
+        // Compute the next Fibonacci number
+    }
+
+    a
 }
 
 fn main() {
-    println!("Fibonacci(10): {}", fibonacci(10));
-    println!("Fibonacci(0): {}", fibonacci(0));
-    println!("Fibonacci(1): {}", fibonacci(1));
-}`fn main() {
-    // TODO: implement the solution
-    
-}`
+    println!("{}", fibonacci(10));
+}`,
     hint: "Use two variables to track the previous two Fibonacci numbers, updating them in each iteration.",
     expectedOutput: null,
   },
@@ -374,21 +382,22 @@ fn main() {
     title: "Factorial Function",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use for loops to calculate factorial.",
-    instructions: "Write a function that calculates the factorial of a number using a for loop.",
+    description: "Factorial multiplies every integer from 1 to n. Example: `let mut fact = 1; for i in 1..=n { fact *= i; }`",
+    instructions: "Implement `factorial(n)` using a for loop (`0! = 1`). From `main`, call `factorial(5)` and print the result as a single number (e.g. `120`).",
     starterCode: `fn factorial(n: u32) -> u64 {
-    // TODO: implement factorial function
-    // Return n! (n factorial)
-    
+    let mut fact: u64 = 1;
+
+    // Multiply fact by each integer from 1 to n
+    for i in 1..=n {
+        fact *= i as u64;
+    }
+
+    fact
 }
 
 fn main() {
-    println!("5! = {}", factorial(5));
-    println!("0! = {}", factorial(0));
-}`fn main() {
-    // TODO: implement the solution
-    
-}`
+    println!("{}", factorial(5));
+}`,
     hint: "Multiply all integers from 1 to n to calculate factorial.",
     expectedOutput: null,
   },
@@ -397,16 +406,16 @@ fn main() {
     title: "Nested Loops",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use nested for loops to work with 2D patterns.",
-    instructions: "Use nested for loops to print a 3x3 multiplication table.",
+    description: "An inner loop runs completely for each outer iteration. Example: `for i in 1..=3 { for j in 1..=3 { print!(\"{}x{}={} \", i, j, i * j); } }`",
+    instructions: "Use nested for loops to print a 3×3 multiplication table. Each row should show `1x1=1 1x2=2 1x3=3` style entries separated by spaces, with one row per line.",
     starterCode: `fn main() {
-    // Use nested loops to print a pattern
-    // Outer loop for rows, inner loop for columns
-    
-}`fn main() {
-    // TODO: implement the solution
-    
-}`
+    for i in 1..=3 {
+        for j in 1..=3 {
+            print!("{}x{}={} ", i, j, i * j);
+        }
+        println!();
+    }
+}`,
     hint: "Nested loops allow you to work with 2D structures. The inner loop completes for each iteration of the outer loop.",
     expectedOutput: "1x1=1 1x2=2 1x3=3 \n2x1=2 2x2=4 2x3=6 \n3x1=3 3x2=6 3x3=9 ",
   },
@@ -415,16 +424,15 @@ fn main() {
     title: "Early Loop Termination",
     difficulty: "intermediate",
     category: "Control Flow - For Loops",
-    description: "Use break to exit loops early based on conditions.",
-    instructions: "Use a for loop to find the first number greater than 50 that's divisible by 7.",
+    description: "`break` exits a loop as soon as a condition is met. Example: `for i in 1..=100 { if i % 7 == 0 && i > 50 { println!(\"Found: {}\", i); break; } }`",
+    instructions: "Use a for loop from 1 to 100 to find the first number greater than 50 that is divisible by 7. Print `Found: 56` and stop the loop with `break`.",
     starterCode: `fn main() {
-    // Use a for loop with early termination
-    // Print numbers until you find a specific condition
-    
-}`fn main() {
-    // TODO: implement the solution
-    
-}`
+    for i in 1..=100 {
+        if i > 50 && i % 7 == 0 {
+            // Print "Found: X" and break
+        }
+    }
+}`,
     hint: "Use `break` to exit a loop early when you find what you're looking for.",
     expectedOutput: "Found: 56",
   },

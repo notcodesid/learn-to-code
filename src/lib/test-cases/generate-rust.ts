@@ -1,6 +1,8 @@
 import { TestCaseSpec, TestCaseValue } from "./types";
 
 export function toRustLiteral(value: TestCaseValue): string {
+  if (value === null) return "None";
+  if (typeof value === "object") return `Some(${toRustLiteral(value.some)})`;
   if (typeof value === "string") return `"${value.replace(/"/g, '\\"')}"`;
   if (typeof value === "boolean") return value ? "true" : "false";
   return String(value);

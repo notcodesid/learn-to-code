@@ -47,4 +47,30 @@ export const CHALLENGE_TEST_SPECS: Record<number, TestCaseSpec> = {
       { id: 4, label: "Case 4", args: [2], expected: true },
     ],
   },
+
+  16: {
+    functionName: "largest_proper_divisor",
+    cases: [
+      { id: 1, label: "Case 1", args: [12], expected: { some: 6 } },
+      { id: 2, label: "Case 2", args: [7], expected: { some: 1 } },
+      { id: 3, label: "Case 3", args: [1], expected: null },
+    ],
+  },
+
+  17: {
+    functionName: "fibonacci",
+    cases: [
+      { id: 1, label: "Case 1", args: [0], expected: 0 },
+      { id: 2, label: "Case 2", args: [1], expected: 1 },
+      { id: 3, label: "Case 3", args: [10], expected: 55 },
+    ],
+  },
+
+  18: {
+    functionName: "factorial",
+    cases: [
+      { id: 1, label: "Case 1", args: [0], expected: 1 },
+      { id: 2, label: "Case 2", args: [5], expected: 120 },
+    ],
+  },
 };

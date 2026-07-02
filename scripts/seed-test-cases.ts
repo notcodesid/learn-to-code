@@ -8,6 +8,16 @@ async function main() {
   console.log(`Seeding test cases for ${ids.length} challenges...`);
 
   for (const id of ids) {
+    const existing = await prisma.challenge.findUnique({
+      where: { id },
+      select: { testCaseSpec: true },
+    });
+
+    if (existing?.testCaseSpec) {
+      console.log(`  ⊘ Challenge ${id} (skipped — uses testCaseSpec)`);
+      continue;
+    }
+
     const testCases = CHALLENGE_TEST_CASES[id];
     await prisma.challenge.update({
       where: { id },
