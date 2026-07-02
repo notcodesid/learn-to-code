@@ -7,7 +7,16 @@ export async function GET(_request: NextRequest) {
       orderBy: [{ order: "asc" }, { id: "asc" }],
     });
 
-    return NextResponse.json({ challenges });
+    // Never expose hidden test cases to the client
+    const publicChallenges = challenges.map(
+      ({ testCases, testCaseSpec, ...challenge }) => ({
+        ...challenge,
+        hasTestCases: !!testCaseSpec || !!testCases?.trim(),
+        hasStructuredTests: !!testCaseSpec,
+      })
+    );
+
+    return NextResponse.json({ challenges: publicChallenges });
   } catch (error) {
     console.error("Get challenges error:", error);
     return NextResponse.json(

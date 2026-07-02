@@ -1,5 +1,7 @@
-import { Challenge as PrismaChallenge } from '@prisma/client';
+import { Challenge as PrismaChallenge } from "@prisma/client";
 
-export type Challenge = PrismaChallenge & {
-  difficulty: 'beginner' | 'intermediate' | 'advanced' | string;
+export type Challenge = Omit<PrismaChallenge, "testCases" | "testCaseSpec"> & {
+  difficulty: "beginner" | "intermediate" | "advanced" | string;
+  hasTestCases?: boolean;
+  hasStructuredTests?: boolean;
 };

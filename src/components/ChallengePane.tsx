@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Challenge } from "@/types/challenge";
+import { getGradingMode } from "@/lib/grading";
 
 interface ChallengePaneProps {
   challenge: Challenge;
@@ -72,6 +73,28 @@ export function ChallengePane({
           <p className="text-sm text-foreground/85 leading-relaxed">
             {challenge.instructions}
           </p>
+          {getGradingMode(challenge) === "tests" && (
+            <p className="mt-2.5 text-xs text-blue-400/90 leading-relaxed flex items-start gap-1.5">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="shrink-0 mt-0.5"
+              >
+                <path d="M9 12l2 2 4-4" />
+                <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>
+                Use <strong className="font-semibold text-blue-300">Run</strong> to
+                see your output, then{" "}
+                <strong className="font-semibold text-blue-300">Submit</strong> to
+                verify against hidden test cases.
+              </span>
+            </p>
+          )}
         </div>
       </div>
     </div>

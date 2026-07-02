@@ -9,7 +9,10 @@ import { Sidebar } from "./Sidebar";
 import { ChallengePane } from "./ChallengePane";
 import { CodeEditor } from "./CodeEditor";
 import { OutputPanel } from "./OutputPanel";
+import { TestResultPanel } from "./TestResultPanel";
 import { AuthPromptModal } from "./AuthPromptModal";
+import { TestRunResult } from "@/lib/test-cases/types";
+import { parseApiJson } from "@/lib/parse-api-response";
 
 
 // Custom SVG Logo Icon
@@ -56,6 +59,9 @@ export function AppShell() {
   const [isLoadingChallenges, setIsLoadingChallenges] = useState(true);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [runVerified, setRunVerified] = useState<boolean | null>(null);
+  const [executionMode, setExecutionMode] = useState<"run" | "test" | null>(null);
+  const [runningAction, setRunningAction] = useState<"run" | "test" | null>(null);
+  const [testResult, setTestResult] = useState<TestRunResult | null>(null);
 
   // Track if we've already shown the "please sign up" prompt for typing.
   // We only auto-show once on write, but re-show on Run attempts (stronger intent).
@@ -263,27 +269,34 @@ export function AppShell() {
       setCode(saved);
       setOutput("");
       setRunVerified(null);
+      setExecutionMode(null);
+      setTestResult(null);
       // Reset the restore flag so saved code is restored when switching challenges
       hasRestoredCodeRef.current = false;
     },
     [selectedChallenge, code, savedCode, status]
   );
 
-  const handleRunCode = useCallback(async () => {
-    if (!selectedChallenge) return;
-
-    // For guests: show the friendly sign-up prompt instead of running.
-    // We always show on Run (even if they dismissed the typing prompt).
+  const requireAuth = useCallback(() => {
     if (status === "unauthenticated") {
       setShowAuthPrompt(true);
-      return;
+      return false;
     }
+    return true;
+  }, [status]);
+
+  const handleRunCode = useCallback(async () => {
+    if (!selectedChallenge || !requireAuth()) return;
 
     const gradingMode = getGradingMode(selectedChallenge);
+    const usesTests = gradingMode === "tests";
 
     setIsRunning(true);
+    setRunningAction("run");
+    setExecutionMode("run");
     setRunVerified(null);
-    setOutput(gradingMode === "tests" ? "Running tests..." : "Compiling...");
+    setTestResult(null);
+    setOutput("Compiling...");
 
     try {
       const res = await fetch("/api/run", {
@@ -291,28 +304,37 @@ export function AppShell() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code,
-          testCases: selectedChallenge.testCases ?? undefined,
+          challengeId: selectedChallenge.id,
+          mode: "run",
         }),
       });
-      const data = await res.json();
+      const data = await parseApiJson<{
+        success: boolean;
+        stdout?: string;
+        stderr?: string;
+      }>(res);
 
       if (data.success) {
         const stdout = data.stdout || "(no output)";
         setOutput(stdout);
-        const passed = isChallengeCorrect(
-          gradingMode,
-          { success: data.success, stdout },
-          selectedChallenge.expectedOutput
-        );
-        setRunVerified(passed);
 
-        if (passed) {
-          const updated = new Set(completedChallengesRef.current);
-          updated.add(selectedChallenge.id);
-          setCompletedChallenges(updated);
+        // Print-based challenges: Run grades the solution
+        if (!usesTests) {
+          const passed = isChallengeCorrect(
+            "output",
+            { success: data.success, stdout },
+            selectedChallenge.expectedOutput
+          );
+          setRunVerified(passed);
 
-          if (status === "authenticated") {
-            saveProgressToServer(selectedChallenge.id, true, code);
+          if (passed) {
+            const updated = new Set(completedChallengesRef.current);
+            updated.add(selectedChallenge.id);
+            setCompletedChallenges(updated);
+
+            if (status === "authenticated") {
+              saveProgressToServer(selectedChallenge.id, true, code);
+            }
           }
         }
       } else {
@@ -324,8 +346,73 @@ export function AppShell() {
       setOutput(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
     } finally {
       setIsRunning(false);
+      setRunningAction(null);
     }
-  }, [code, selectedChallenge, status]);
+  }, [code, selectedChallenge, status, requireAuth]);
+
+  const handleSubmitTests = useCallback(async () => {
+    if (!selectedChallenge || !requireAuth()) return;
+
+    setIsRunning(true);
+    setRunningAction("test");
+    setExecutionMode("test");
+    setRunVerified(null);
+    setTestResult(null);
+    setOutput("Running tests...");
+
+    try {
+      const res = await fetch("/api/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code,
+          challengeId: selectedChallenge.id,
+          mode: "test",
+        }),
+      });
+      const data = await parseApiJson<{
+        success: boolean;
+        stdout?: string;
+        stderr?: string;
+        testResult?: TestRunResult;
+      }>(res);
+
+      if (data.testResult) {
+        setTestResult(data.testResult);
+        setRunVerified(data.testResult.accepted);
+
+        if (data.testResult.accepted) {
+          const updated = new Set(completedChallengesRef.current);
+          updated.add(selectedChallenge.id);
+          setCompletedChallenges(updated);
+
+          if (status === "authenticated") {
+            saveProgressToServer(selectedChallenge.id, true, code);
+          }
+        }
+      } else if (data.success) {
+        setOutput(data.stdout || "All tests passed!");
+        setRunVerified(true);
+
+        const updated = new Set(completedChallengesRef.current);
+        updated.add(selectedChallenge.id);
+        setCompletedChallenges(updated);
+
+        if (status === "authenticated") {
+          saveProgressToServer(selectedChallenge.id, true, code);
+        }
+      } else {
+        setRunVerified(false);
+        setOutput(data.stderr || data.stdout || "Tests failed");
+      }
+    } catch (err) {
+      setRunVerified(false);
+      setOutput(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
+    } finally {
+      setIsRunning(false);
+      setRunningAction(null);
+    }
+  }, [code, selectedChallenge, status, requireAuth]);
 
   const handleResetCode = useCallback(() => {
     if (!selectedChallenge) return;
@@ -334,6 +421,8 @@ export function AppShell() {
     setCode(starter);
     setOutput("");
     setRunVerified(null);
+    setExecutionMode(null);
+    setTestResult(null);
 
     // Remove from local cache
     setSavedCode(prev => {
@@ -509,8 +598,11 @@ export function AppShell() {
               code={code}
               onChange={handleCodeChange}
               onRun={handleRunCode}
+              onSubmitTests={handleSubmitTests}
               onReset={handleResetCode}
               isRunning={isRunning}
+              runningAction={runningAction}
+              hasTestCases={!!selectedChallenge.hasTestCases}
             />
             {/* Drag Handle Divider */}
             <div
@@ -520,14 +612,19 @@ export function AppShell() {
               <div className="w-8 h-0.5 rounded-full bg-muted/20 group-hover:bg-accent/60 group-active:bg-accent transition-colors" />
             </div>
 
-            <OutputPanel
-              output={output}
-              expectedOutput={selectedChallenge.expectedOutput || undefined}
-              isRunning={isRunning}
-              height={outputHeight}
-              gradingMode={getGradingMode(selectedChallenge)}
-              verified={runVerified}
-            />
+            {executionMode === "test" && testResult && !isRunning ? (
+              <TestResultPanel result={testResult} height={outputHeight} />
+            ) : (
+              <OutputPanel
+                output={output}
+                expectedOutput={selectedChallenge.expectedOutput || undefined}
+                isRunning={isRunning}
+                height={outputHeight}
+                executionMode={executionMode}
+                challengeGradingMode={getGradingMode(selectedChallenge)}
+                verified={runVerified}
+              />
+            )}
           </div>
         </div>
 

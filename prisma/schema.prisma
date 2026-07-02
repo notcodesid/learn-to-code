@@ -71,6 +71,7 @@ model Challenge {
   expectedOutput String?  @db.Text
   explanation    String?  @db.Text
   testCases      String?  @db.Text
+  testCaseSpec   Json?
   order          Int      @default(0)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

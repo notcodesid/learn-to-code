@@ -94,11 +94,6 @@ export const staticChallenges: Challenge[] = [
 fn main() {
     // Call add(3, 7) and print the result
     
-
-
-fn main() {
-    // Call add(3, 7) and print the result
-    
 }`,
     hint: "Function syntax: `fn name(param: Type) -> ReturnType { expression }`. The last expression without a semicolon is the return value.",
     expectedOutput: "10",

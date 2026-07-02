@@ -3,19 +3,17 @@
 import dynamic from "next/dynamic";
 import { loader } from "@monaco-editor/react";
 
-// Use CDN for Monaco Editor files
 loader.config({
   paths: {
-    vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs"
-  }
+    vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs",
+  },
 });
 
-// Suppress cancellation errors in browser console
 if (typeof window !== "undefined") {
   const originalError = console.error;
   console.error = (...args) => {
     if (typeof args[0] === "string" && args[0].includes("Canceled")) {
-      return; // Suppress Monaco cancellation errors
+      return;
     }
     originalError.apply(console, args);
   };
@@ -43,23 +41,47 @@ interface CodeEditorProps {
   code: string;
   onChange: (code: string) => void;
   onRun: () => void;
+  onSubmitTests?: () => void;
   onReset: () => void;
   isRunning: boolean;
+  runningAction?: "run" | "test" | null;
+  hasTestCases?: boolean;
+}
+
+function Spinner() {
+  return (
+    <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24" fill="none">
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+        className="opacity-25"
+      />
+      <path
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+        className="opacity-75"
+      />
+    </svg>
+  );
 }
 
 export function CodeEditor({
   code,
   onChange,
   onRun,
+  onSubmitTests,
   onReset,
   isRunning,
+  runningAction = null,
+  hasTestCases = false,
 }: CodeEditorProps) {
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      {/* Toolbar */}
       <div className="flex items-center justify-between px-3 md:px-4 py-2 border-b border-border bg-surface/80 backdrop-blur-sm shrink-0">
         <div className="flex items-center gap-2">
-          {/* File tab */}
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-surface-hover/60 rounded-md border border-border/50">
             <svg
               width="12"
@@ -73,16 +95,15 @@ export function CodeEditor({
               <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
               <path d="M14 2v6h6" />
             </svg>
-            <span className="text-xs text-foreground/70 font-mono">
-              main.rs
-            </span>
+            <span className="text-xs text-foreground/70 font-mono">main.rs</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={onReset}
-            className="h-8 px-3 text-xs font-medium rounded-md bg-surface-hover text-muted hover:text-foreground transition-all duration-200 btn-press border border-transparent hover:border-border flex items-center justify-center gap-1.5 min-w-[80px]"
+            disabled={isRunning}
+            className="h-8 px-3 text-xs font-medium rounded-md bg-surface-hover text-muted hover:text-foreground transition-all duration-200 btn-press border border-transparent hover:border-border flex items-center justify-center gap-1.5 min-w-[80px] disabled:opacity-50"
           >
             <svg
               width="11"
@@ -103,27 +124,9 @@ export function CodeEditor({
             disabled={isRunning}
             className="group h-8 px-4 text-xs font-bold rounded-md bg-accent text-white hover:bg-accent-hover transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 min-w-[80px] btn-glow btn-press shadow-sm shadow-accent/20"
           >
-            {isRunning ? (
+            {isRunning && runningAction === "run" ? (
               <>
-                <svg
-                  className="animate-spin h-3 w-3"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    className="opacity-25"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    className="opacity-75"
-                  />
-                </svg>
+                <Spinner />
                 <span>Running...</span>
               </>
             ) : (
@@ -146,10 +149,39 @@ export function CodeEditor({
               </>
             )}
           </button>
+
+          {hasTestCases && onSubmitTests && (
+            <button
+              onClick={onSubmitTests}
+              disabled={isRunning}
+              className="h-8 px-3 text-xs font-bold rounded-md bg-blue-500 text-white hover:bg-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 min-w-[88px] btn-press border border-transparent"
+            >
+              {isRunning && runningAction === "test" ? (
+                <>
+                  <Spinner />
+                  <span>Testing...</span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    width="11"
+                    height="11"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M9 12l2 2 4-4" />
+                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Submit
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Monaco */}
       <div className="flex-1 min-h-0 animate-fade-in">
         <MonacoEditor
           height="100%"

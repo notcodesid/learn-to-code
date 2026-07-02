@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "bun --bun next dev --webpack",
     "build": "bun --bun next build",
     "start": "bun --bun next start",
     "lint": "bun --bun eslint",
     "seed": "bun --bun tsx prisma/seed.ts",
-    "seed:test-cases": "bun run scripts/seed-test-cases.ts"
+    "seed:test-cases": "bun run scripts/seed-test-cases.ts",
+    "seed:test-specs": "bun run scripts/seed-test-specs.ts"
   },
   "prisma": {
     "seed": "bun --bun tsx prisma/seed.ts"

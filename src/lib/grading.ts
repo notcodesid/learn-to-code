@@ -1,10 +1,10 @@
 export type GradingMode = "tests" | "output" | "none";
 
 export function getGradingMode(challenge: {
-  testCases?: string | null;
+  hasTestCases?: boolean;
   expectedOutput?: string | null;
 }): GradingMode {
-  if (challenge.testCases) return "tests";
+  if (challenge.hasTestCases) return "tests";
   if (challenge.expectedOutput) return "output";
   return "none";
 }

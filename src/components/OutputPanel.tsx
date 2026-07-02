@@ -8,7 +8,8 @@ interface OutputPanelProps {
   isRunning: boolean;
   justCompleted?: boolean;
   height?: number;
-  gradingMode?: GradingMode;
+  executionMode?: "run" | "test" | null;
+  challengeGradingMode?: GradingMode;
   verified?: boolean | null;
 }
 
@@ -18,21 +19,34 @@ export function OutputPanel({
   isRunning,
   justCompleted,
   height,
-  gradingMode = "output",
+  executionMode = null,
+  challengeGradingMode = "output",
   verified = null,
 }: OutputPanelProps) {
+  const isTestView = executionMode === "test";
+  const isOutputGrading =
+    challengeGradingMode === "output" && executionMode === "run";
+
   const outputMatch =
-    gradingMode === "output" &&
+    isOutputGrading &&
     expectedOutput &&
     output.trim() === expectedOutput.trim();
-  const testsPassed = gradingMode === "tests" && verified === true;
+  const testsPassed = isTestView && verified === true;
+  const testsFailed = isTestView && verified === false && !isRunning && output.length > 0;
   const isMatch = outputMatch || testsPassed;
+
   const isError =
     !isRunning &&
     output.length > 0 &&
     !isMatch &&
-    (output.includes("error") || output.includes("Error"));
+    (testsFailed ||
+      output.includes("error") ||
+      output.includes("Error") ||
+      output.includes("FAILED") ||
+      output.includes("panicked"));
+
   const hasOutput = output.length > 0;
+  const showTestHint = challengeGradingMode === "tests" && !hasOutput && !isRunning;
 
   return (
     <div
@@ -47,7 +61,6 @@ export function OutputPanel({
             : "border-border bg-[#111]"
       }`}
     >
-      {/* Header */}
       <div className="flex items-center justify-between px-3 md:px-4 py-1.5 border-b border-border/50 bg-surface/60 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <div
@@ -62,7 +75,7 @@ export function OutputPanel({
             }`}
           />
           <span className="text-[11px] text-muted font-mono uppercase tracking-wider">
-            Output
+            {isTestView ? "Test Results" : "Output"}
           </span>
         </div>
 
@@ -80,9 +93,7 @@ export function OutputPanel({
                 >
                   <path d="M20 6L9 17l-5-5" />
                 </svg>
-                {gradingMode === "tests"
-                  ? "All tests passed"
-                  : "Output matches expected"}
+                {isTestView ? "All tests passed" : "Output matches expected"}
               </span>
             ) : isError ? (
               <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-error">
@@ -97,14 +108,13 @@ export function OutputPanel({
                   <circle cx="12" cy="12" r="10" />
                   <path d="M15 9l-6 6M9 9l6 6" />
                 </svg>
-                Compilation error
+                {testsFailed ? "Tests failed" : "Compilation error"}
               </span>
             ) : null}
           </div>
         )}
       </div>
 
-      {/* Output content */}
       <pre className="flex-1 overflow-auto px-3 md:px-4 py-3 text-[13px] font-mono leading-relaxed whitespace-pre-wrap">
         {isRunning ? (
           <span className="flex items-center gap-2 text-accent">
@@ -127,9 +137,7 @@ export function OutputPanel({
                 className="opacity-80"
               />
             </svg>
-            {gradingMode === "tests"
-              ? "Running tests..."
-              : "Compiling and running..."}
+            {isTestView ? "Running tests..." : "Compiling and running..."}
           </span>
         ) : hasOutput ? (
           <span
@@ -142,6 +150,15 @@ export function OutputPanel({
             }`}
           >
             {output}
+          </span>
+        ) : showTestHint ? (
+          <span className="text-muted/40 flex flex-col gap-1 leading-relaxed">
+            <span>
+              <strong className="text-muted/60">Run</strong> — compile and see your program&apos;s output
+            </span>
+            <span>
+              <strong className="text-muted/60">Submit</strong> — run hidden test cases to verify your solution
+            </span>
           </span>
         ) : (
           <span className="text-muted/30 flex items-center gap-2">
