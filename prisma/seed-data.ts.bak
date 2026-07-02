@@ -132,7 +132,7 @@ fn main() {
     title: "Loops",
     difficulty: "beginner",
     category: "Basics",
-    description: "Use `for i in 1..=5` for inclusive ranges, `while condition { }` for conditional loops. Example: `for i in 1..=5 { println!(\"{}\", i); }`",
+    description: "Use `for` to iterate over ranges and `while` for loops that continue while a condition is true. Example: `for i in 1..=5 { println!(\"{}\", i); }` and `let mut sum = 0; let mut n = 1; while n <= 10 { sum += n; n += 1; }`",
     instructions:
       "Use a `for` loop to print the numbers 1 through 5, each on a separate line. Then print the sum of numbers 1 to 10 using a `while` loop.",
     starterCode: `fn main() {
@@ -172,8 +172,8 @@ fn main() {
     title: "Variable Range Loop",
     difficulty: "beginner",
     category: "Control Flow - For Loops",
-    description: "Use for loops with variables to define ranges.",
-    instructions: "Create variables `start` and `end`, then use a for loop with these variables to iterate and print numbers.",
+    description: "Range bounds can be variables, not just literals. Example: `let start = 3; let end = 7; for i in start..=end { println!(\"{}\", i); }`",
+    instructions: "Create variables `start = 3` and `end = 7`, then use a for loop with these variables to iterate and print each number on a separate line.",
     starterCode: `fn main() {
     // Create variables start and end
     
@@ -188,8 +188,8 @@ fn main() {
     title: "Loop Counter with Mutable Variable",
     difficulty: "beginner",
     category: "Control Flow - For Loops",
-    description: "Combine mutable variables with for loops for counting.",
-    instructions: "Use a mutable counter variable inside a for loop to track total iterations.",
+    description: "Use `let mut` to update state inside a loop; use `_` when you don't need the loop variable. Example: `let mut count = 0; for _ in 1..=5 { count += 1; }`",
+    instructions: "Use a mutable counter variable inside a for loop to track total iterations from 1 to 5. Print the result as `Total iterations: 5`.",
     starterCode: `fn main() {
     // Create a mutable counter variable
     
