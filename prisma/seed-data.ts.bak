@@ -103,7 +103,7 @@ fn main() {
     title: "Control Flow — if/else",
     difficulty: "beginner",
     category: "Basics",
-    description: "Use `if`, `else if`, and `else` for conditional logic. Example: `if x > 0 { println!(\"positive\"); } else if x < 0 { println!(\"negative\"); } else { println!(\"zero\"); }`",
+    description: "Use `if`, `else if`, and `else` for conditional branching. Each condition must evaluate to a `bool`. Example: `if x > 0 { println!(\"positive\"); } else if x < 0 { println!(\"negative\"); } else { println!(\"zero\"); }`",
     instructions:
       'Write a function `classify_number` that takes an `i32` and prints "positive", "negative", or "zero". Call it with values `5`, `-3`, and `0`.',
     starterCode: `fn classify_number(n: i32) {
