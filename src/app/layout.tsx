@@ -15,7 +15,39 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Learn Rust",
+  title: {
+    default: "Learn to Code - Interactive Rust Learning Platform",
+    template: "%s | Learn to Code"
+  },
+  description: "Interactive Rust learning platform with real browser-based compiler, instant feedback, and guided curriculum. Build coding muscle memory without local setup.",
+  keywords: ["rust programming", "learn rust", "interactive coding", "rust tutorial", "programming education", "online compiler"],
+  authors: [{ name: "Learn to Code" }],
+  creator: "Learn to Code",
+  publisher: "Learn to Code",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://learntocode.notcodesid.com",
+    title: "Learn to Code - Interactive Rust Learning Platform",
+    description: "Interactive Rust learning platform with real browser-based compiler, instant feedback, and guided curriculum.",
+    siteName: "Learn to Code",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Learn to Code - Interactive Rust Learning Platform",
+    description: "Interactive Rust learning platform with real browser-based compiler, instant feedback, and guided curriculum.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({

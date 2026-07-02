@@ -8,6 +8,7 @@ interface OutputPanelProps {
   isRunning: boolean;
   justCompleted?: boolean;
   height?: number;
+  className?: string;
   executionMode?: "run" | "test" | null;
   challengeGradingMode?: GradingMode;
   verified?: boolean | null;
@@ -19,6 +20,7 @@ export function OutputPanel({
   isRunning,
   justCompleted,
   height,
+  className = "",
   executionMode = null,
   challengeGradingMode = "output",
   verified = null,
@@ -51,15 +53,15 @@ export function OutputPanel({
   return (
     <div
       style={height !== undefined ? { height: `${height}px` } : undefined}
-      className={`shrink-0 border-t flex flex-col transition-colors duration-500 ${
-        height === undefined ? "h-36 md:h-40" : ""
+      className={`border-t flex flex-col transition-colors duration-500 ${
+        height === undefined ? "flex-1 md:shrink-0 md:h-40" : "shrink-0"
       } ${
         justCompleted
           ? "border-success/30 bg-success/5"
           : isError
             ? "border-error/20 bg-error/5"
             : "border-border bg-[#111]"
-      }`}
+      } ${className}`}
     >
       <div className="flex items-center justify-between px-3 md:px-4 py-1.5 border-b border-border/50 bg-surface/60 backdrop-blur-sm">
         <div className="flex items-center gap-2">

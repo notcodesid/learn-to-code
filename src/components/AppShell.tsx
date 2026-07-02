@@ -58,10 +58,26 @@ export function AppShell() {
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [isLoadingChallenges, setIsLoadingChallenges] = useState(true);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeTab, setActiveTab] = useState<"challenge" | "editor" | "output">("challenge");
   const [runVerified, setRunVerified] = useState<boolean | null>(null);
   const [executionMode, setExecutionMode] = useState<"run" | "test" | null>(null);
   const [runningAction, setRunningAction] = useState<"run" | "test" | null>(null);
   const [testResult, setTestResult] = useState<TestRunResult | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+
+    if (window.innerWidth < 768) {
+      setShowSidebar(false);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Track if we've already shown the "please sign up" prompt for typing.
   // We only auto-show once on write, but re-show on Run attempts (stronger intent).
@@ -273,6 +289,11 @@ export function AppShell() {
       setTestResult(null);
       // Reset the restore flag so saved code is restored when switching challenges
       hasRestoredCodeRef.current = false;
+
+      if (window.innerWidth < 768) {
+        setShowSidebar(false);
+        setActiveTab("challenge");
+      }
     },
     [selectedChallenge, code, savedCode, status]
   );
@@ -287,6 +308,10 @@ export function AppShell() {
 
   const handleRunCode = useCallback(async () => {
     if (!selectedChallenge || !requireAuth()) return;
+
+    if (window.innerWidth < 768) {
+      setActiveTab("output");
+    }
 
     const gradingMode = getGradingMode(selectedChallenge);
     const usesTests = gradingMode === "tests";
@@ -352,6 +377,10 @@ export function AppShell() {
 
   const handleSubmitTests = useCallback(async () => {
     if (!selectedChallenge || !requireAuth()) return;
+
+    if (window.innerWidth < 768) {
+      setActiveTab("output");
+    }
 
     setIsRunning(true);
     setRunningAction("test");
@@ -572,63 +601,138 @@ export function AppShell() {
       </header>
 
       {/* Main content */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        {showSidebar && (
-          <Sidebar
-            challenges={challenges}
-            selectedId={selectedChallenge.id}
-            completedIds={completedChallenges}
-            onSelect={handleSelectChallenge}
+      <div className="flex flex-1 overflow-hidden relative">
+        {showSidebar && isMobile && (
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden animate-fade-in"
+            onClick={() => setShowSidebar(false)}
           />
         )}
 
-        {/* Center: challenge + editor + output */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Challenge description */}
-          <ChallengePane challenge={selectedChallenge} />
+        <Sidebar
+          challenges={challenges}
+          selectedId={selectedChallenge.id}
+          completedIds={completedChallenges}
+          onSelect={handleSelectChallenge}
+          className={`
+            transition-transform duration-300 ease-in-out z-50
+            fixed inset-y-0 left-0 w-80 h-full border-r border-border
+            md:static md:translate-x-0 md:z-auto
+            ${showSidebar ? "translate-x-0" : "-translate-x-full md:hidden"}
+          `}
+        />
 
-          {/* Editor + output — always visible so guests can see the code and starter.
-              We intercept writes/runs via modal for unauthenticated users. */}
+        <div className="flex-1 flex flex-col min-w-0 bg-background relative">
+          <div className="flex md:hidden border-b border-border bg-surface shrink-0 z-10">
+            <button
+              onClick={() => setActiveTab("challenge")}
+              className={`flex-1 py-3.5 text-center text-xs font-bold tracking-wider uppercase border-b-2 transition-all duration-200 cursor-pointer ${
+                activeTab === "challenge"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-muted hover:text-foreground"
+              }`}
+            >
+              Challenge
+            </button>
+            <button
+              onClick={() => setActiveTab("editor")}
+              className={`flex-1 py-3.5 text-center text-xs font-bold tracking-wider uppercase border-b-2 transition-all duration-200 cursor-pointer ${
+                activeTab === "editor"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-muted hover:text-foreground"
+              }`}
+            >
+              Editor
+            </button>
+            <button
+              onClick={() => setActiveTab("output")}
+              className={`flex-1 py-3.5 text-center text-xs font-bold tracking-wider uppercase border-b-2 transition-all duration-200 cursor-pointer relative ${
+                activeTab === "output"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-muted hover:text-foreground"
+              }`}
+            >
+              Output
+              {(output || testResult) && !isRunning && activeTab !== "output" && (
+                <span
+                  className={`absolute top-3 right-4.5 w-1.5 h-1.5 rounded-full ${
+                    runVerified === true || testResult?.accepted
+                      ? "bg-success animate-pulse"
+                      : "bg-error animate-pulse"
+                  }`}
+                />
+              )}
+            </button>
+          </div>
+
+          <div
+            className={`
+            md:block shrink-0
+            ${isMobile && activeTab === "challenge" ? "flex-1 overflow-y-auto block" : "hidden"}
+          `}
+          >
+            <ChallengePane challenge={selectedChallenge} />
+          </div>
+
           <div
             ref={containerRef}
-            className={`flex-1 flex flex-col min-h-0 relative ${isDragging ? "select-none" : ""}`}
+            className={`
+              flex-1 flex flex-col min-h-0 relative
+              ${isMobile && activeTab !== "editor" && activeTab !== "output" ? "hidden" : "flex"}
+              ${isDragging ? "select-none" : ""}
+            `}
           >
-            <CodeEditor
-              code={code}
-              onChange={handleCodeChange}
-              onRun={handleRunCode}
-              onSubmitTests={handleSubmitTests}
-              onReset={handleResetCode}
-              isRunning={isRunning}
-              runningAction={runningAction}
-              hasTestCases={!!selectedChallenge.hasTestCases}
-            />
-            {/* Drag Handle Divider */}
             <div
-              className={`h-2 cursor-ns-resize bg-border/50 hover:bg-accent/40 active:bg-accent transition-colors shrink-0 flex items-center justify-center relative group z-10 select-none touch-none`}
+              className={`
+              flex-1 flex flex-col min-h-0
+              ${isMobile && activeTab !== "editor" ? "hidden" : "flex"}
+            `}
+            >
+              <CodeEditor
+                code={code}
+                onChange={handleCodeChange}
+                onRun={handleRunCode}
+                onSubmitTests={handleSubmitTests}
+                onReset={handleResetCode}
+                isRunning={isRunning}
+                runningAction={runningAction}
+                hasTestCases={!!selectedChallenge.hasTestCases}
+              />
+            </div>
+
+            <div
+              className="hidden md:flex h-2 cursor-ns-resize bg-border/50 hover:bg-accent/40 active:bg-accent transition-colors shrink-0 items-center justify-center relative group z-10 select-none touch-none"
               onPointerDown={startDragging}
             >
               <div className="w-8 h-0.5 rounded-full bg-muted/20 group-hover:bg-accent/60 group-active:bg-accent transition-colors" />
             </div>
 
-            {executionMode === "test" && testResult && !isRunning ? (
-              <TestResultPanel result={testResult} height={outputHeight} />
-            ) : (
-              <OutputPanel
-                output={output}
-                expectedOutput={selectedChallenge.expectedOutput || undefined}
-                isRunning={isRunning}
-                height={outputHeight}
-                executionMode={executionMode}
-                challengeGradingMode={getGradingMode(selectedChallenge)}
-                verified={runVerified}
-              />
-            )}
+            <div
+              className={`
+              ${isMobile && activeTab !== "output" ? "hidden" : "flex flex-col"}
+              ${isMobile ? "flex-1 min-h-0 h-full" : "shrink-0"}
+            `}
+            >
+              {executionMode === "test" && testResult && !isRunning ? (
+                <TestResultPanel
+                  result={testResult}
+                  height={isMobile ? undefined : outputHeight}
+                />
+              ) : (
+                <OutputPanel
+                  output={output}
+                  expectedOutput={selectedChallenge.expectedOutput || undefined}
+                  isRunning={isRunning}
+                  height={isMobile ? undefined : outputHeight}
+                  executionMode={executionMode}
+                  challengeGradingMode={getGradingMode(selectedChallenge)}
+                  verified={runVerified}
+                  className={isMobile ? "border-t-0 flex-1" : ""}
+                />
+              )}
+            </div>
           </div>
         </div>
-
-
       </div>
 
       <AuthPromptModal
