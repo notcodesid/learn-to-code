@@ -7,7 +7,8 @@
     "build": "bun --bun next build",
     "start": "bun --bun next start",
     "lint": "bun --bun eslint",
-    "seed": "bun --bun tsx prisma/seed.ts"
+    "seed": "bun --bun tsx prisma/seed.ts",
+    "seed:test-cases": "bun run scripts/seed-test-cases.ts"
   },
   "prisma": {
     "seed": "bun --bun tsx prisma/seed.ts"

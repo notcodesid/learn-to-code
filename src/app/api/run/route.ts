@@ -1,7 +1,17 @@
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const { code } = await request.json();
+  const { code, testCases } = await request.json();
+
+  if (typeof code !== "string") {
+    return Response.json(
+      { success: false, stderr: "Invalid code" },
+      { status: 400 }
+    );
+  }
+
+  const useTests = typeof testCases === "string" && testCases.trim().length > 0;
+  const fullCode = useTests ? `${code}\n\n${testCases}` : code;
 
   try {
     const response = await fetch("https://play.rust-lang.org/execute", {
@@ -12,8 +22,8 @@ export async function POST(request: NextRequest) {
         mode: "debug",
         edition: "2021",
         crateType: "bin",
-        tests: false,
-        code,
+        tests: useTests,
+        code: fullCode,
         backtrace: false,
       }),
     });
@@ -30,12 +40,14 @@ export async function POST(request: NextRequest) {
       success: data.success,
       stdout: data.stdout || "",
       stderr: data.stderr || "",
+      mode: useTests ? "tests" : "output",
     });
   } catch (error) {
     return Response.json(
       {
         success: false,
         stderr: `Server error: ${error instanceof Error ? error.message : "Unknown"}`,
+        mode: useTests ? "tests" : "output",
       },
       { status: 500 }
     );

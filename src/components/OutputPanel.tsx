@@ -1,11 +1,15 @@
 "use client";
 
+import { GradingMode } from "@/lib/grading";
+
 interface OutputPanelProps {
   output: string;
   expectedOutput?: string;
   isRunning: boolean;
   justCompleted?: boolean;
   height?: number;
+  gradingMode?: GradingMode;
+  verified?: boolean | null;
 }
 
 export function OutputPanel({
@@ -14,8 +18,15 @@ export function OutputPanel({
   isRunning,
   justCompleted,
   height,
+  gradingMode = "output",
+  verified = null,
 }: OutputPanelProps) {
-  const isMatch = expectedOutput && output.trim() === expectedOutput.trim();
+  const outputMatch =
+    gradingMode === "output" &&
+    expectedOutput &&
+    output.trim() === expectedOutput.trim();
+  const testsPassed = gradingMode === "tests" && verified === true;
+  const isMatch = outputMatch || testsPassed;
   const isError =
     !isRunning &&
     output.length > 0 &&
@@ -69,7 +80,9 @@ export function OutputPanel({
                 >
                   <path d="M20 6L9 17l-5-5" />
                 </svg>
-                Output matches expected
+                {gradingMode === "tests"
+                  ? "All tests passed"
+                  : "Output matches expected"}
               </span>
             ) : isError ? (
               <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-error">
@@ -114,7 +127,9 @@ export function OutputPanel({
                 className="opacity-80"
               />
             </svg>
-            Compiling and running...
+            {gradingMode === "tests"
+              ? "Running tests..."
+              : "Compiling and running..."}
           </span>
         ) : hasOutput ? (
           <span

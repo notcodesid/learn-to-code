@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Challenge } from "@/types/challenge";
+import { getGradingMode, isChallengeCorrect } from "@/lib/grading";
 import { Sidebar } from "./Sidebar";
 import { ChallengePane } from "./ChallengePane";
 import { CodeEditor } from "./CodeEditor";
@@ -54,6 +55,7 @@ export function AppShell() {
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [isLoadingChallenges, setIsLoadingChallenges] = useState(true);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [runVerified, setRunVerified] = useState<boolean | null>(null);
 
   // Track if we've already shown the "please sign up" prompt for typing.
   // We only auto-show once on write, but re-show on Run attempts (stronger intent).
@@ -260,6 +262,7 @@ export function AppShell() {
       const saved = savedCode[challenge.id] || challenge.starterCode;
       setCode(saved);
       setOutput("");
+      setRunVerified(null);
       // Reset the restore flag so saved code is restored when switching challenges
       hasRestoredCodeRef.current = false;
     },
@@ -276,37 +279,48 @@ export function AppShell() {
       return;
     }
 
+    const gradingMode = getGradingMode(selectedChallenge);
+
     setIsRunning(true);
-    setOutput("Compiling...");
+    setRunVerified(null);
+    setOutput(gradingMode === "tests" ? "Running tests..." : "Compiling...");
 
     try {
       const res = await fetch("/api/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, challengeId: selectedChallenge.id }),
+        body: JSON.stringify({
+          code,
+          testCases: selectedChallenge.testCases ?? undefined,
+        }),
       });
       const data = await res.json();
 
       if (data.success) {
-        setOutput(data.stdout || "(no output)");
-        const isCorrect = 
-          selectedChallenge.expectedOutput &&
-          (data.stdout || "").trim() === selectedChallenge.expectedOutput.trim();
-        
-        if (isCorrect) {
+        const stdout = data.stdout || "(no output)";
+        setOutput(stdout);
+        const passed = isChallengeCorrect(
+          gradingMode,
+          { success: data.success, stdout },
+          selectedChallenge.expectedOutput
+        );
+        setRunVerified(passed);
+
+        if (passed) {
           const updated = new Set(completedChallengesRef.current);
           updated.add(selectedChallenge.id);
           setCompletedChallenges(updated);
 
-          // Save completion to server (authenticated users only)
           if (status === "authenticated") {
             saveProgressToServer(selectedChallenge.id, true, code);
           }
         }
       } else {
+        setRunVerified(false);
         setOutput(data.stderr || "Compilation error");
       }
     } catch (err) {
+      setRunVerified(false);
       setOutput(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
     } finally {
       setIsRunning(false);
@@ -319,6 +333,7 @@ export function AppShell() {
     const starter = selectedChallenge.starterCode;
     setCode(starter);
     setOutput("");
+    setRunVerified(null);
 
     // Remove from local cache
     setSavedCode(prev => {
@@ -332,37 +347,6 @@ export function AppShell() {
       void saveProgressToServer(selectedChallenge.id, false, starter);
     }
   }, [selectedChallenge, status]);
-
-  const handleTestCode = useCallback(async () => {
-    if (!selectedChallenge) return;
-
-    if (status === "unauthenticated") {
-      setShowAuthPrompt(true);
-      return;
-    }
-
-    setIsRunning(true);
-    setOutput("Running tests...");
-
-    try {
-      const res = await fetch("/api/test", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, test: selectedChallenge.test }),
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        setOutput(data.stdout || "Tests passed!");
-      } else {
-        setOutput(data.stderr || "Test failed");
-      }
-    } catch (err) {
-      setOutput(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
-    } finally {
-      setIsRunning(false);
-    }
-  }, [code, selectedChallenge, status]);
 
   // Wrapped code change handler: guests can type and see the editor fully.
   // We gently prompt them once the first time they start writing code.
@@ -526,9 +510,7 @@ export function AppShell() {
               onChange={handleCodeChange}
               onRun={handleRunCode}
               onReset={handleResetCode}
-              onTest={handleTestCode}
               isRunning={isRunning}
-              hasTest={!!selectedChallenge.test}
             />
             {/* Drag Handle Divider */}
             <div
@@ -543,6 +525,8 @@ export function AppShell() {
               expectedOutput={selectedChallenge.expectedOutput || undefined}
               isRunning={isRunning}
               height={outputHeight}
+              gradingMode={getGradingMode(selectedChallenge)}
+              verified={runVerified}
             />
           </div>
         </div>
