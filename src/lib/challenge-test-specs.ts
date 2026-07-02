@@ -18,4 +18,14 @@ export const CHALLENGE_TEST_SPECS: Record<number, TestCaseSpec> = {
       { id: 3, label: "Case 3", args: [1, 1], expected: 0 },
     ],
   },
+
+  12: {
+    functionName: "multiply_by_addition",
+    cases: [
+      { id: 1, label: "Case 1", args: [5, 4], expected: 20 },
+      { id: 2, label: "Case 2", args: [0, 5], expected: 0 },
+      { id: 3, label: "Case 3", args: [3, 0], expected: 0 },
+      { id: 4, label: "Case 4", args: [7, 1], expected: 7 },
+    ],
+  },
 };
