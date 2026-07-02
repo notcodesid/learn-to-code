@@ -52,7 +52,7 @@ export const staticChallenges: Challenge[] = [
     title: "Data Types",
     difficulty: "beginner",
     category: "Basics",
-    description: "Common types: `i32` (integers), `f64` (decimals), `bool` (true/false), `char` (single character). Example: `let x: i32 = 42;`",
+    description: "Common types: `i32` (integers), `f64` (decimals), `bool` (true/false), `char` (single character). Example: `let x: i32 = 42; let pi: f64 = 3.14; let ok: bool = true; let c: char = 'R';`",
     instructions:
       "Create variables of these types: an `i32` integer with value `42`, a `f64` float with value `3.14`, a `bool` with value `true`, and a `char` with value `'R'`. Print each on a separate line.",
     starterCode: `fn main() {
