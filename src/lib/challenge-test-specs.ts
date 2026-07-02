@@ -28,4 +28,13 @@ export const CHALLENGE_TEST_SPECS: Record<number, TestCaseSpec> = {
       { id: 4, label: "Case 4", args: [7, 1], expected: 7 },
     ],
   },
+
+  13: {
+    functionName: "power",
+    cases: [
+      { id: 1, label: "Case 1", args: [2, 5], expected: 32 },
+      { id: 2, label: "Case 2", args: [5, 0], expected: 1 },
+      { id: 3, label: "Case 3", args: [9, 1], expected: 9 },
+    ],
+  },
 };
