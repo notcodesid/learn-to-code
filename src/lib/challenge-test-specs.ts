@@ -37,4 +37,14 @@ export const CHALLENGE_TEST_SPECS: Record<number, TestCaseSpec> = {
       { id: 3, label: "Case 3", args: [9, 1], expected: 9 },
     ],
   },
+
+  14: {
+    functionName: "is_prime",
+    cases: [
+      { id: 1, label: "Case 1", args: [7], expected: true },
+      { id: 2, label: "Case 2", args: [12], expected: false },
+      { id: 3, label: "Case 3", args: [1], expected: false },
+      { id: 4, label: "Case 4", args: [2], expected: true },
+    ],
+  },
 };
