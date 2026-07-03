@@ -1,5 +1,6 @@
 "use client";
 
+import { Lock } from "lucide-react";
 import { Challenge } from "@/types/challenge";
 
 interface SidebarProps {
@@ -67,20 +68,25 @@ export function Sidebar({
               .map((challenge) => {
                 const isSelected = challenge.id === selectedId;
                 const isCompleted = completedIds.has(challenge.id);
+                const isLocked = challenge.locked;
                 const diff = difficultyConfig[challenge.difficulty as keyof typeof difficultyConfig];
                 return (
                   <button
                     key={challenge.id}
                     onClick={() => onSelect(challenge)}
                     className={`group w-full text-left px-2.5 py-2 rounded-lg text-[13px] transition-all duration-200 flex items-center gap-2.5 mb-0.5 btn-press ${
-                      isSelected
-                        ? "bg-accent/12 text-accent border border-accent/20 shadow-sm shadow-accent/5"
-                        : "text-foreground/75 hover:bg-surface-hover hover:text-foreground border border-transparent"
+                      isLocked
+                        ? "text-muted/60 hover:bg-surface-hover border border-transparent"
+                        : isSelected
+                          ? "bg-accent/12 text-accent border border-accent/20 shadow-sm shadow-accent/5"
+                          : "text-foreground/75 hover:bg-surface-hover hover:text-foreground border border-transparent"
                     }`}
                   >
                     {/* Status indicator */}
                     <span className="shrink-0 w-5 h-5 flex items-center justify-center">
-                      {isCompleted ? (
+                      {isLocked ? (
+                        <Lock className="w-3.5 h-3.5 text-muted/50" />
+                      ) : isCompleted ? (
                         <svg
                           width="16"
                           height="16"

@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { canAccessChallenge, isPaywallEnabled } from "@/lib/payments";
 import { generateRustTests, parseTestCaseSpec } from "@/lib/test-cases/generate-rust";
 import { buildTestRunResult } from "@/lib/test-cases/parse-results";
 
@@ -9,6 +12,23 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { code, challengeId, mode = "run" } = body;
+
+    if (isPaywallEnabled() && typeof challengeId === "number") {
+      const session = await getServerSession(authOptions);
+      const allowed = await canAccessChallenge(session?.user?.id, challengeId);
+      if (!allowed) {
+        return NextResponse.json(
+          {
+            success: false,
+            stderr:
+              "This challenge is locked. Unlock all challenges with a one-time purchase.",
+            locked: true,
+            mode,
+          },
+          { status: 402 }
+        );
+      }
+    }
 
     if (typeof code !== "string") {
       return NextResponse.json(

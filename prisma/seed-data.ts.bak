@@ -957,10 +957,10 @@ fn main() {
 
 fn value_in_cents(coin: &Coin) -> u32 {
     match coin {
-        Coin::Penny => 1,
-        Coin::Nickel => 5,
-        Coin::Dime => 10,
-        Coin::Quarter => 25,
+        Coin::Penny => todo!(),
+        Coin::Nickel => todo!(),
+        Coin::Dime => todo!(),
+        Coin::Quarter => todo!(),
     }
 }
 
@@ -1044,11 +1044,13 @@ fn main() {
 
 impl Point {
     fn new(x: f64, y: f64) -> Self {
-        Point { x, y }
+        // Return Point { x, y }
+        Point { x: 0.0, y: 0.0 }
     }
 
     fn origin() -> Self {
-        Point { x: 0.0, y: 0.0 }
+        // Return a point at the origin
+        Point { x: 1.0, y: 1.0 }
     }
 }
 
