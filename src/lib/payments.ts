@@ -13,7 +13,6 @@ export const FREE_CHALLENGE_LIMIT = 35;
 
 export const PRICE_USD = 1;
 export const PRICE_INR = 85;
-export const PRICE_USDC = 1;
 
 /**
  * Returns the set of challenge IDs that are free for everyone.
