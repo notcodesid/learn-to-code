@@ -624,7 +624,7 @@ export default function LandingPage() {
             simple, transparent pricing
           </h2>
           <p className="mt-4 text-[16px] text-muted leading-relaxed">
-            Get unlimited lifetime access to all current and future challenges. No subscriptions, no hidden fees.
+            Pay once to unlock every Pro challenge. The first 35 stay free — no subscription, no hidden fees.
           </p>
         </div>
         <div className="flex justify-center items-center">

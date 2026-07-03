@@ -2,6 +2,11 @@
 
 import { CheckCircle2, ShieldAlert } from "lucide-react";
 import React from "react";
+import {
+  FREE_CHALLENGE_LIMIT,
+  PRO_CHALLENGE_COUNT,
+  TOTAL_CHALLENGES,
+} from "@/lib/payments-client";
 
 interface PricingCardProps {
   /** Optional title to show context (e.g. "Ownership Basics is part of the Pro library") */
@@ -59,16 +64,16 @@ export function PricingCard({
 
       {/* Heading */}
       <h3 className="text-2xl font-extrabold text-foreground tracking-tight mb-2">
-        Unlock all 155 Rust challenges
+        Unlock all {TOTAL_CHALLENGES} Rust challenges
       </h3>
       
       {triggerTitle ? (
         <p className="text-[13.5px] text-muted mb-6 leading-relaxed">
-          <span className="text-foreground/90 font-semibold">{triggerTitle}</span> is part of the Pro curriculum. Upgrade to keep coding.
+          <span className="text-foreground/90 font-semibold">{triggerTitle}</span> is part of the Pro curriculum. Pay once to unlock the remaining {PRO_CHALLENGE_COUNT} challenges.
         </p>
       ) : (
         <p className="text-[13.5px] text-muted mb-6 leading-relaxed">
-          Get complete, lifetime access to all levels. Write more code, build muscle memory, and master Rust today.
+          One payment unlocks every Pro challenge for life. The first {FREE_CHALLENGE_LIMIT} stay free — this pass opens the rest.
         </p>
       )}
 
@@ -100,7 +105,7 @@ export function PricingCard({
             <CheckCircle2 className="w-3.5 h-3.5" />
           </span>
           <span className="text-[13.5px] text-foreground/80">
-            <strong>All 155 challenges</strong> (35 free + 120 Pro)
+            <strong>All {TOTAL_CHALLENGES} challenges</strong> ({FREE_CHALLENGE_LIMIT} free + {PRO_CHALLENGE_COUNT} Pro)
           </span>
         </div>
         <div className="flex items-start gap-3">
@@ -108,7 +113,7 @@ export function PricingCard({
             <CheckCircle2 className="w-3.5 h-3.5" />
           </span>
           <span className="text-[13.5px] text-foreground/80">
-            Complete curriculum (Beginner to Advanced)
+            Structured curriculum from beginner to advanced
           </span>
         </div>
         <div className="flex items-start gap-3">
@@ -116,7 +121,7 @@ export function PricingCard({
             <CheckCircle2 className="w-3.5 h-3.5" />
           </span>
           <span className="text-[13.5px] text-foreground/80">
-            Capstone projects & traits/lifetimes deep dive
+            Capstone projects plus traits & lifetimes tracks
           </span>
         </div>
         <div className="flex items-start gap-3">
@@ -124,7 +129,7 @@ export function PricingCard({
             <CheckCircle2 className="w-3.5 h-3.5" />
           </span>
           <span className="text-[13.5px] text-foreground/80">
-            Unlimited compilation sandbox & AI helper support
+            Unlimited in-browser compiles with instant test feedback
           </span>
         </div>
       </div>
@@ -160,27 +165,23 @@ export function PricingCard({
               Redirecting to checkout…
             </span>
           ) : (
-            "Pay $1 with Card"
+            "Unlock for $1"
           )}
         </button>
       )}
 
       {/* Footer Trust badge */}
-      <div className="mt-4 flex flex-col items-center justify-center gap-2">
+      <div className="mt-4 flex flex-col items-center justify-center">
         <p className="text-[11px] text-muted flex items-center gap-1.5">
           <svg className="w-3.5 h-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
-          Secured by Dodo Payments
+          Secure checkout via Dodo Payments
         </p>
-        <div className="flex items-center gap-3.5 opacity-50 text-[10.5px] font-semibold text-neutral-400 mt-1 select-none flex-wrap justify-center">
-          <span className="font-black italic tracking-tighter hover:text-indigo-400 transition-colors cursor-default">VISA</span>
-          <span className="hover:text-orange-400 transition-colors cursor-default">Mastercard</span>
-          <span className="border border-neutral-700/60 px-1 py-0.2 rounded text-[9.5px] font-bold hover:text-sky-400 hover:border-sky-400/40 transition-colors cursor-default">AMEX</span>
-          <span className="hover:text-white transition-colors cursor-default"> Pay</span>
-          <span className="hover:text-white transition-colors cursor-default">G Pay</span>
-        </div>
+        <p className="text-[10.5px] text-muted/80 mt-1.5 text-center">
+          You&apos;ll be redirected to complete payment. No subscription.
+        </p>
       </div>
     </div>
   );

@@ -78,7 +78,7 @@ function PaymentSuccessContent() {
         </h1>
         <p className="text-sm text-muted mb-6">
           {hasPaid
-            ? "All 155 challenges are unlocked. Time to write some Rust."
+            ? "All 152 challenges are unlocked. Time to write some Rust."
             : "Confirming your payment… this can take a few seconds."}
         </p>
         <Link
