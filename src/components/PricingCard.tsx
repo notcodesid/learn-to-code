@@ -40,7 +40,7 @@ export function PricingCard({
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/5 rounded-full blur-[80px] pointer-events-none" />
 
       {/* Header Badge */}
-      <div className="flex justify-between items-start mb-6">
+      <div className="mb-6">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-[10.5px] font-bold uppercase tracking-widest text-accent">
           <svg
             className="w-3.5 h-3.5 animate-pulse"
@@ -56,9 +56,6 @@ export function PricingCard({
             />
           </svg>
           Pro Lifetime Pass
-        </div>
-        <div className="text-[10px] text-muted font-mono tracking-wider bg-neutral-900 border border-neutral-800 px-2.5 py-1 rounded-md">
-          v1.0 UNLOCKED
         </div>
       </div>
 
@@ -178,9 +175,6 @@ export function PricingCard({
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
           Secure checkout via Dodo Payments
-        </p>
-        <p className="text-[10.5px] text-muted/80 mt-1.5 text-center">
-          You&apos;ll be redirected to complete payment. No subscription.
         </p>
       </div>
     </div>
