@@ -69,7 +69,7 @@ export function formatCaseInput(spec: TestCaseSpec, c: TestCase): string {
     return `${fn}(&mut ${varName}) after "${c.initial}"`;
   }
 
-  return formatFunctionCall(fn, c.args);
+  return formatFunctionCall(fn, c.args ?? []);
 }
 
 function generateCaseAssert(spec: TestCaseSpec, c: TestCase): string {
@@ -84,13 +84,13 @@ function generateCaseAssert(spec: TestCaseSpec, c: TestCase): string {
 
   if (spec.callKind === "method" && c.receiver) {
     const recvVar = `receiver_${c.id}`;
-    const call = `${recvVar}.${fn}(${c.args.map(toRustLiteral).join(", ")})`;
+    const call = `${recvVar}.${fn}(${(c.args ?? []).map(toRustLiteral).join(", ")})`;
     return `let ${recvVar} = ${c.receiver};
         assert_eq!(${call}, ${toDisplayExpected(c.expected)});`;
   }
 
   if (spec.callKind === "associated" && isStructExpected(c.expected)) {
-    const call = formatFunctionCall(fn, c.args);
+    const call = formatFunctionCall(fn, c.args ?? []);
     const resultVar = `result_${c.id}`;
     const fieldAsserts = Object.entries(c.expected.struct)
       .map(([field, value]) => `assert_eq!(${resultVar}.${field}, ${toRustLiteral(value)});`)
@@ -99,7 +99,7 @@ function generateCaseAssert(spec: TestCaseSpec, c: TestCase): string {
         ${fieldAsserts}`;
   }
 
-  return `assert_eq!(${formatFunctionCall(fn, c.args)}, ${toDisplayExpected(c.expected)});`;
+  return `assert_eq!(${formatFunctionCall(fn, c.args ?? [])}, ${toDisplayExpected(c.expected)});`;
 }
 
 export function generateRustTests(spec: TestCaseSpec): string {

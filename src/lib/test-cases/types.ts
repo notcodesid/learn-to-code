@@ -16,7 +16,7 @@ export type TestCallKind = "function" | "method" | "associated" | "mutate";
 export interface TestCase {
   id: number;
   label?: string;
-  args: TestCaseValue[];
+  args?: TestCaseValue[];
   expected: TestCaseExpected;
   receiver?: string;
   method?: string;

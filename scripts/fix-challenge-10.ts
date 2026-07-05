@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const test = `#[test]
+const testCases = `#[test]
 fn test_count_evens_in_range() {
     assert_eq!(count_evens_in_range(1, 10), 5);
     assert_eq!(count_evens_in_range(1, 1), 0);
@@ -32,7 +32,7 @@ fn main() {
     let count = count_evens_in_range(1, 10);
     println!("{}", count);
 }`,
-      test,
+      testCases,
     },
   });
 

@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const test = `#[test]
+const testCases = `#[test]
 fn i32_copy_allows_both_bindings() {
     let x = 5;
     let y = x;
@@ -34,7 +34,7 @@ async function main() {
   await prisma.challenge.update({
     where: { id: 25 },
     data: {
-      test,
+      testCases,
       starterCode,
       expectedOutput: 'x: 5, y: 5\ns2: hello',
       instructions:

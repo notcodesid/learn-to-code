@@ -68,7 +68,7 @@ async function main() {
       expectedOutput: 'R\n15\n4',
       explanation:
         'Tuples are perfect for ad-hoc grouping of a few related values without creating a full struct. They can be destructured directly in let bindings. Arrays have their length encoded in the type ([T; N]), so the compiler knows the exact size. Both live on the stack and are very fast. When you need a growable list, reach for Vec<T> instead.',
-      test: `#[test]
+      testCases: `#[test]
 fn test_tuples_and_arrays() {
     let info = (42i32, 'R', true);
     let (num, ch, flag) = info;
