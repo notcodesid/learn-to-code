@@ -6,12 +6,15 @@ import { getFreeChallengeIds, isPaywallEnabled } from "@/lib/payments";
 
 export async function GET(_request: NextRequest) {
   try {
-    const [challenges, freeIds, session] = await Promise.all([
+    // getServerSession reads request headers/cookies — must not run inside
+    // Promise.all or other deferred work that loses the Next.js request scope.
+    const session = await getServerSession(authOptions);
+
+    const [challenges, freeIds] = await Promise.all([
       prisma.challenge.findMany({
         orderBy: [{ order: "asc" }, { id: "asc" }],
       }),
       getFreeChallengeIds(),
-      getServerSession(authOptions),
     ]);
 
     const paywallEnabled = isPaywallEnabled();
