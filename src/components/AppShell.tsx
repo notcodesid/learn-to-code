@@ -40,7 +40,7 @@ const LogoIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
 );
 
 export function AppShell() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update: updateSession } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const router = useRouter();
   const [challenges, setChallenges] = useState<Challenge[]>([]);
@@ -59,6 +59,7 @@ export function AppShell() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [isLoadingChallenges, setIsLoadingChallenges] = useState(true);
+  const [hasPaid, setHasPaid] = useState(false);
   const [paywall, setPaywall] = useState<{ open: boolean; title?: string }>({
     open: false,
   });
@@ -92,7 +93,7 @@ export function AppShell() {
   // to prevent the restore effect from running during auto-save operations.
   const hasRestoredCodeRef = useRef(false);
 
-  // Load challenges from the database
+  // Load challenges from the database (hasPaid comes from DB, not JWT)
   useEffect(() => {
     const loadChallenges = async () => {
       try {
@@ -101,6 +102,7 @@ export function AppShell() {
           const data = await res.json();
           const list: Challenge[] = data.challenges || [];
           setChallenges(list);
+          setHasPaid(!!data.hasPaid);
           if (list.length > 0) {
             setSelectedChallenge(list[0]);
             setCode(list[0].starterCode);
@@ -113,7 +115,13 @@ export function AppShell() {
       }
     };
     loadChallenges();
-  }, []);
+  }, [status]);
+
+  // Keep JWT session in sync when DB says paid but token is stale (e.g. after grandfather/webhook).
+  useEffect(() => {
+    if (status !== "authenticated" || !hasPaid || session?.user?.hasPaid) return;
+    void updateSession();
+  }, [status, hasPaid, session?.user?.hasPaid, updateSession]);
 
   // Resizable output panel states & callbacks
   const containerRef = useRef<HTMLDivElement>(null);
@@ -573,7 +581,7 @@ export function AppShell() {
             />
           </div>
 
-          {session && (isPaywallEnabledClient() ? !session.user?.hasPaid : true) && (
+          {session && isPaywallEnabledClient() && !hasPaid && (
             <button
               onClick={() => setPaywall({ open: true })}
               className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider rounded-md bg-gradient-to-r from-accent to-amber-400 text-black hover:opacity-90 transition-opacity"

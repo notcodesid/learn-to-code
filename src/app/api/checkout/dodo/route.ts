@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { getDodoClient, getDodoProductId } from "@/lib/dodo";
 
 /**
@@ -20,7 +21,11 @@ export async function POST(_request: NextRequest) {
       );
     }
 
-    if (session.user.hasPaid) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { hasPaid: true },
+    });
+    if (user?.hasPaid) {
       return NextResponse.json(
         { error: "You already have lifetime access." },
         { status: 400 }

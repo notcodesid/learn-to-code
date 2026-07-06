@@ -80,7 +80,17 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.image = token.picture as string;
-        session.user.hasPaid = token.hasPaid as boolean;
+
+        // Always read from DB — JWT hasPaid can be stale after webhook/grandfather updates.
+        if (token.id) {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { hasPaid: true },
+          });
+          session.user.hasPaid = !!dbUser?.hasPaid;
+        } else {
+          session.user.hasPaid = false;
+        }
       }
       return session;
     }
