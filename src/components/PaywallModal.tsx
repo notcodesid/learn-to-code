@@ -77,7 +77,7 @@ export function PaywallModal({ open, onClose, triggerTitle }: PaywallModalProps)
           onCheckout={handleDodoCheckout}
           isLoading={isLoading}
           error={error}
-          reviewMode={!paywallEnabled}
+          freeMode={!paywallEnabled}
         />
       </div>
     </div>

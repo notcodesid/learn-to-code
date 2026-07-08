@@ -5,6 +5,7 @@ export const FREE_CHALLENGE_LIMIT = 35;
 export const TOTAL_CHALLENGES = 152;
 export const PRO_CHALLENGE_COUNT = TOTAL_CHALLENGES - FREE_CHALLENGE_LIMIT;
 
+/** Mirrors server flag. All challenges free unless NEXT_PUBLIC_PAYWALL_ENABLED=true. */
 export function isPaywallEnabledClient(): boolean {
-  return process.env.NEXT_PUBLIC_PAYWALL_ENABLED !== "false";
+  return process.env.NEXT_PUBLIC_PAYWALL_ENABLED === "true";
 }

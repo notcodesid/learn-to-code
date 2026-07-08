@@ -66,10 +66,9 @@ export async function markUserPaid(userId: string) {
 
 /**
  * Returns true if the paywall is currently active.
- * Set PAYWALL_ENABLED=false in environment to disable all payment gating
- * (useful for reviews, demos, or launches where you want the UI visible
- * but no actual payment required).
+ * All challenges are free by default. Set PAYWALL_ENABLED=true to re-enable
+ * payment gating (first FREE_CHALLENGE_LIMIT free, rest require hasPaid).
  */
 export function isPaywallEnabled(): boolean {
-  return process.env.PAYWALL_ENABLED !== "false";
+  return process.env.PAYWALL_ENABLED === "true";
 }

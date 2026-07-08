@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getDodoClient, getDodoProductId } from "@/lib/dodo";
+import { isPaywallEnabled } from "@/lib/payments";
 
 /**
  * Creates a Dodo Payments checkout session for the lifetime unlock.
@@ -13,6 +14,13 @@ import { getDodoClient, getDodoProductId } from "@/lib/dodo";
  */
 export async function POST(_request: NextRequest) {
   try {
+    if (!isPaywallEnabled()) {
+      return NextResponse.json(
+        { error: "All challenges are free — payment is disabled." },
+        { status: 400 }
+      );
+    }
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.id || !session.user.email) {
       return NextResponse.json(

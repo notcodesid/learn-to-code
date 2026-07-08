@@ -4,6 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { PricingCard } from "@/components/PricingCard";
+import { isPaywallEnabledClient } from "@/lib/payments-client";
 import {
   Play,
   Terminal,
@@ -74,8 +75,13 @@ export default function LandingPage() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [isLoadingCheckout, setIsLoadingCheckout] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const paywallEnabled = isPaywallEnabledClient();
 
   const handleLandingCheckout = async () => {
+    if (!paywallEnabled) {
+      window.location.href = "/learn";
+      return;
+    }
     if (!session?.user) {
       window.location.href = `/auth/signin?callbackUrl=${encodeURIComponent("/learn")}`;
       return;
@@ -621,10 +627,12 @@ export default function LandingPage() {
       <section id="pricing" className="mx-auto w-full max-w-5xl px-6 py-20 border-t border-border/30 scroll-mt-6">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2 className="font-sans text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
-            simple, transparent pricing
+            {paywallEnabled ? "simple, transparent pricing" : "all challenges free"}
           </h2>
           <p className="mt-4 text-[16px] text-muted leading-relaxed">
-            Pay once to unlock every Pro challenge. The first 35 stay free — no subscription, no hidden fees.
+            {paywallEnabled
+              ? "Pay once to unlock every Pro challenge. The first 35 stay free — no subscription, no hidden fees."
+              : "Every challenge is free for everyone. No payment, no paywall — just open the editor and start writing Rust."}
           </p>
         </div>
         <div className="flex justify-center items-center">
@@ -632,6 +640,7 @@ export default function LandingPage() {
             onCheckout={handleLandingCheckout}
             isLoading={isLoadingCheckout}
             error={checkoutError}
+            freeMode={!paywallEnabled}
           />
         </div>
       </section>

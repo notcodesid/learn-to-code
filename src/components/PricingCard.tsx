@@ -21,6 +21,8 @@ interface PricingCardProps {
   className?: string;
   /** When true, shows review/demo messaging instead of real payment button */
   reviewMode?: boolean;
+  /** When true, all challenges are free — no payment UI */
+  freeMode?: boolean;
 }
 
 export function PricingCard({
@@ -30,6 +32,7 @@ export function PricingCard({
   error = null,
   className = "",
   reviewMode = false,
+  freeMode = false,
 }: PricingCardProps) {
   return (
     <div
@@ -55,16 +58,22 @@ export function PricingCard({
               d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0110 21a3.745 3.745 0 01-3.296-1.593 3.746 3.746 0 01-1.043-3.296 3.745 3.745 0 01-3.296-1.043A3.746 3.746 0 013 12c0-1.268.63-2.39 1.593-3.068a3.746 3.746 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0114 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"
             />
           </svg>
-          Pro Lifetime Pass
+          {freeMode ? "100% Free" : "Pro Lifetime Pass"}
         </div>
       </div>
 
       {/* Heading */}
       <h3 className="text-2xl font-extrabold text-foreground tracking-tight mb-2">
-        Unlock all {TOTAL_CHALLENGES} Rust challenges
+        {freeMode
+          ? `All ${TOTAL_CHALLENGES} Rust challenges free`
+          : `Unlock all ${TOTAL_CHALLENGES} Rust challenges`}
       </h3>
       
-      {triggerTitle ? (
+      {freeMode ? (
+        <p className="text-[13.5px] text-muted mb-6 leading-relaxed">
+          No payment required. Every challenge is unlocked for everyone — start learning Rust right away.
+        </p>
+      ) : triggerTitle ? (
         <p className="text-[13.5px] text-muted mb-6 leading-relaxed">
           <span className="text-foreground/90 font-semibold">{triggerTitle}</span> is part of the Pro curriculum. Pay once to unlock the remaining {PRO_CHALLENGE_COUNT} challenges.
         </p>
@@ -78,19 +87,21 @@ export function PricingCard({
       <div className="flex items-center gap-3 bg-neutral-950/60 border border-neutral-900 rounded-2xl p-4.5 mb-6">
         <div className="flex items-baseline">
           <span className="text-4.5xl font-extrabold text-foreground tracking-tight bg-gradient-to-r from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
-            $1
+            {freeMode ? "Free" : "$1"}
           </span>
-          <span className="text-sm font-semibold text-muted ml-1.5 uppercase tracking-wider">
-            USD
-          </span>
+          {!freeMode && (
+            <span className="text-sm font-semibold text-muted ml-1.5 uppercase tracking-wider">
+              USD
+            </span>
+          )}
         </div>
         <div className="w-[1px] h-8 bg-neutral-800" />
         <div className="flex flex-col justify-center">
           <span className="text-[12px] font-bold text-accent uppercase tracking-wider">
-            One-Time Payment
+            {freeMode ? "No Payment" : "One-Time Payment"}
           </span>
           <span className="text-[11.5px] text-muted">
-            Lifetime access, zero subscriptions
+            {freeMode ? "Full access for everyone" : "Lifetime access, zero subscriptions"}
           </span>
         </div>
       </div>
@@ -102,7 +113,13 @@ export function PricingCard({
             <CheckCircle2 className="w-3.5 h-3.5" />
           </span>
           <span className="text-[13.5px] text-foreground/80">
-            <strong>All {TOTAL_CHALLENGES} challenges</strong> ({FREE_CHALLENGE_LIMIT} free + {PRO_CHALLENGE_COUNT} Pro)
+            {freeMode ? (
+              <strong>All {TOTAL_CHALLENGES} challenges unlocked</strong>
+            ) : (
+              <>
+                <strong>All {TOTAL_CHALLENGES} challenges</strong> ({FREE_CHALLENGE_LIMIT} free + {PRO_CHALLENGE_COUNT} Pro)
+              </>
+            )}
           </span>
         </div>
         <div className="flex items-start gap-3">
@@ -140,7 +157,14 @@ export function PricingCard({
       )}
 
       {/* CTA Button */}
-      {reviewMode ? (
+      {freeMode ? (
+        <button
+          onClick={onCheckout}
+          className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-[14px] transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] hover:shadow-[0_0_24px_rgba(249,115,22,0.3)] cursor-pointer"
+        >
+          Start learning free
+        </button>
+      ) : reviewMode ? (
         <button
           onClick={onCheckout}
           className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-[14px] transition-all duration-300"
@@ -168,15 +192,17 @@ export function PricingCard({
       )}
 
       {/* Footer Trust badge */}
-      <div className="mt-4 flex flex-col items-center justify-center">
-        <p className="text-[11px] text-muted flex items-center gap-1.5">
-          <svg className="w-3.5 h-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-          </svg>
-          Secure checkout via Dodo Payments
-        </p>
-      </div>
+      {!freeMode && (
+        <div className="mt-4 flex flex-col items-center justify-center">
+          <p className="text-[11px] text-muted flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Secure checkout via Dodo Payments
+          </p>
+        </div>
+      )}
     </div>
   );
 }
