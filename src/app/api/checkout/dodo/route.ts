@@ -6,7 +6,7 @@ import { getDodoClient, getDodoProductId } from "@/lib/dodo";
 import { isPaywallEnabled } from "@/lib/payments";
 
 /**
- * Creates a Dodo Payments checkout session for the lifetime unlock.
+ * Creates a Dodo Payments checkout session (dormant while paywall is off).
  * Returns a URL the client should redirect to.
  *
  * The session is keyed to the authenticated user via metadata.userId so the
@@ -16,7 +16,7 @@ export async function POST(_request: NextRequest) {
   try {
     if (!isPaywallEnabled()) {
       return NextResponse.json(
-        { error: "All challenges are free — payment is disabled." },
+        { error: "Checkout is not available." },
         { status: 400 }
       );
     }
@@ -35,7 +35,7 @@ export async function POST(_request: NextRequest) {
     });
     if (user?.hasPaid) {
       return NextResponse.json(
-        { error: "You already have lifetime access." },
+        { error: "You already have full access." },
         { status: 400 }
       );
     }

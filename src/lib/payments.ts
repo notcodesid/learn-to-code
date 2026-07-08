@@ -1,18 +1,13 @@
 /**
- * Payment gating configuration and helpers.
+ * Payment gating configuration and helpers (server-only).
  *
- * Free tier: first FREE_CHALLENGE_LIMIT challenges (sorted by `order` asc, then `id` asc).
- * Paid users (`hasPaid=true`) get access to all challenges.
- *
- * Server-only — import from @/lib/payments-client in client components.
+ * Paywall is off by default — all challenges are free. Infrastructure for a
+ * future paid tier is kept dormant until PAYWALL_ENABLED=true.
  */
 import "server-only";
 import { prisma } from "./prisma";
 
 export const FREE_CHALLENGE_LIMIT = 35;
-
-export const PRICE_USD = 1;
-export const PRICE_INR = 85;
 
 /**
  * Returns the set of challenge IDs that are free for everyone.

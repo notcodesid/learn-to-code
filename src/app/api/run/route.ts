@@ -20,8 +20,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            stderr:
-              "This challenge is locked. Unlock all challenges with a one-time purchase.",
+            stderr: "This challenge is temporarily unavailable.",
             locked: true,
             mode,
           },

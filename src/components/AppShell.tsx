@@ -10,9 +10,7 @@ import { ChallengePane } from "./ChallengePane";
 import { CodeEditor } from "./CodeEditor";
 import { OutputPanel } from "./OutputPanel";
 import { TestResultPanel } from "./TestResultPanel";
-import { PaywallModal } from "./PaywallModal";
 import { AuthPromptModal } from "./AuthPromptModal";
-import { isPaywallEnabledClient } from "@/lib/payments-client";
 import { TestRunResult } from "@/lib/test-cases/types";
 import { parseApiJson } from "@/lib/parse-api-response";
 
@@ -40,7 +38,7 @@ const LogoIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
 );
 
 export function AppShell() {
-  const { data: session, status, update: updateSession } = useSession();
+  const { data: session, status } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const router = useRouter();
   const [challenges, setChallenges] = useState<Challenge[]>([]);
@@ -59,10 +57,6 @@ export function AppShell() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [isLoadingChallenges, setIsLoadingChallenges] = useState(true);
-  const [hasPaid, setHasPaid] = useState(false);
-  const [paywall, setPaywall] = useState<{ open: boolean; title?: string }>({
-    open: false,
-  });
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState<"challenge" | "editor" | "output">("challenge");
@@ -93,7 +87,7 @@ export function AppShell() {
   // to prevent the restore effect from running during auto-save operations.
   const hasRestoredCodeRef = useRef(false);
 
-  // Load challenges from the database (hasPaid comes from DB, not JWT)
+  // Load challenges from the database
   useEffect(() => {
     const loadChallenges = async () => {
       try {
@@ -102,7 +96,6 @@ export function AppShell() {
           const data = await res.json();
           const list: Challenge[] = data.challenges || [];
           setChallenges(list);
-          setHasPaid(!!data.hasPaid);
           if (list.length > 0) {
             setSelectedChallenge(list[0]);
             setCode(list[0].starterCode);
@@ -116,12 +109,6 @@ export function AppShell() {
     };
     loadChallenges();
   }, [status]);
-
-  // Keep JWT session in sync when DB says paid but token is stale (e.g. after grandfather/webhook).
-  useEffect(() => {
-    if (status !== "authenticated" || !hasPaid || session?.user?.hasPaid) return;
-    void updateSession();
-  }, [status, hasPaid, session?.user?.hasPaid, updateSession]);
 
   // Resizable output panel states & callbacks
   const containerRef = useRef<HTMLDivElement>(null);
@@ -287,11 +274,6 @@ export function AppShell() {
 
   const handleSelectChallenge = useCallback(
     (challenge: Challenge) => {
-      if (challenge.locked) {
-        setPaywall({ open: true, title: challenge.title });
-        return;
-      }
-
       // Save current code before switching (only for authenticated users)
       if (selectedChallenge && status === "authenticated") {
         const isCompleted = completedChallengesRef.current.has(selectedChallenge.id);
@@ -359,8 +341,7 @@ export function AppShell() {
       }>(res);
 
       if (res.status === 402 || data.locked) {
-        setPaywall({ open: true, title: selectedChallenge.title });
-        setOutput("");
+        setOutput("This challenge is temporarily unavailable.");
         setIsRunning(false);
         setRunningAction(null);
         return;
@@ -435,8 +416,7 @@ export function AppShell() {
       }>(res);
 
       if (res.status === 402 || data.locked) {
-        setPaywall({ open: true, title: selectedChallenge.title });
-        setOutput("");
+        setOutput("This challenge is temporarily unavailable.");
         setIsRunning(false);
         setRunningAction(null);
         return;
@@ -580,16 +560,6 @@ export function AppShell() {
               }}
             />
           </div>
-
-          {session && isPaywallEnabledClient() && !hasPaid && (
-            <button
-              onClick={() => setPaywall({ open: true })}
-              className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider rounded-md bg-gradient-to-r from-accent to-amber-400 text-black hover:opacity-90 transition-opacity"
-              title="Unlock all challenges"
-            >
-              Unlock Pro
-            </button>
-          )}
 
           {session ? (
             <div className="relative">
@@ -780,12 +750,6 @@ export function AppShell() {
           </div>
         </div>
       </div>
-
-      <PaywallModal
-        open={paywall.open}
-        onClose={() => setPaywall({ open: false })}
-        triggerTitle={paywall.title}
-      />
 
       <AuthPromptModal
         open={showAuthPrompt}
