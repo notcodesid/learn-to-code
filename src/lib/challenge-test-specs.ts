@@ -217,4 +217,14 @@ export const CHALLENGE_TEST_SPECS: Record<number, TestCaseSpec> = {
       },
     ],
   },
+
+  151: {
+    functionName: "calculate_length",
+    argTypes: ["String"],
+    cases: [
+      { id: 1, label: "Case 1", args: ["hello"], expected: 5 },
+      { id: 2, label: "Case 2", args: [""], expected: 0 },
+      { id: 3, label: "Case 3", args: ["Rustacean"], expected: 9 },
+    ],
+  },
 };
