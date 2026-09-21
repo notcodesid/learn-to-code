@@ -49,6 +49,7 @@ export async function GET(_request: NextRequest) {
         ...challenge,
         hasTestCases: !!testCaseSpec || !!testCases?.trim(),
         hasStructuredTests: !!testCaseSpec,
+        hints: c.hints as { level: number; title: string; content: string }[] | undefined,
         locked: false,
       };
     });

@@ -5,15 +5,91 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Challenge } from "@/types/challenge";
 import { getGradingMode, isChallengeCorrect } from "@/lib/grading";
+import { TestRunResult } from "@/lib/test-cases/types";
+import { parseApiJson } from "@/lib/parse-api-response";
 import { Sidebar } from "./Sidebar";
 import { ChallengePane } from "./ChallengePane";
 import { CodeEditor } from "./CodeEditor";
 import { OutputPanel } from "./OutputPanel";
 import { TestResultPanel } from "./TestResultPanel";
 import { AuthPromptModal } from "./AuthPromptModal";
+import { HintsPanel } from "./HintsPanel";
 import { formatRustTestResult } from "@/lib/format-test-output";
 import { ThemeToggle } from "./ThemeToggle";
+import { Download, Upload, HelpCircle, Keyboard, Lightbulb } from "lucide-react";
 
+
+// Keyboard Shortcuts Help Modal
+interface KeyboardShortcutsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsModalProps) {
+  if (!isOpen) return null;
+
+  const shortcuts = [
+    { keys: ["Ctrl", "Enter"], description: "Run code" },
+    { keys: ["Ctrl", "Shift", "Enter"], description: "Submit tests" },
+    { keys: ["Ctrl", "/"], description: "Toggle sidebar" },
+    { keys: ["Ctrl", "B"], description: "Toggle bookmark" },
+    { keys: ["Escape"], description: "Close modal / output panel" },
+    { keys: ["?"], description: "Show this help" },
+  ];
+
+  const isMac = typeof navigator !== "undefined" && navigator.platform.includes("Mac");
+  const formatKey = (key: string) => {
+    if (key === "Ctrl") return isMac ? "⌘" : "Ctrl";
+    if (key === "Shift") return isMac ? "⇧" : "Shift";
+    if (key === "Enter") return isMac ? "↵" : "Enter";
+    return key;
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center animate-fade-in">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-surface dark:bg-[#161616] border border-border/80 rounded-xl shadow-xl w-full max-w-md mx-4 animate-in slide-in-from-bottom-4 duration-200">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border/30">
+          <h3 className="font-semibold text-foreground flex items-center gap-2">
+            <Keyboard className="w-5 h-5" />
+            Keyboard Shortcuts
+          </h3>
+          <button
+            onClick={onClose}
+            className="p-1 rounded hover:bg-muted/50 text-muted hover:text-foreground transition-colors"
+            aria-label="Close"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+          {shortcuts.map((shortcut, idx) => (
+            <div key={idx} className="flex items-center justify-between py-2 px-3 rounded-lg bg-surface-hover/50">
+              <span className="text-sm text-foreground">{shortcut.description}</span>
+              <div className="flex items-center gap-1.5">
+                {shortcut.keys.map((key, kIdx) => (
+                  <span key={kIdx} className="flex items-center gap-1">
+                    <kbd className="px-2 py-1 text-[11px] font-mono font-medium bg-muted/50 border border-border/50 rounded text-muted">
+                      {formatKey(key)}
+                    </kbd>
+                    {kIdx < shortcut.keys.length - 1 && (
+                      <span className="text-[10px] text-muted/50">+</span>
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+          <p className="text-[11px] text-muted/60 text-center pt-2">
+            {isMac ? "Mac: ⌘ = Command, ⇧ = Shift, ↵ = Return" : "Windows/Linux: Ctrl = Control"}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Custom SVG Logo Icon
 const LogoIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
@@ -49,10 +125,15 @@ export function AppShell() {
   const [completedChallenges, setCompletedChallenges] = useState<Set<number>>(
     new Set()
   );
+  const [bookmarkedChallenges, setBookmarkedChallenges] = useState<Set<number>>(
+    new Set()
+  );
   // Keep a ref to the latest completed set so the auto-save effect doesn't
   // re-run every time we create a new Set instance.
   const completedChallengesRef = useRef(completedChallenges);
   completedChallengesRef.current = completedChallenges;
+  const bookmarkedChallengesRef = useRef(bookmarkedChallenges);
+  bookmarkedChallengesRef.current = bookmarkedChallenges;
   const [savedCode, setSavedCode] = useState<Record<number, string>>({});
   const [showSidebar, setShowSidebar] = useState(true);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
@@ -64,6 +145,12 @@ export function AppShell() {
   const [executionMode, setExecutionMode] = useState<"run" | "test" | null>(null);
   const [runningAction, setRunningAction] = useState<"run" | "test" | null>(null);
   const [testResult, setTestResult] = useState<TestRunResult | null>(null);
+  const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
+  const [hintLevelsRevealed, setHintLevelsRevealed] = useState<Set<number>>(new Set());
+
+  const handleHintUsed = useCallback((level: number) => {
+    setHintLevelsRevealed(prev => new Set(prev).add(level));
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -114,6 +201,7 @@ export function AppShell() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [outputHeight, setOutputHeight] = useState(160);
   const [isDragging, setIsDragging] = useState(false);
+// add keyboard shotcut an close icon to  close output window 
 
   useEffect(() => {
     if (!isDragging) return;
@@ -157,13 +245,17 @@ export function AppShell() {
       if (res.ok) {
         const data = await res.json();
         const completed = new Set<number>();
+        const bookmarked = new Set<number>();
         const codeMap: Record<number, string> = {};
         
         Object.entries(data.progress).forEach(([challengeId, progress]) => {
-          const p = progress as { completed?: boolean; code?: string | null };
+          const p = progress as { completed?: boolean; bookmarked?: boolean; code?: string | null };
           const id = parseInt(challengeId);
           if (p.completed) {
             completed.add(id);
+          }
+          if (p.bookmarked) {
+            bookmarked.add(id);
           }
           if (p.code) {
             codeMap[id] = p.code;
@@ -171,6 +263,7 @@ export function AppShell() {
         });
         
         setCompletedChallenges(completed);
+        setBookmarkedChallenges(bookmarked);
         setSavedCode(codeMap);
       } else if (res.status === 404 && retryCount === 0) {
         // User not found in database, try to sync from session
@@ -229,14 +322,14 @@ export function AppShell() {
     }
   }, [isLoadingProgress, isLoadingChallenges, selectedChallenge?.id, savedCode, code]);
 
-  const saveProgressToServer = async (challengeId: number, completed: boolean, code: string) => {
+  const saveProgressToServer = async (challengeId: number, completed: boolean, code: string, bookmarked?: boolean) => {
     if (status !== "authenticated") return false;
 
     try {
       const res = await fetch("/api/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ challengeId, completed, code }),
+        body: JSON.stringify({ challengeId, completed, code, bookmarked }),
       });
 
       if (res.ok) {
@@ -277,7 +370,8 @@ export function AppShell() {
       // Save current code before switching (only for authenticated users)
       if (selectedChallenge && status === "authenticated") {
         const isCompleted = completedChallengesRef.current.has(selectedChallenge.id);
-        saveProgressToServer(selectedChallenge.id, isCompleted, code);
+        const isBookmarked = bookmarkedChallengesRef.current.has(selectedChallenge.id);
+        saveProgressToServer(selectedChallenge.id, isCompleted, code, isBookmarked);
       }
 
       setSelectedChallenge(challenge);
@@ -305,6 +399,74 @@ export function AppShell() {
     }
     return true;
   }, [status]);
+
+  const toggleBookmark = useCallback(async () => {
+    if (!selectedChallenge || !requireAuth()) return;
+
+    const challengeId = selectedChallenge.id;
+    const isBookmarked = bookmarkedChallengesRef.current.has(challengeId);
+    const updated = new Set(bookmarkedChallengesRef.current);
+
+    if (isBookmarked) {
+      updated.delete(challengeId);
+    } else {
+      updated.add(challengeId);
+    }
+
+    setBookmarkedChallenges(updated);
+
+    if (status === "authenticated") {
+      const isCompleted = completedChallengesRef.current.has(challengeId);
+      await saveProgressToServer(challengeId, isCompleted, code, !isBookmarked);
+    }
+  }, [selectedChallenge, code, status, requireAuth]);
+
+  const exportProgress = useCallback(async () => {
+    if (status !== "authenticated") return;
+    try {
+      const res = await fetch("/api/progress", { method: "PUT" });
+      if (res.ok) {
+        const data = await res.json();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `learn-to-code-progress-${new Date().toISOString().split("T")[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error("Export failed:", error);
+    }
+  }, [status]);
+
+  const importProgress = useCallback(async (file: File) => {
+    if (status !== "authenticated") return;
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (!data.progress || !Array.isArray(data.progress)) {
+        alert("Invalid file format");
+        return;
+      }
+      const res = await fetch("/api/progress", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ progress: data.progress }),
+      });
+      if (res.ok) {
+        const result = await res.json();
+        alert(`Imported ${result.imported} challenges, skipped ${result.skipped}`);
+        // Reload progress
+        await loadProgressFromServer();
+      } else {
+        alert("Import failed");
+      }
+    } catch (error) {
+      console.error("Import failed:", error);
+      alert("Import failed: invalid file");
+    }
+  }, [status, loadProgressFromServer]);
 
   const handleRunCode = useCallback(async () => {
     if (!selectedChallenge || !requireAuth()) return;
@@ -366,7 +528,8 @@ export function AppShell() {
             setCompletedChallenges(updated);
 
             if (status === "authenticated") {
-              saveProgressToServer(selectedChallenge.id, true, code);
+              const isBookmarked = bookmarkedChallengesRef.current.has(selectedChallenge.id);
+              saveProgressToServer(selectedChallenge.id, true, code, isBookmarked);
             }
           }
         }
@@ -432,7 +595,8 @@ export function AppShell() {
           setCompletedChallenges(updated);
 
           if (status === "authenticated") {
-            saveProgressToServer(selectedChallenge.id, true, code);
+            const isBookmarked = bookmarkedChallengesRef.current.has(selectedChallenge.id);
+            saveProgressToServer(selectedChallenge.id, true, code, isBookmarked);
           }
         }
       } else if (data.success) {
@@ -444,7 +608,8 @@ export function AppShell() {
         setCompletedChallenges(updated);
 
         if (status === "authenticated") {
-          saveProgressToServer(selectedChallenge.id, true, code);
+          const isBookmarked = bookmarkedChallengesRef.current.has(selectedChallenge.id);
+          saveProgressToServer(selectedChallenge.id, true, code, isBookmarked);
         }
       } else {
         setRunVerified(false);
@@ -458,6 +623,78 @@ export function AppShell() {
       setRunningAction(null);
     }
   }, [code, selectedChallenge, status, requireAuth]);
+
+  // Keyboard shortcuts handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts when typing in input/textarea (except for Escape)
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
+      
+      const isCtrl = e.ctrlKey || e.metaKey;
+      const isShift = e.shiftKey;
+
+      // Escape - close modals/output
+      if (e.key === "Escape") {
+        if (showShortcutsHelp) {
+          setShowShortcutsHelp(false);
+        } else if (showAuthPrompt) {
+          setShowAuthPrompt(false);
+        } else if (isProfileOpen) {
+          setIsProfileOpen(false);
+        } else if (executionMode === "test" && testResult && !isRunning) {
+          setExecutionMode(null);
+          setRunVerified(null);
+          setTestResult(null);
+          setOutput("");
+        } else if (showSidebar && isMobile) {
+          setShowSidebar(false);
+        }
+        return;
+      }
+
+      // Don't trigger other shortcuts when in input fields
+      if (isInput && e.key !== "?") return;
+
+      // Ctrl/Cmd + Enter - Run code
+      if (isCtrl && e.key === "Enter" && !isShift && selectedChallenge && !isRunning) {
+        e.preventDefault();
+        handleRunCode();
+        return;
+      }
+
+      // Ctrl/Cmd + Shift + Enter - Submit tests
+      if (isCtrl && isShift && e.key === "Enter" && selectedChallenge && !isRunning) {
+        e.preventDefault();
+        handleSubmitTests();
+        return;
+      }
+
+      // Ctrl/Cmd + / - Toggle sidebar
+      if (isCtrl && e.key === "/") {
+        e.preventDefault();
+        setShowSidebar(!showSidebar);
+        return;
+      }
+
+      // Ctrl/Cmd + B - Toggle bookmark
+      if (isCtrl && e.key === "b" && selectedChallenge && status === "authenticated") {
+        e.preventDefault();
+        toggleBookmark();
+        return;
+      }
+
+      // ? - Show shortcuts help
+      if (e.key === "?" && !isCtrl && !isShift && !isInput) {
+        e.preventDefault();
+        setShowShortcutsHelp(true);
+        return;
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [selectedChallenge, isRunning, showSidebar, isMobile, showAuthPrompt, isProfileOpen, executionMode, testResult, status, handleRunCode, handleSubmitTests, toggleBookmark]);
 
   const handleResetCode = useCallback(() => {
     if (!selectedChallenge) return;
@@ -478,7 +715,8 @@ export function AppShell() {
 
     // Persist the reset to the server so it stays cleared across refreshes
     if (status === "authenticated") {
-      void saveProgressToServer(selectedChallenge.id, false, starter);
+      const isBookmarked = bookmarkedChallengesRef.current.has(selectedChallenge.id);
+      void saveProgressToServer(selectedChallenge.id, false, starter, isBookmarked);
     }
   }, [selectedChallenge, status]);
 
@@ -502,7 +740,8 @@ export function AppShell() {
       // Use ref to get latest completed state without causing this effect to re-run
       // every time a new Set is created in setCompletedChallenges.
       const isCompleted = completedChallengesRef.current.has(challengeId);
-      saveProgressToServer(challengeId, isCompleted, code);
+      const isBookmarked = bookmarkedChallengesRef.current.has(challengeId);
+      saveProgressToServer(challengeId, isCompleted, code, isBookmarked);
       // Optimistic local update (saveProgressToServer also does this on success)
       setSavedCode(prev => ({ ...prev, [challengeId]: code }));
     }, 1000);
@@ -562,6 +801,14 @@ export function AppShell() {
           </div>
 
           <ThemeToggle />
+          <button
+            onClick={() => setShowShortcutsHelp(true)}
+            className="p-2 rounded-lg hover:bg-surface-hover transition-colors text-muted hover:text-foreground"
+            title="Keyboard shortcuts (?)"
+            aria-label="Keyboard shortcuts"
+          >
+            <HelpCircle className="w-4.5 h-4.5" />
+          </button>
 
           {session ? (
             <div className="relative">
@@ -598,6 +845,28 @@ export function AppShell() {
                       </div>
                     </div>
                     <button
+                      onClick={exportProgress}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-xs font-medium text-muted hover:text-foreground hover:bg-surface transition-colors cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      Export Progress
+                    </button>
+                    <label className="w-full flex items-center gap-2 px-4 py-2 text-xs font-medium text-muted hover:text-foreground hover:bg-surface transition-colors cursor-pointer">
+                      <Upload className="w-3.5 h-3.5" />
+                      Import Progress
+                      <input
+                        type="file"
+                        accept=".json"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) importProgress(file);
+                          e.target.value = "";
+                        }}
+                      />
+                    </label>
+                    <hr className="my-1 border-border/30" />
+                    <button
                       onClick={() => signOut({ callbackUrl: "/auth/signin" })}
                       className="w-full text-left px-4 py-2 text-xs font-medium text-muted hover:text-foreground hover:bg-surface transition-colors cursor-pointer"
                     >
@@ -631,7 +900,9 @@ export function AppShell() {
           challenges={challenges}
           selectedId={selectedChallenge.id}
           completedIds={completedChallenges}
+          bookmarkedIds={bookmarkedChallenges}
           onSelect={handleSelectChallenge}
+          onToggleBookmark={toggleBookmark}
           className={`
             transition-transform duration-300 ease-in-out z-50
             fixed inset-y-0 left-0 w-80 h-full border-r border-border
@@ -690,6 +961,12 @@ export function AppShell() {
           `}
           >
             <ChallengePane challenge={selectedChallenge} />
+            {selectedChallenge.hints && selectedChallenge.hints.length > 0 && (
+              <HintsPanel
+                hints={selectedChallenge.hints}
+                onHintUsed={handleHintUsed}
+              />
+            )}
           </div>
 
           <div
@@ -746,6 +1023,16 @@ export function AppShell() {
                   challengeGradingMode={getGradingMode(selectedChallenge)}
                   verified={runVerified}
                   className={isMobile ? "border-t-0 flex-1" : ""}
+                  onClose={() => {
+                    if (isMobile) {
+                      setActiveTab("editor");
+                    } else {
+                      setExecutionMode(null);
+                      setRunVerified(null);
+                      setTestResult(null);
+                      setOutput("");
+                    }
+                  }}
                 />
               )}
             </div>
@@ -756,6 +1043,10 @@ export function AppShell() {
       <AuthPromptModal
         open={showAuthPrompt}
         onClose={() => setShowAuthPrompt(false)}
+      />
+      <KeyboardShortcutsModal
+        isOpen={showShortcutsHelp}
+        onClose={() => setShowShortcutsHelp(false)}
       />
     </div>
   );

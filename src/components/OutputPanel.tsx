@@ -1,6 +1,7 @@
 "use client";
 
 import { GradingMode } from "@/lib/grading";
+import { X } from "lucide-react";
 
 interface OutputPanelProps {
   output: string;
@@ -12,6 +13,7 @@ interface OutputPanelProps {
   executionMode?: "run" | "test" | null;
   challengeGradingMode?: GradingMode;
   verified?: boolean | null;
+  onClose?: () => void;
 }
 
 export function OutputPanel({
@@ -24,6 +26,7 @@ export function OutputPanel({
   executionMode = null,
   challengeGradingMode = "output",
   verified = null,
+  onClose,
 }: OutputPanelProps) {
   const isTestView = executionMode === "test";
   const isOutputGrading =
@@ -80,6 +83,14 @@ export function OutputPanel({
             {isTestView ? "Test Results" : "Output"}
           </span>
         </div>
+
+        <button
+          onClick={onClose}
+          className="p-1 rounded hover:bg-muted/50 text-muted hover:text-foreground transition-colors"
+          title="Close output"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
 
         {hasOutput && !isRunning && (
           <div className="animate-fade-in">

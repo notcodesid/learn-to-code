@@ -1,13 +1,15 @@
 "use client";
 
-import { Lock } from "lucide-react";
+import { Lock, Bookmark } from "lucide-react";
 import { Challenge } from "@/types/challenge";
 
 interface SidebarProps {
   challenges: Challenge[];
   selectedId: number;
   completedIds: Set<number>;
+  bookmarkedIds: Set<number>;
   onSelect: (challenge: Challenge) => void;
+  onToggleBookmark: (challengeId: number, e: React.MouseEvent) => void;
   className?: string;
 }
 
@@ -21,7 +23,9 @@ export function Sidebar({
   challenges,
   selectedId,
   completedIds,
+  bookmarkedIds,
   onSelect,
+  onToggleBookmark,
   className = "",
 }: SidebarProps) {
   const categories = Array.from(
@@ -68,69 +72,85 @@ export function Sidebar({
               .map((challenge) => {
                 const isSelected = challenge.id === selectedId;
                 const isCompleted = completedIds.has(challenge.id);
+                const isBookmarked = bookmarkedIds.has(challenge.id);
                 const isLocked = challenge.locked;
                 const diff = difficultyConfig[challenge.difficulty as keyof typeof difficultyConfig];
                 return (
-                  <button
-                    key={challenge.id}
-                    onClick={() => onSelect(challenge)}
-                    className={`group w-full text-left px-2.5 py-2 rounded-lg text-[13px] transition-all duration-200 flex items-center gap-2.5 mb-0.5 btn-press ${
-                      isLocked
-                        ? "text-muted/60 hover:bg-surface-hover border border-transparent"
-                        : isSelected
-                          ? "bg-accent/12 text-accent border border-accent/20 shadow-sm shadow-accent/5"
-                          : "text-foreground/75 hover:bg-surface-hover hover:text-foreground border border-transparent"
-                    }`}
-                  >
-                    {/* Status indicator */}
-                    <span className="shrink-0 w-5 h-5 flex items-center justify-center">
-                      {isLocked ? (
-                        <Lock className="w-3.5 h-3.5 text-muted/50" />
-                      ) : isCompleted ? (
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          className="text-success animate-check-draw"
-                        >
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeOpacity="0.3"
-                          />
-                          <path
-                            d="M8 12l3 3 5-5"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      ) : (
-                        <span
-                          className={`text-[10px] font-bold tabular-nums ${
-                            isSelected ? "text-accent" : "text-muted/50 group-hover:text-muted"
-                          } transition-colors`}
-                        >
-                          {String(challenge.id).padStart(2, "0")}
-                        </span>
-                      )}
-                    </span>
-
-                    <span className="truncate flex-1 font-medium">
-                      {challenge.title}
-                    </span>
-
-                    <span
-                      className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${diff.color} ${diff.bg}`}
+                  <div className="flex items-center gap-2 w-full">
+                    <button
+                      key={challenge.id}
+                      onClick={() => onSelect(challenge)}
+                      className={`group w-full text-left px-2.5 py-2 rounded-lg text-[13px] transition-all duration-200 flex items-center gap-2.5 mb-0.5 btn-press ${
+                        isLocked
+                          ? "text-muted/60 hover:bg-surface-hover border border-transparent"
+                          : isSelected
+                            ? "bg-accent/12 text-accent border border-accent/20 shadow-sm shadow-accent/5"
+                            : "text-foreground/75 hover:bg-surface-hover hover:text-foreground border border-transparent"
+                      }`}
                     >
-                      {diff.label}
-                    </span>
-                  </button>
+                      {/* Status indicator */}
+                      <span className="shrink-0 w-5 h-5 flex items-center justify-center">
+                        {isLocked ? (
+                          <Lock className="w-3.5 h-3.5 text-muted/50" />
+                        ) : isCompleted ? (
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            className="text-success animate-check-draw"
+                          >
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeOpacity="0.3"
+                            />
+                            <path
+                              d="M8 12l3 3 5-5"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        ) : (
+                          <span
+                            className={`text-[10px] font-bold tabular-nums ${
+                              isSelected ? "text-accent" : "text-muted/50 group-hover:text-muted"
+                            } transition-colors`}
+                          >
+                            {String(challenge.id).padStart(2, "0")}
+                          </span>
+                        )}
+                      </span>
+
+                      <span className="truncate flex-1 font-medium">
+                        {challenge.title}
+                      </span>
+
+                      <span
+                        className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${diff.color} ${diff.bg}`}
+                      >
+                        {diff.label}
+                      </span>
+                    </button>
+                    {!isLocked && (
+                      <button
+                        onClick={(e) => onToggleBookmark(challenge.id, e)}
+                        className={`p-1.5 rounded transition-colors group-hover:bg-surface-hover ${
+                          isBookmarked ? "text-amber-400" : "text-muted/40 hover:text-amber-400"
+                        }`}
+                        title={isBookmarked ? "Remove bookmark" : "Bookmark"}
+                      >
+                        <Bookmark
+                          className={`w-4 h-4 ${isBookmarked ? "fill-current" : ""}`}
+                        />
+                      </button>
+                    )}
+                  </div>
                 );
               })}
           </div>

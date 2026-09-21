@@ -5,4 +5,5 @@ export type Challenge = Omit<PrismaChallenge, "testCases" | "testCaseSpec"> & {
   difficulty: "beginner" | "intermediate" | "advanced" | string;
   hasTestCases?: boolean;
   hasStructuredTests?: boolean;
+  hints?: { level: number; title: string; content: string }[];
 };

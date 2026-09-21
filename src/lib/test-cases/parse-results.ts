@@ -11,15 +11,44 @@ export function buildTestRunResult(
   stderr: string
 ): TestRunResult {
   const caseStatus = new Map<number, boolean>();
+  const combinedOutput = `${stdout}\n${stderr}`;
 
   for (const c of spec.cases) {
-    const pattern = new RegExp(
-      `test challenge_tests::case_${c.id} \\.\\.\\. (ok|FAILED)`,
-      "m"
-    );
-    const match = stdout.match(pattern) || stderr.match(pattern);
-    if (match) {
-      caseStatus.set(c.id, match[1] === "ok");
+    const patterns = [
+      new RegExp(`test challenge_tests::case_${c.id} \\.\\.\\. (ok|FAILED)`, "m"),
+      new RegExp(`test challenge_tests::case_${c.id} \\.\\.\\. (ok|failed)`, "m"),
+      new RegExp(`case_${c.id} \\.\\.\\. (ok|FAILED)`, "m"),
+      new RegExp(`case_${c.id} \\.\\.\\. (ok|failed)`, "m"),
+      new RegExp(`test case_${c.id} \\.\\.\\. (ok|FAILED)`, "m"),
+      new RegExp(`test case_${c.id} \\.\\.\\. (ok|failed)`, "m"),
+    ];
+
+    let matched = false;
+    for (const pattern of patterns) {
+      const match = combinedOutput.match(pattern);
+      if (match) {
+        caseStatus.set(c.id, match[1].toLowerCase() === "ok");
+        matched = true;
+        break;
+      }
+    }
+
+    if (!matched) {
+      const passedPattern = new RegExp(
+        `(?:test )?challenge_tests::case_${c.id}[^\\n]*\\bpassed\\b`,
+        "im"
+      );
+      const failedPattern = new RegExp(
+        `(?:test )?challenge_tests::case_${c.id}[^\\n]*\\bfailed\\b`,
+        "im"
+      );
+      if (combinedOutput.match(passedPattern)) {
+        caseStatus.set(c.id, true);
+        matched = true;
+      } else if (combinedOutput.match(failedPattern)) {
+        caseStatus.set(c.id, false);
+        matched = true;
+      }
     }
   }
 
@@ -39,7 +68,7 @@ export function buildTestRunResult(
     const passed = caseStatus.get(c.id) ?? false;
     const input = formatCaseInput(spec, c);
     const expected = toDisplayExpected(c.expected);
-    const panic = stderr.match(
+    const panic = combinedOutput.match(
       new RegExp(
         `challenge_tests::case_${c.id}[\\s\\S]*?left: ([^\\n]+)\\s+right: ([^\\n]+)`,
         "m"

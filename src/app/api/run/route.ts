@@ -93,6 +93,24 @@ export async function POST(request: NextRequest) {
         stdout,
         stderr
       );
+    } else if (useTests && !testCaseSpec) {
+      // Legacy testCases format: create a basic test result from success flag
+      payload.testResult = {
+        accepted: data.success,
+        totalCases: 1,
+        passedCases: data.success ? 1 : 0,
+        cases: [
+          {
+            id: 1,
+            label: "Test",
+            passed: data.success,
+            input: "",
+            expected: "",
+            output: data.success ? undefined : stdout || stderr,
+            error: data.success ? undefined : "Test failed",
+          },
+        ],
+      };
     }
 
     return NextResponse.json(payload);
